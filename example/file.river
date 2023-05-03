@@ -1,0 +1,56 @@
+/********************************************
+ * AGENT METRICS
+ ********************************************/
+module.file "metrics_prometheus_receiver" {
+	filename = env("AGENT_CONFIG_FOLDER") + "/metrics/prometheus_receiver/module.river"
+
+	arguments {
+		username = env("METRIC_USERNAME")
+		password = env("METRIC_PASSWORD")
+		url      = env("METRIC_URL")
+	}
+}
+
+module.file "metrics_prometheus_scrape_agent" {
+	filename = env("AGENT_CONFIG_FOLDER") + "/metrics/prometheus_scrape/module.river"
+
+	arguments {
+		address  = "0.0.0.0:12345"
+		receiver = module.file.metrics_prometheus_receiver.exports.receiver
+	}
+}
+
+/********************************************
+ * AGENT LOGGING
+ ********************************************/
+logging {
+	level  = env("AGENT_LOG_LEVEL")
+	format = "logfmt"
+}
+
+module.file "logs_forward_to_loki" {
+	filename = env("AGENT_CONFIG_FOLDER") + "/logs/forward_to_loki/module.river"
+
+	arguments {
+		filepath = env("LOG_FILEPATH")
+		url      = env("LOG_URL")
+	}
+}
+
+// /********************************************
+//  * AGENT TRACING
+//  ********************************************/
+tracing {
+	sampling_fraction = 1
+	write_to          = [module.file.traces_otel_input.exports.input]
+}
+
+module.file "traces_otel_input" {
+	filename = env("AGENT_CONFIG_FOLDER") + "/traces/otel_input/module.river"
+
+	arguments {
+		username = env("TRACE_USERNAME")
+		password = env("TRACE_PASSWORD")
+		url      = env("TRACE_URL")
+	}
+}

@@ -1,0 +1,33 @@
+/********************************************
+ * ARGUMENTS
+ ********************************************/
+argument "filepath" {
+	optional = false
+}
+
+argument "url" {
+	optional = false
+}
+
+/********************************************
+ * EXPORTS
+ ********************************************/
+
+/********************************************
+ * SOURCES
+ ********************************************/
+loki.source.file "default" {
+	targets = [
+		{__path__ = argument.filepath.value},
+	]
+	forward_to = [loki.write.default.receiver]
+}
+
+/********************************************
+ * LOG EXPORTER
+ ********************************************/
+loki.write "default" {
+	endpoint {
+		url = argument.url.value
+	}
+}
