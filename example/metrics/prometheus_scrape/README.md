@@ -1,5 +1,7 @@
 # metrics/prometheus_scrape
 
+> **SUPPORTED**: grafana/agent >= v0.34.0
+
 The `metrics/prometheus_scrape` module is an example module which scrapes
 metrics from a promtheus compatible endpoint and forwards them to a receiver.
 

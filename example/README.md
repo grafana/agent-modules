@@ -13,7 +13,7 @@ Provided modules can be used independently by creating your own entrypoint
 parent config or via a provided entrypoint parent config. Environment variables
 control the entrypoints so the entrypoints need not be modified.
 
-Here are the exports as I have them in my .bashrc profile. Example values were
+Here are the exports as can be defined in a .bashrc profile. Example values were
 left where possible and REDACTED where not.
 
 ```bash
