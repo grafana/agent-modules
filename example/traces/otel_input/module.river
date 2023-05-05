@@ -1,0 +1,45 @@
+/********************************************
+ * ARGUMENTS
+ ********************************************/
+argument "username" {
+	optional = false
+}
+
+argument "password" {
+	optional = false
+}
+
+argument "url" {
+	optional = false
+}
+
+/********************************************
+ * EXPORTS
+ ********************************************/
+export "input" {
+	value = otelcol.processor.batch.default.input
+}
+
+/********************************************
+ * TRACE EXPORTERS
+ ********************************************/
+otelcol.auth.basic "default" {
+	username = argument.username.value
+	password = argument.password.value
+}
+
+otelcol.exporter.otlp "default" {
+	client {
+		endpoint = argument.url.value
+		auth     = otelcol.auth.basic.default.handler
+	}
+}
+
+/********************************************
+ * OTLP PROCESSORS
+ ********************************************/
+otelcol.processor.batch "default" {
+	output {
+		traces = [otelcol.exporter.otlp.default.input]
+	}
+}

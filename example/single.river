@@ -1,0 +1,71 @@
+/********************************************
+ * AGENT METRICS
+ ********************************************/
+prometheus.remote_write "default" {
+	endpoint {
+		url = env("METRIC_URL")
+
+		basic_auth {
+			username = env("METRIC_USERNAME")
+			password = env("METRIC_PASSWORD")
+		}
+	}
+}
+
+// SCRAPE
+prometheus.scrape "default" {
+	targets         = [{"__address__" = "0.0.0.0:12345"}]
+	forward_to      = [prometheus.remote_write.default.receiver]
+	scrape_interval = "10s"
+}
+
+/********************************************
+ * AGENT LOGGING
+ ********************************************/
+logging {
+	level  = env("AGENT_LOG_LEVEL")
+	format = "logfmt"
+}
+
+// SOURCES
+loki.source.file "default" {
+	targets = [
+		{__path__ = env("LOG_FILEPATH")},
+	]
+	forward_to = [loki.write.default.receiver]
+}
+
+// LOG EXPORTER
+loki.write "default" {
+	endpoint {
+		url = env("LOG_URL")
+	}
+}
+
+/********************************************
+ * AGENT TRACING
+ ********************************************/
+tracing {
+	sampling_fraction = 1
+	write_to          = [otelcol.exporter.otlp.default.input]
+}
+
+// TRACE EXPORTERS
+otelcol.auth.basic "default" {
+	username = env("TRACE_USERNAME")
+	password = env("TRACE_PASSWORD")
+}
+
+otelcol.exporter.otlp "default" {
+	client {
+		endpoint = env("TRACE_URL")
+		auth     = otelcol.auth.basic.default.handler
+	}
+}
+
+// OTLP PROCESSORS
+otelcol.processor.batch "default" {
+	output {
+		traces = [otelcol.exporter.otlp.default.input]
+	}
+}
