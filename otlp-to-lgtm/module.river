@@ -1,0 +1,134 @@
+argument "otlp_http_endpoint" {
+    comment = "The OTLP HTTP server URL."
+    optional = true
+    default = "0.0.0.0:4318"
+}
+
+argument "otlp_grpc_endpoint" {
+    comment = "The OTLP gRPC server URL."
+    optional = true
+    default = "0.0.0.0:4317"
+}
+
+argument "prometheus_endpoint" {
+    comment = "The Prometheus remote write endpoint."
+}
+
+argument "prometheus_user" {
+    comment = "The Prometheus remote write basic auth username."
+}
+
+argument "prometheus_password" {
+    comment = "The Prometheus remote write basic auth password."
+}
+
+argument "loki_endpoint" {
+    comment = "Loki endpoint."
+}
+
+argument "loki_user" {
+    comment = "Loki basic auth username."
+}
+
+argument "loki_password" {
+    comment = "Loki basic auth password."
+}
+
+argument "tempo_endpoint" {
+    comment = "Tempo endpoint."
+}
+
+argument "tempo_user" {
+    comment = "Tempo basic auth username."
+}
+
+argument "tempo_password" {
+    comment = "Tempo basic auth password."
+}
+
+
+
+otelcol.receiver.otlp "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.receiver.otlp/
+
+    // configures the default endpoint "0.0.0.0:4317"
+	grpc { }
+    // configures the default endpoint "0.0.0.0:4318"
+	http { }
+
+	output {
+		metrics = [otelcol.processor.batch.default.input]
+		logs    = [otelcol.processor.batch.default.input]
+		traces  = [otelcol.processor.batch.default.input]
+	}
+}
+
+otelcol.processor.batch "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.processor.batch/
+	output {
+		metrics = [otelcol.processor.memory_limiter.default.input]
+		logs    = [otelcol.processor.memory_limiter.default.input]
+		traces  = [otelcol.processor.memory_limiter.default.input]
+	}
+}
+
+otelcol.processor.memory_limiter "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.processor.memory_limiter/
+	check_interval = "1s"
+
+	limit = "150MiB" // alternatively, set `limit_percentage` and `spike_limit_percentage`
+
+	output {
+		metrics = [otelcol.exporter.prometheus.default.input]
+		logs    = [otelcol.exporter.loki.default.input]
+		traces  = [otelcol.exporter.otlp.grafana_cloud_tempo.input]
+	}
+}
+
+otelcol.exporter.loki "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.exporter.loki/
+	forward_to = [loki.write.default.receiver]
+}
+
+otelcol.exporter.prometheus "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.exporter.prometheus/
+	forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/prometheus.remote_write/
+	endpoint {
+		url = argument.prometheus_endpoint.value
+
+		basic_auth {
+			username = argument.prometheus_user.value
+			password = argument.prometheus_password.value
+		}
+	}
+}
+
+loki.write "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/loki.write/
+	endpoint {
+		url = argument.loki_endpoint.value
+
+		basic_auth {
+			username = argument.loki_user.value
+			password = argument.loki_password.value
+		}
+	}
+}
+
+otelcol.exporter.otlp "grafana_cloud_tempo" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.exporter.otlp/
+	client {
+		endpoint = argument.tempo_endpoint.value
+		auth     = otelcol.auth.basic.grafana_cloud_tempo.handler
+	}
+}
+
+otelcol.auth.basic "grafana_cloud_tempo" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.auth.basic/
+	username = argument.tempo_user.value
+	password = argument.tempo_password.value
+}
