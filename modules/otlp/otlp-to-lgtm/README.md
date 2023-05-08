@@ -3,6 +3,11 @@
 Module to ingest OTLP data and then send it to Loki, Mimir and Tempo stacks locally or in GrafanaCloud.
 
 
+
+## Agent Version
+
+`>= v0.33`
+
 ## Module arguments
 
 The following arguments are supported when passing arguments to the module
@@ -33,7 +38,7 @@ The module has no exports.
 module.git "otlp_to_lgtm" {
     repository = "https://github.com/grafana/agent-modules.git"
     revision   = "main"
-    path       = "otlp-to-lgtm/module.river"
+    path       = "modules/otlp/otlp-to-lgtm/module.river"
 
     arguments {
         prometheus_endpoint = "https://prometheus-us-central1.grafana.net/api/prom"
