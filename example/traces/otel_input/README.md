@@ -1,28 +1,13 @@
 # traces/otel_input
 
-> **SUPPORTED**: grafana/agent >= v0.34.0
-
 The `traces/otel_input` module is an example module which exports an otel trace
 input. That input will run the traces through the default
 `otelcol.processor.batch` settings and then forward them on to the provided
 target url.
 
-## Usage
+## Agent Version
 
-```river
-module.git "traces_otel_input" {
-	repository = "https://github.com/grafana/agent-modules.git"
-	revision   = "main"
-	path       = "example/traces/otel_input/module.river"
-
-	arguments {
-		username = USERNAME
-		password = PASSWORD
-		url      = URL
-	}
-}
-
-```
+`>= v0.34`
 
 ## Module arguments
 

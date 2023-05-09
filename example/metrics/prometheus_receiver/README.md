@@ -1,26 +1,11 @@
 # metrics/prometheus_receiver
 
-> **SUPPORTED**: grafana/agent >= v0.34.0
-
 The `metrics/prometheus_receiver` module is an example module which exports a
 prometheus receiver for use by other components.
 
-## Usage
+## Agent Version
 
-```river
-module.git "metrics_prometheus_receiver" {
-	repository = "https://github.com/grafana/agent-modules.git"
-	revision   = "main"
-	path       = "example/metrics/prometheus_receiver/module.river"
-
-	arguments {
-		username = USERNAME
-		password = PASSWORD
-		url      = URL
-	}
-}
-
-```
+`>= v0.34`
 
 ## Module arguments
 

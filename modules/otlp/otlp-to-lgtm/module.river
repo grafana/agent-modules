@@ -1,53 +1,42 @@
 argument "otlp_http_endpoint" {
-    optional = true
-    default = "0.0.0.0:4318"
+	optional = true
+	default  = "0.0.0.0:4318"
 }
 
 argument "otlp_grpc_endpoint" {
-    optional = true
-    default = "0.0.0.0:4317"
+	optional = true
+	default  = "0.0.0.0:4317"
 }
 
-argument "prometheus_endpoint" {
-}
+argument "prometheus_endpoint" { }
 
-argument "prometheus_user" {
-}
+argument "prometheus_user" { }
 
-argument "prometheus_password" {
-}
+argument "prometheus_password" { }
 
-argument "loki_endpoint" {
-}
+argument "loki_endpoint" { }
 
-argument "loki_user" {
-}
+argument "loki_user" { }
 
-argument "loki_password" {
-}
+argument "loki_password" { }
 
-argument "tempo_endpoint" {
-}
+argument "tempo_endpoint" { }
 
-argument "tempo_user" {
-}
+argument "tempo_user" { }
 
-argument "tempo_password" {
-}
-
-
+argument "tempo_password" { }
 
 otelcol.receiver.otlp "default" {
 	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.receiver.otlp/
 
-    // configures the default endpoint "0.0.0.0:4317"
+	// configures the default endpoint "0.0.0.0:4317"
 	grpc {
 		endpoint = argument.otlp_grpc_endpoint.value
 	}
-    // configures the default endpoint "0.0.0.0:4318"
+	// configures the default endpoint "0.0.0.0:4318"
 	http {
 		endpoint = argument.otlp_http_endpoint.value
-	 }
+	}
 
 	output {
 		metrics = [otelcol.processor.batch.default.input]

@@ -1,0 +1,106 @@
+/********************************************
+ * ARGUMENTS
+ ********************************************/
+argument "prometheus_endpoint" { }
+
+argument "prometheus_user" { }
+
+argument "prometheus_password" { }
+
+argument "loki_filepath" { }
+
+argument "loki_endpoint" { }
+
+argument "loki_user" { }
+
+argument "loki_password" { }
+
+argument "tempo_endpoint" { }
+
+argument "tempo_user" { }
+
+argument "tempo_password" { }
+
+argument "grafana_agent_port" {
+	optional = true
+	default  = "12345"
+}
+
+/********************************************
+ * EXPORTS
+ ********************************************/
+export "trace_input" {
+	value = otelcol.processor.batch.default.input
+}
+
+/********************************************
+ * AGENT METRICS
+ ********************************************/
+prometheus.remote_write "default" {
+	endpoint {
+		url = argument.prometheus_endpoint.value
+
+		basic_auth {
+			username = argument.prometheus_user.value
+			password = argument.prometheus_password.value
+		}
+	}
+}
+
+prometheus.scrape "default" {
+	targets         = [{"__address__" = "0.0.0.0:" + argument.grafana_agent_port.value}]
+	forward_to      = [prometheus.remote_write.default.receiver]
+	scrape_interval = "10s"
+}
+
+/********************************************
+ * AGENT LOGGING
+ ********************************************/
+loki.source.file "default" {
+	targets = [
+		{__path__ = argument.loki_filepath.value},
+	]
+	forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+	endpoint {
+		url = argument.loki_endpoint.value
+
+		basic_auth {
+			username = argument.loki_user.value
+			password = argument.loki_password.value
+		}
+	}
+}
+
+/********************************************
+ * AGENT TRACING
+ ********************************************/
+otelcol.processor.batch "default" {
+	output {
+		traces = [otelcol.processor.memory_limiter.default.input]
+	}
+}
+
+otelcol.processor.memory_limiter "default" {
+	check_interval = "1s"
+
+	limit = "150MiB"
+
+	output {
+		traces = [otelcol.exporter.otlp.default.input]
+	}
+}
+
+otelcol.auth.basic "default" {
+	username = argument.tempo_user.value
+	password = argument.tempo_password.value
+}
+
+otelcol.exporter.otlp "default" {
+	client {
+		endpoint = argument.tempo_endpoint.value
+		auth     = otelcol.auth.basic.default.handler
+	}
+}
