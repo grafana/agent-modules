@@ -2,8 +2,6 @@
 
 Module to ingest OTLP data and then send it to Loki, Mimir and Tempo stacks locally or in GrafanaCloud.
 
-
-
 ## Agent Version
 
 `>= v0.33`
@@ -27,7 +25,6 @@ loader:
 | `tempo_user`      | `string` | Tempo basic auth username. | | yes
 | `tempo_password`      | `secret` | Tempo basic auth password. | | yes
 
-
 ## Module exports
 
 The module has no exports.
@@ -41,16 +38,16 @@ module.git "otlp_to_lgtm" {
     path       = "modules/otlp/otlp-to-lgtm/module.river"
 
     arguments {
-        prometheus_endpoint = "https://prometheus-us-central1.grafana.net/api/prom"
-        prometheus_user = "123456"
+        prometheus_endpoint = "https://prometheus-us-central1.grafana.net/api/prom/push"
+        prometheus_user     = "123456"
         prometheus_password = env("GRAFANA_CLOUD_KEY")
 
-        loki_endpoint = "https://logs-prod-us-central1.grafana.net"
-        loki_user = "1234567"
+        loki_endpoint = "https://logs-prod-us-central1.grafana.net/loki/api/v1/push"
+        loki_user     = "1234567"
         loki_password = env("GRAFANA_CLOUD_KEY")
 
         tempo_endpoint = "tempo-us-central1.grafana.net:443"
-        tempo_user = "1234"
+        tempo_user     = "1234"
         tempo_password = env("GRAFANA_CLOUD_KEY")
     }
 }

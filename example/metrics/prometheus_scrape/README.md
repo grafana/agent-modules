@@ -1,25 +1,11 @@
 # metrics/prometheus_scrape
 
-> **SUPPORTED**: grafana/agent >= v0.34.0
-
 The `metrics/prometheus_scrape` module is an example module which scrapes
 metrics from a promtheus compatible endpoint and forwards them to a receiver.
 
-## Usage
+## Agent Version
 
-```river
-module.git "traces_otel_input" {
-	repository = "https://github.com/grafana/agent-modules.git"
-	revision   = "main"
-	path       = "example/traces/otel_input/module.river"
-
-	arguments {
-		address  = ADDRESS
-		receiver = RECEIVER
-	}
-}
-
-```
+`>= v0.34`
 
 ## Module arguments
 

@@ -1,25 +1,11 @@
 # logs/forward_to_loki
 
-> **SUPPORTED**: grafana/agent >= v0.34.0
-
 The `logs/forward_to_loki` module is an example module which exports logs
 from a log file to a loki endpoint.
 
-## Usage
+## Agent Version
 
-```river
-module.git "forward_to_loki" {
-	repository = "https://github.com/grafana/agent-modules.git"
-	revision   = "main"
-	path       = "example/logs/forward_to_loki/module.river"
-
-	arguments {
-		filepath = FILEPATH
-		url      = URL
-	}
-}
-
-```
+`>= v0.34`
 
 ## Module arguments
 
