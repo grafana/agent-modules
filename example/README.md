@@ -4,8 +4,9 @@ This folder contains example modules and entrypoint parent config files for the
 Grafana Agent. This example focuses on the agent forwarding its own metrics,
 logs and traces. The purpose of the example is to demonstrate module features
 such as various module loaders, passing arguments and receiving exports. It is not
-recommended as the most efficient way to do this for production (see ./modules for
-practical modules to use).
+recommended as the most efficient way to do this for production. See
+[Grafana Agent Telemetry to LGTM](../modules/grafana-agent/telemetry-to-lgtm/) for a
+practical module to use.
 
 # Entrypoints
 

@@ -25,7 +25,11 @@ loader:
 | `tempo_user`            | `string`   | Tempo basic auth username. | | yes
 | `tempo_password`        | `secret`   | Tempo basic auth password. | | yes
 
-Grafana Agent logs must be forwarded to the file at `grafana_agent_logpath`.
+Grafana Agent logs must be forwarded to the file at `grafana_agent_logpath`. For example:
+
+```bash
+grafana-agent run parent.river 2>${GRAFANA_AGENT_LOGPATH}
+```
 
 ## Module exports
 
