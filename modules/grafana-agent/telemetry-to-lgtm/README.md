@@ -44,7 +44,7 @@ The following fields are exported by the module:
 ```
 tracing {
 	sampling_fraction = 1
-	write_to          = [module.file.agent_telemetry.exports.trace_input]
+	write_to          = [module.git.agent_telemetry.exports.trace_input]
 }
 
 module.git "agent_telemetry" {
