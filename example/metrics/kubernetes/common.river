@@ -39,8 +39,8 @@ discovery.relabel "pods_autoscrape" {
   // if node_name_filter passed into this module, filter out pods from other nodes
   rule {
     action = "keep"
-    source_labels = [__meta_kubernetes_pod_node_name]
-    regex = node_name_filter
+    source_labels = ["__meta_kubernetes_pod_node_name"]
+    regex = argument.node_name_filter
   }
 
   // if prometheus.io/port is set, drop anything with non-matching container port
