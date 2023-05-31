@@ -1,7 +1,6 @@
 # metrics/kubernetes_autoscrape
 
-The `metrics/kubernetes_autoscrape` module is an example for simple convention-based discovery of pods in your cluster to
-scrape as many pods as possible with a single discovery config.
+The `metrics/kubernetes` module is an example for scraping of metrics from your kubernetes cluster.
 
 ## Agent Version
 
