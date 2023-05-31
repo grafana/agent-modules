@@ -59,12 +59,12 @@ discovery.relabel "pod_filters" {
 discovery.relabel "ksm" {
   targets = discovery.relabel.pod_filters.output
   rule {
-    source_labels = ["__meta_kubernetes_service_name"]
+    source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
     regex = "kube-state-metrics"
     action = "keep"
   }
   rule {
-    source_labels = ["__meta_kubernetes_service_port_name"]
+    source_labels = ["__meta_kubernetes_pod_container_port_name"]
     regex = "http"
     action = "keep"
   }
