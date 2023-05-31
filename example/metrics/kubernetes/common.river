@@ -11,6 +11,9 @@ argument "shard_number" {
 argument "node_name_filter" {
   default = ".*"
 }
+argument "scrape_interval"{
+  default = "15s"
+}
 
 /********************************************
  * Discovery and Relabeling
@@ -177,4 +180,10 @@ discovery.relabel "pods_autoscrape" {
     source_labels = ["__meta_kubernetes_pod_name", "__meta_kubernetes_pod_container_name", "__meta_kubernetes_pod_container_port_name"]
     target_label = "instance"
   }
+}
+
+prometheus.scrape "scraper" {
+  targets = discovery.relabel.pods_autoscrape.output
+  forward_to = [arguments.receiver]
+  scrape_interval = arguments.scrape_interval
 }
