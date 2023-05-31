@@ -40,7 +40,7 @@ discovery.relabel "pods_autoscrape" {
   rule {
     action = "keep"
     source_labels = ["__meta_kubernetes_pod_node_name"]
-    regex = argument.node_name_filter
+    regex = argument.node_name_filter.value
   }
 
   // if prometheus.io/port is set, drop anything with non-matching container port
@@ -70,13 +70,13 @@ discovery.relabel "pods_autoscrape" {
   // hashmod if needed
   rule {
     action = "hashmod"
-    modulus = argument.hashmod_shards
+    modulus = argument.hashmod_shards.value
     source_labels = ["__address__"]
     target_label = "__tmp_hash"
   }
   rule {
     action = "keep"
-    regex = argument.shard_number
+    regex = argument.shard_number.value
     source_labels = ["__tmp_hash"]
   }
   rule {
@@ -188,6 +188,6 @@ discovery.relabel "pods_autoscrape" {
 
 prometheus.scrape "scraper" {
   targets = discovery.relabel.pods_autoscrape.output
-  forward_to = [argument.receiver]
-  scrape_interval = argument.scrape_interval
+  forward_to = [argument.receiver.value]
+  scrape_interval = argument.scrape_interval.value
 }
