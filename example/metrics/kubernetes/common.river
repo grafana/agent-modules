@@ -2,9 +2,6 @@ argument "receiver" {
 	optional = false
 }
 
-argument "hashmod_enabled" {
-  default = false
-}
 argument "hashmod_shards" {
   default = 1
 }
@@ -13,9 +10,6 @@ argument "shard_number" {
 }
 argument "node_name_filter" {
   default = ".*"
-}
-argument "clustering_enabled" {
-  default = false
 }
 
 /********************************************
