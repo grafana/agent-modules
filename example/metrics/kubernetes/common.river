@@ -19,28 +19,84 @@ argument "scrape_interval"{
   optional = true
 }
 
-/********************************************
- * Discovery and Relabeling
- ********************************************/
-
 discovery.kubernetes "pods" {
 	role = "pod"
 }
 
-discovery.relabel "pods_autoscrape" {
+// filter out pods for daemonset or clustering modes
+discovery.relabel "pod_filters" {
   targets = discovery.kubernetes.pods.targets
-  // only scrape ports with names ending in "metrics" OR `prometheus.io/scrape: true`
-  rule {
-    action = "keep"
-    regex = ".*metrics;.*|.*;true"
-    source_labels = ["__meta_kubernetes_pod_container_port_name","__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
-  }
 
   // if node_name_filter passed into this module, filter out pods from other nodes
   rule {
     action = "keep"
     source_labels = ["__meta_kubernetes_pod_node_name"]
     regex = argument.node_name_filter.value
+  }
+
+  // hashmod if needed
+  rule {
+    action = "hashmod"
+    modulus = argument.hashmod_shards.value
+    source_labels = ["__address__"]
+    target_label = "__tmp_hash"
+  }
+  rule {
+    action = "keep"
+    regex = argument.shard_number.value
+    source_labels = ["__tmp_hash"]
+  }
+  rule {
+    action = "labeldrop"
+    regex = "__tmp_hash"
+  }
+}
+
+/********************************************
+ * Kube State Metrics
+ ********************************************/
+
+discovery.relabel "ksm" {
+  targets = discovery.relabel.pod_filters.output
+  rule {
+    source_labels = ["__meta_kubernetes_service_name"]
+    regex = "kube-state-metrics"
+    action = "keep"
+  }
+  rule {
+    source_labels = ["__meta_kubernetes_service_port_name"]
+    regex = "http"
+    action = "keep"
+  }
+}
+
+prometheus.scrape "ksm" {
+  job_name   = "integrations/kubernetes/kube-state-metrics"
+  targets    = discovery.relabel.ksm.output
+  forward_to = [prometheus.relabel.ksm.receiver]
+}
+
+prometheus.relabel "ksm" {
+  rule {
+    source_labels = ["__name__"]
+    regex = "up|kube_*"
+    action = "keep"
+  }
+  forward_to = [argument.receiver.value]
+}
+
+
+/********************************************
+ * General purpose pod discovery for applications
+ ********************************************/
+
+discovery.relabel "pods_autoscrape" {
+  targets = discovery.relabel.pod_filters.output
+  // only scrape ports with names ending in "metrics" OR `prometheus.io/scrape: true`
+  rule {
+    action = "keep"
+    regex = ".*metrics;.*|.*;true"
+    source_labels = ["__meta_kubernetes_pod_container_port_name","__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
   }
 
   // if prometheus.io/port is set, drop anything with non-matching container port
@@ -65,23 +121,6 @@ discovery.relabel "pods_autoscrape" {
     replacement = "$1:$3"
     source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
     target_label = "__address__"
-  }
-
-  // hashmod if needed
-  rule {
-    action = "hashmod"
-    modulus = argument.hashmod_shards.value
-    source_labels = ["__address__"]
-    target_label = "__tmp_hash"
-  }
-  rule {
-    action = "keep"
-    regex = argument.shard_number.value
-    source_labels = ["__tmp_hash"]
-  }
-  rule {
-    action = "labeldrop"
-    regex = "__tmp_hash"
   }
 
   // we need to find a usable application name from pod labels
