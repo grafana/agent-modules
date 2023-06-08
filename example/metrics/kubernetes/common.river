@@ -2,6 +2,11 @@ argument "receiver" {
 	optional = false
 }
 
+argument "logs_receiver" {
+  optional = true
+  default = null
+}
+
 argument "hashmod_shards" {
   default = 1
   optional = true
@@ -51,6 +56,16 @@ discovery.relabel "pod_filters" {
     regex = "__tmp_hash"
   }
 }
+
+/********************************************
+ * Logs
+ ********************************************/
+
+loki.source.kubernetes "pods" {
+  targets    = discovery.relabel.pod_filters.output
+  forward_to = [argument.logs_receiver.value]
+}
+
 
 /********************************************
  * Kube State Metrics
