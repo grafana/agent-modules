@@ -14,6 +14,10 @@ argument "node_name_filter" {
   default = ".*"
   optional = true
 }
+argument "clustering_enabled" {
+  optional = true
+  default = false
+}
 argument "scrape_interval"{
   default = "15s"
   optional = true
@@ -229,4 +233,7 @@ prometheus.scrape "scraper" {
   targets = discovery.relabel.pods_autoscrape.output
   forward_to = [argument.receiver.value]
   scrape_interval = argument.scrape_interval.value
+  clustering {
+    enabled = argument.clustering_enabled.value
+  }
 }
