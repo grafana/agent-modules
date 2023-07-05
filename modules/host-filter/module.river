@@ -12,6 +12,10 @@ argument "hostname" {
 	)
 }
 
+export "output" {
+	value = discovery.relabel.host_filter.output
+}
+
 discovery.relabel "host_filter" {
 	targets = argument.targets.value
 
@@ -51,8 +55,4 @@ discovery.relabel "host_filter" {
 
 		action = "keep"
 	}
-}
-
-export "output" {
-	value = discovery.relabel.host_filter.output
 }
