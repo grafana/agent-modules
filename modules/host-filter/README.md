@@ -36,7 +36,7 @@ following values:
 * `localhost` or `127.0.0.1`
 * The value of the `hostname` argument.
 
-The `hostname` arugment defaults to the first of the following:
+The `hostname` argument defaults to the first of the following:
 
 * The `HOSTNAME` environment variable, if set.
 * The system-reported hostname.
