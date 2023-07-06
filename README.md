@@ -10,11 +10,7 @@ parameterize a configuration to create reusable pipelines.
 - <b>example</b>: A practical example shown for each module loader plus without modules for comparison
 - <b>util</b>: Utilities for managing modules in this repo
 
-## Categories
-
-### OTLP
-
-OTLP covers multi use OpenTelemetry modules
+## Modules
 
 | Name |  Description | Agent Version | 
 | ---- |  ----------- | ------------- | 
