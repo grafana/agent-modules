@@ -23,7 +23,7 @@ OTLP covers multi use OpenTelemetry modules
 
 ## Submitting modules
 
-Modules should be added under `modules` folder. Each module should have a README.MD that has:
+Modules should be added under the `modules` folder. Each module should have a README.MD that has:
 * Name
 * Brief description
 * Applicable Agent Versions
