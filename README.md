@@ -20,6 +20,7 @@ OTLP covers multi use OpenTelemetry modules
 | ---- |  ----------- | ------------- | 
 | [OTLP to LGTM](./modules/otlp/otlp-to-lgtm/) | Module to ingest OTLP data and then send it to Loki, Mimir and Tempo stacks locally or in GrafanaCloud. | `>= v0.33`
 | [Grafana Agent Telemetry to LGTM](./modules/grafana-agent/telemetry-to-lgtm/) | Module to forward the Grafana Agent's own telemetry data to Loki, Mimir and Tempo stacks locally or in GrafanaCloud. | `>= v0.33`
+| [Grafana Cloud Autoconfigure](./modules/grafana-cloud/autoconfigure/) | Module to automatically configure receivers for Grafana Cloud. | `>= v0.34`
 
 ## Submitting modules
 
@@ -34,4 +35,4 @@ Modules should be added under the `modules` folder. Each module should have a RE
 Module contents should be ordered:
 * `arguments`
 * `exports`
-* body of the module. 
+* body of the module
