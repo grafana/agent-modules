@@ -31,4 +31,7 @@ Modules should be added under `modules` folder. Each module should have a README
 * Exports
 * Example
 
-Module text should follow the order of `arguments`, `exports` then the body of the module. 
+Module contents should be ordered:
+* `arguments`
+* `exports`
+* body of the module. 
