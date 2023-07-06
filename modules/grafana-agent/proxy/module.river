@@ -1,0 +1,66 @@
+/********************************************
+ * ARGUMENTS
+ ********************************************/
+argument "prometheus_listen_port" { }
+
+argument "prometheus_listen_address" { }
+
+argument "prometheus_forward_endpoint" { }
+
+argument "prometheus_forward_user" { }
+
+argument "prometheus_forward_password" { }
+
+argument "loki_listen_port" { }
+
+argument "loki_listen_address" { }
+
+argument "loki_forward_endpoint" { }
+
+argument "loki_forward_user" { }
+
+argument "loki_forward_password" { }
+
+/********************************************
+ * METRICS PROXY
+ ********************************************/
+prometheus.receive_http "server" {
+	http {
+		listen_address = argument.prometheus_listen_address.value
+		listen_port    = argument.prometheus_listen_port.value
+	}
+	forward_to = [prometheus.remote_write.metrics.receiver]
+}
+
+prometheus.remote_write "metrics" {
+	endpoint {
+		url = argument.prometheus_forward_endpoint.value
+
+		basic_auth {
+			username = argument.prometheus_forward_user.value
+			password = argument.prometheus_forward_password.value
+		}
+	}
+}
+
+/********************************************
+ * LOGS PROXY
+ ********************************************/
+loki.source.api "server" {
+	http {
+		listen_address = argument.loki_listen_address.value
+		listen_port    = argument.loki_listen_port.value
+	}
+	forward_to = [loki.write.logs.receiver]
+}
+
+loki.write "logs" {
+	endpoint {
+		url = argument.loki_forward_endpoint.value
+
+		basic_auth {
+			username = argument.loki_forward_user.value
+			password = argument.loki_forward_password.value
+		}
+	}
+}
