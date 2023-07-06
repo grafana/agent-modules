@@ -21,7 +21,7 @@ parameterize a configuration to create reusable pipelines.
 
 ## Submitting modules
 
-Modules should be added under the `modules` folder. Each module should have a README.MD that has:
+Add modules to the `modules` folder. Each module must have a README.MD that provides the following information:
 * Name
 * Brief description
 * Applicable Agent Versions
