@@ -1,0 +1,124 @@
+/*
+Module: log-relabelings
+Description: Handles log relabelings
+Arguments:
+  targets: Discovered targets to apply relabelings to
+*/
+argument "targets" {
+  optional = false
+}
+
+export "relabelings" {
+  value = discovery.relabel.logs
+}
+
+discovery.relabel "logs" {
+  targets = argument.targets.value
+
+  // allow pods to declare their logs to be ingested or not, the following annotation is supported:
+  //   logs.agent.grafana.com/ingest: false
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_annotation_logs_agent_grafana_com_ingest",
+      "__meta_kubernetes_service_annotation_logs_agent_grafana_com_ingest",
+      "__meta_kubernetes_endpoint_annotation_logs_agent_grafana_com_ingest",
+      "__meta_kubernetes_endpointslice_annotation_logs_agent_grafana_com_ingest",
+      "__meta_kubernetes_ingress_annotation_logs_agent_grafana_com_ingest",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?(true|false).*$"
+    replacement = "$1"
+    target_label = "__tmp_ingest"
+  }
+
+  // drop any targets that have scrape: false
+  rule {
+    action = "drop"
+    source_labels = ["__tmp_ingest"]
+    regex = "false"
+  }
+
+  // set the __path__, this is automatically translated as a label of filename (which should be dropped or normalized)
+  // DO NOT delete this line as it is needed to tail the pod logs on the node
+  rule {
+    action = "replace"
+    separator = "/"
+    source_labels = [
+      "__meta_kubernetes_pod_uid",
+      "__meta_kubernetes_pod_container_name",
+    ]
+    replacement = "/var/log/pods/*$1/*.log"
+    target_label = "__path__"
+  }
+  // set the __host__
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_pod_node_name"]
+    target_label = "__host__"
+  }
+
+  // set the job label to be namespace / friendly pod name
+  rule {
+    action = "replace"
+    separator = "/"
+    source_labels = [
+      "deployment",
+      "__meta_kubernetes_namespace",
+    ]
+    regex = ".+\\/(.+);(.+)"
+    replacement = "$2/$1"
+    target_label = "job"
+  }
+
+  // set the pod name label
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_pod_name"]
+    target_label = "pod"
+  }
+
+  // set the container label
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_container_name"]
+    target_label = "container"
+  }
+
+  // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_label_app",
+      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+    ]
+    regex = "(?:;*)?([^;]+).*"
+    replacement = "$1"
+    target_label = "app"
+  }
+
+  // set the app component if specified as metadata labels "component:" or "app.kubernetes.io/component:"
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_label_component",
+      "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+    ]
+    regex = "(?:;*)?([^;]+).*"
+    replacement = "$1"
+    target_label = "component"
+  }
+
+  // make all labels on the pod available to the pipeline as labels,
+  // they are omitted before write via labelallow unless explicitly set
+  rule {
+    action = "labelmap"
+    regex = "__meta_kubernetes_pod_label_(.+)"
+  }
+  // make all annotations on the pod available to the pipeline as labels,
+  // they are omitted before write via labelallow unless explicitly set
+  rule {
+    action = "labelmap"
+    regex = "__meta_kubernetes_pod_annotation_(.+)"
+  }
+}
