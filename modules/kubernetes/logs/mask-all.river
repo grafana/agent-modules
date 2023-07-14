@@ -9,7 +9,7 @@ argument "forward_to" {
 }
 
 export "process" {
-  value = loki.process.mask_ssn
+  value = module.git.mask_ssn.exports.process
 }
 
 module.git "mask_ssn" {
