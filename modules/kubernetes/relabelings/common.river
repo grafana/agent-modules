@@ -1,0 +1,83 @@
+/*
+Module: relabelings-common
+Description: Handles relabelings for extracting common fields across various roles
+Arguments:
+  targets: Discovered targets to apply relabelings to
+*/
+
+argument "targets" {
+  optional = false
+}
+
+export "relabelings" {
+  value = discovery.relabel.common
+}
+
+discovery.relabel "common" {
+  targets = argument.targets.value
+
+  // set the namespace label
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
+  // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+      "__meta_kubernetes_pod_label_app",
+      "__meta_kubernetes_service_label_app_kubernetes_io_name",
+      "__meta_kubernetes_service_label_app",
+      "__meta_kubernetes_endpoint_label_app_kubernetes_io_name",
+      "__meta_kubernetes_endpoint_label_app",
+      "__meta_kubernetes_endpointslice_label_app_kubernetes_io_name",
+      "__meta_kubernetes_endpointslice_label_app",
+      "__meta_kubernetes_ingress_label_app_kubernetes_io_name",
+      "__meta_kubernetes_ingress_label_app",
+    ]
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "app"
+  }
+
+  // set the app component if specified as metadata labels "component:" or "app.kubernetes.io/component:"
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+      "__meta_kubernetes_pod_label_component",
+      "__meta_kubernetes_service_label_app_kubernetes_io_component",
+      "__meta_kubernetes_service_label_component",
+      "__meta_kubernetes_endpoint_label_app_kubernetes_io_component",
+      "__meta_kubernetes_endpoint_label_component",
+      "__meta_kubernetes_endpointslice_label_app_kubernetes_io_component",
+      "__meta_kubernetes_endpointslice_label_component",
+      "__meta_kubernetes_ingress_label_app_kubernetes_io_component",
+      "__meta_kubernetes_ingress_label_component",
+    ]
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "component"
+  }
+
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_annotation_logs_agent_grafana_com_tenant",
+      "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_node_annotation_metrics_agent_grafana_com_tenant",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "__tmp_tenant"
+  }
+
+}
