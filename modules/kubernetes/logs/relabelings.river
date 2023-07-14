@@ -12,8 +12,28 @@ export "relabelings" {
   value = discovery.relabel.logs
 }
 
+module.git "relabelings_common" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/relabelings/common.river"
+
+  arguments {
+    targets = argument.targets.value
+  }
+}
+
+module.git "relabelings_pod" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/relabelings/pod.river"
+
+  arguments {
+    targets = module.git.relabelings_common.exports.relabelings.output
+  }
+}
+
 discovery.relabel "logs" {
-  targets = argument.targets.value
+  targets = module.git.relabelings_pod.exports.relabelings.output
 
   // allow pods to declare their logs to be ingested or not, the following annotation is supported:
   //   logs.agent.grafana.com/ingest: false
