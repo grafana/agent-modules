@@ -2,6 +2,7 @@
 Module: drop-info
 Description: The default behavior is to keep info level messaging automatically, however, info level
              messages can dropped by adding the annotation:
+
              logs.agent.grafana.com/drop-info: true
 Arguments:
   forward_to: Module to forward the output to

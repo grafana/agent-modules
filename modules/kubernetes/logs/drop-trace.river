@@ -2,6 +2,7 @@
 Module: drop-trace
 Description: The default behavior is to drop trace level messaging automatically, however, trace level
              messages can still be logged by adding the annotation:
+
              logs.agent.grafana.com/drop-trace: false
 Arguments:
   forward_to: Module to forward the output to
