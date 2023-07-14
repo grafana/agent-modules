@@ -1,0 +1,73 @@
+/*
+Module: mask-all
+Description: Wrapper module to include all masking modules
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+export "process" {
+  value = loki.process.mask_ssn
+}
+
+module.git "mask_ssn" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-ssn.river"
+
+  arguments {
+    forward_to = module.git.mask_credit_card.exports.process.receiver
+  }
+}
+
+module.git "mask_credit_card" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-credit-card.river"
+
+  arguments {
+    forward_to = module.git.mask_email.exports.process.receiver
+  }
+}
+
+module.git "mask_email" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-email.river"
+
+  arguments {
+    forward_to = module.git.mask_phone.exports.process.receiver
+  }
+}
+
+module.git "mask_phone" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-phone.river"
+
+  arguments {
+    forward_to = module.git.mask_ipv4.exports.process.receiver
+  }
+}
+
+module.git "mask_ipv4" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-ipv4.river"
+
+  arguments {
+    forward_to = module.git.mask_ipv6.exports.process.receiver
+  }
+}
+
+module.git "mask_ipv6" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/mask-ipv6.river"
+
+  arguments {
+    forward_to = argument.forward_to.value
+  }
+}
