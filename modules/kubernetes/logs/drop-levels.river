@@ -1,0 +1,43 @@
+/*
+Module: drop-levels
+Description: Wrapper module to include all drop level modules
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+export "process" {
+  value = module.git.drop_trace.exports.process
+}
+
+module.git "drop_trace" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/drop-level-trace.river"
+
+  arguments {
+    forward_to = module.git.drop_debug.exports.process.receiver
+  }
+}
+
+module.git "drop_debug" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/drop-level-debug.river"
+
+  arguments {
+    forward_to = module.git.drop_info.exports.process.receiver
+  }
+}
+
+module.git "drop_info" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/drop-level-info.river"
+
+  arguments {
+    forward_to = argument.forward_to.value
+  }
+}
