@@ -12,6 +12,7 @@ export "relabelings" {
   value = discovery.relabel.logs
 }
 
+// apply common relabelings
 module.git "relabelings_common" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
@@ -22,6 +23,7 @@ module.git "relabelings_common" {
   }
 }
 
+// apply common pod relabelings
 module.git "relabelings_pod" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
@@ -32,6 +34,7 @@ module.git "relabelings_pod" {
   }
 }
 
+// apply pod specific relabelings
 discovery.relabel "logs" {
   targets = module.git.relabelings_pod.exports.relabelings.output
 

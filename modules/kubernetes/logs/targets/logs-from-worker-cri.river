@@ -36,7 +36,7 @@ loki.source.file "pods" {
 }
 
 loki.process "parse" {
-  forward_to  = [arguments.forward_to.value]
+  forward_to  = [argument.forward_to.value]
 
   stage.cri {}
 
