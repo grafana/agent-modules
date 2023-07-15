@@ -88,6 +88,16 @@ module.git "log_format_postgres" {
   path       = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
+    forward_to = module.git.log_format_python.exports.process.receiver
+  }
+}
+
+module.git "log_format_python" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/python.river"
+
+  arguments {
     forward_to = module.git.log_format_spring_boot.exports.process.receiver
   }
 }
