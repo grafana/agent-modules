@@ -27,7 +27,7 @@ loki.process "log_format_json" {
       }
     }
 
-    // set the extracted level, response code and request method as labels
+    // set the extracted level as a label
     stage.labels {
       values = {
         level = "",

@@ -1,0 +1,83 @@
+/*
+Module: mask-all
+Description: Wrapper module to include all masking modules
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+export "process" {
+  value = module.git.mask_ssn.exports.process
+}
+
+module.git "log_format_common_log" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/common-log.river"
+
+  arguments {
+    forward_to = module.git.log_format_istio.exports.process.receiver
+  }
+}
+
+module.git "log_format_istio" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/istio.river"
+
+  arguments {
+    forward_to = module.git.log_format_json.exports.process.receiver
+  }
+}
+
+module.git "log_format_json" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/json.river"
+
+  arguments {
+    forward_to = module.git.log_format_klog.exports.process.receiver
+  }
+}
+
+module.git "log_format_klog" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/klog.river"
+
+  arguments {
+    forward_to = module.git.log_format_logfmt.exports.process.receiver
+  }
+}
+
+module.git "log_format_logfmt" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/logfmt.river"
+
+  arguments {
+    forward_to = module.git.log_format_otel.exports.process.receiver
+  }
+}
+
+module.git "log_format_otel" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/otel.river"
+
+  arguments {
+    forward_to = module.git.log_format_postgres.exports.process.receiver
+  }
+}
+
+module.git "log_format_postgres" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/otel.river"
+
+  arguments {
+    forward_to = argument.forward_to.value
+  }
+}
