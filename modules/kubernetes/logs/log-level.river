@@ -17,11 +17,17 @@ export "process" {
 loki.process "log_level" {
   forward_to = [argument.forward_to.value]
 
-  // default level to unknown
-  stage.static_labels {
-    values = {
-      level = "unknown",
+  // if a log level is not set, default it to unknown
+  stage.match {
+    selector = "{level=\"\"}"
+
+    // default level to unknown
+    stage.static_labels {
+      values = {
+        level = "unknown",
+      }
     }
+
   }
 
   // check to see if the log line matches the klog format (https://github.com/kubernetes/klog)
