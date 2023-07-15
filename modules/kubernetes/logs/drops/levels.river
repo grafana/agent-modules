@@ -15,7 +15,7 @@ export "process" {
 module.git "drop_trace" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/drop-level-trace.river"
+  path       = "modules/kubernetes/logs/drops/level-trace.river"
 
   arguments {
     forward_to = module.git.drop_debug.exports.process.receiver
@@ -25,7 +25,7 @@ module.git "drop_trace" {
 module.git "drop_debug" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/drop-level-debug.river"
+  path       = "modules/kubernetes/logs/drops/level-debug.river"
 
   arguments {
     forward_to = module.git.drop_info.exports.process.receiver
@@ -35,7 +35,7 @@ module.git "drop_debug" {
 module.git "drop_info" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/drop-level-info.river"
+  path       = "modules/kubernetes/logs/drops/level-info.river"
 
   arguments {
     forward_to = argument.forward_to.value
