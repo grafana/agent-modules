@@ -16,7 +16,7 @@ export "process" {
 loki.process "log_format_otel" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to json then process the line as otel
+  // check logs.agent.grafana.com/log-format annotation, if set to otel then process the line as otel
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: otel"
     selector = "{logs_agent_grafana_com_log_format=~\"(?i)(otel|open-?telemetry)(-?json)?\"}"
