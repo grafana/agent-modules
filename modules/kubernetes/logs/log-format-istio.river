@@ -10,16 +10,16 @@ argument "forward_to" {
 }
 
 export "process" {
-  value = loki.process.log_format_clf
+  value = loki.process.log_format_istio
 }
 
-loki.process "log_format_clf" {
+loki.process "log_format_istio" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to istio then process the line as clf
+  // check logs.agent.grafana.com/log-format annotation, if set to istio then process the line as json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: istio"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)istio-?json\"}"
+    selector = "{logs_agent_grafana_com_log_format=~\"(?i)istio-?(json)?\"}"
 
     // not all istio logs contain a level, default to info
     stage.static_labels{
