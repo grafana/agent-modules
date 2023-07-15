@@ -73,32 +73,6 @@ loki.process "log_format_log4j" {
       }
     }
 
-    // check logs.agent.grafana.com/embed-pod annotation, if true embed the name of the pod to the end of the log line
-    // this can reduce the overall cardinality, by not using a label of "pod", individual pods can still be searched
-    // using a line selector i.e. __pod=your-pod-name
-    stage.match {
-      selector = "{logs_agent_grafana_com_embed_pod=~\"(?i)true\"}"
-      pipeline_name = "pipeline for annotation || logs.agent.grafana.com/embed-pod: true"
-
-      // render a new label called log_line, and add the name of the pod to the end of the log message
-      // knowing the pod name can be valuable for debugging, but it should not be a label in Loki due
-      // to the high cardinality it would create.
-      // note: .Entry is a special key that is used to reference the current line
-      stage.replace {
-        expression = "\\}$"
-        replace = ""
-      }
-      stage.template {
-        source = "log_line"
-        template = "{{ .Entry }},\"__pod\":\"{{ .pod }}\"}"
-      }
-
-      // reset the output to the log_line
-      stage.output {
-        source = "log_line"
-      }
-    }
-
   }
 
   // check logs.agent.grafana.com/log-format annotation, if set to log4j-text then process the line as log4j-text
@@ -147,28 +121,6 @@ loki.process "log_format_log4j" {
         // unescaped regex: (\[?(DEBUG|INFO|WARN|ERROR|FATAL|TRACE)\]\s*)
         expression = "(\\[?(DEBUG|INFO|WARN|ERROR|FATAL|TRACE)\\]\\s*)"
         replace = ""
-      }
-    }
-
-    // check logs.agent.grafana.com/embed-pod annotation, if true embed the name of the pod to the end of the log line
-    // this can reduce the overall cardinality, by not using a label of "pod", individual pods can still be searched
-    // using a line selector i.e. __pod=your-pod-name
-    stage.match {
-      selector = "{logs_agent_grafana_com_embed_pod=~\"(?i)true\"}"
-      pipeline_name = "pipeline for annotation || logs.agent.grafana.com/embed-pod: true"
-
-      // render a new label called log_line, and add the name of the pod to the end of the log message
-      // knowing the pod name can be valuable for debugging, but it should not be a label in Loki due
-      // to the high cardinality it would create.
-      // note: .Entry is a special key that is used to reference the current line
-      stage.template {
-        source = "log_line"
-        template = "{{ .Entry }} __pod={{ .pod }}"
-      }
-
-      // reset the output to the log_line
-      stage.output {
-        source = "log_line"
       }
     }
 
