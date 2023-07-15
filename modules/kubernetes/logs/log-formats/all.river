@@ -48,6 +48,16 @@ module.git "log_format_klog" {
   path       = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
+    forward_to = module.git.log_format_log4j.exports.process.receiver
+  }
+}
+
+module.git "log_format_log4j" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/log4j.river"
+
+  arguments {
     forward_to = module.git.log_format_logfmt.exports.process.receiver
   }
 }
