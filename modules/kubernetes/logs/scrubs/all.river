@@ -1,0 +1,33 @@
+/*
+Module: scrub-all
+Description: Wrapper module to include all scrubing modules
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+export "process" {
+  value = module.git.scrub_json_empties.exports.process
+}
+
+module.git "scrub_json_empties" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/scrubs/json-empties.river"
+
+  arguments {
+    forward_to = module.git.scrub_json_nulls.exports.process.receiver
+  }
+}
+
+module.git "scrub_json_nulls" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/scrubs/json-nulls.river"
+
+  arguments {
+    forward_to = argument.forward_to.value
+  }
+}
