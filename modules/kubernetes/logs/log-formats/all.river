@@ -1,6 +1,6 @@
 /*
-Module: mask-all
-Description: Wrapper module to include all masking modules
+Module: log-format-all
+Description: Wrapper module to include all log-format modules
 Arguments:
   forward_to: Module to forward the output to
 */
