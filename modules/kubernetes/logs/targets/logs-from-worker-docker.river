@@ -1,0 +1,49 @@
+/*
+Module: logs-from-worker-docker
+Description: Performs Kubernetes service discovery for pods, applies relabelings, discovers available files on the
+             worker node, and uses these are source files for loki and parses the files using the docker stage.
+
+             This requires the agent to deployed as a DaemonSet, as each pod will mount a volume to the worker
+             node to retrieve the pod logs.
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+discovery.kubernetes "pods" {
+  role = "pod"
+}
+
+module.git "relabelings_log" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/relabelings.river"
+
+  arguments {
+    targets = discovery.kubernetes.pods.targets
+  }
+}
+
+discovery.file "pods" {
+  path_targets = module.git.relabelings_log.exports.relabelings.output
+}
+
+loki.source.file "pods" {
+    targets = discovery.file.pods.targets
+    forward_to = [loki.process.parse.receiver]
+}
+
+loki.process "parse" {
+  forward_to  = [arguments.forward_to.value]
+
+  stage.docker {}
+
+  stage.labels {
+    values = {
+      stream  = "",         // Sets up an 'stream' label, based on the 'stream' extracted value.
+    }
+  }
+
+}

@@ -1,0 +1,29 @@
+/*
+Module: logs-from-api
+Description: Performs Kubernetes service discovery for pods, applies relabelings, the discovered target logs are
+             then retrieved from the kubernetes api
+Arguments:
+  forward_to: Module to forward the output to
+*/
+argument "forward_to" {
+  optional = false
+}
+
+discovery.kubernetes "pods" {
+  role = "pod"
+}
+
+module.git "relabelings_log" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/relabelings.river"
+
+  arguments {
+    targets = discovery.kubernetes.pods.targets
+  }
+}
+
+loki.source.kubernetes "pods" {
+  targets    = module.git.relabelings_log.exports.relabelings.output
+  forward_to = [arguments.forward_to.value]
+}
