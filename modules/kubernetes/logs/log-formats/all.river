@@ -9,7 +9,7 @@ argument "forward_to" {
 }
 
 export "process" {
-  value = module.git.mask_ssn.exports.process
+  value = module.git.log_format_common_log.exports.process
 }
 
 module.git "log_format_common_log" {
