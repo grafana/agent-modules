@@ -18,6 +18,16 @@ module.git "log_format_common_log" {
   path       = "modules/kubernetes/logs/log-formats/common-log.river"
 
   arguments {
+    forward_to = module.git.log_format_dotnet.exports.process.receiver
+  }
+}
+
+module.git "log_format_dotnet" {
+  repository = "https://github.com/bentonam/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/log-formats/dotnetriver"
+
+  arguments {
     forward_to = module.git.log_format_istio.exports.process.receiver
   }
 }
