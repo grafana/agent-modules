@@ -15,7 +15,7 @@ export "process" {
 module.git "mask_ssn" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-ssn.river"
+  path       = "modules/kubernetes/logs/masks/ssn.river"
 
   arguments {
     forward_to = module.git.mask_credit_card.exports.process.receiver
@@ -25,7 +25,7 @@ module.git "mask_ssn" {
 module.git "mask_credit_card" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-credit-card.river"
+  path       = "modules/kubernetes/logs/masks/credit-card.river"
 
   arguments {
     forward_to = module.git.mask_email.exports.process.receiver
@@ -35,7 +35,7 @@ module.git "mask_credit_card" {
 module.git "mask_email" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-email.river"
+  path       = "modules/kubernetes/logs/masks/email.river"
 
   arguments {
     forward_to = module.git.mask_phone.exports.process.receiver
@@ -45,7 +45,7 @@ module.git "mask_email" {
 module.git "mask_phone" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-phone.river"
+  path       = "modules/kubernetes/logs/masks/phone.river"
 
   arguments {
     forward_to = module.git.mask_ipv4.exports.process.receiver
@@ -55,7 +55,7 @@ module.git "mask_phone" {
 module.git "mask_ipv4" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-ipv4.river"
+  path       = "modules/kubernetes/logs/masks/ipv4.river"
 
   arguments {
     forward_to = module.git.mask_ipv6.exports.process.receiver
@@ -65,7 +65,7 @@ module.git "mask_ipv4" {
 module.git "mask_ipv6" {
   repository = "https://github.com/bentonam/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/logs/mask-ipv6.river"
+  path       = "modules/kubernetes/logs/masks/ipv6.river"
 
   arguments {
     forward_to = argument.forward_to.value
