@@ -74,9 +74,9 @@ loki.process "log_level" {
   stage.match {
     selector = "{level=\"unknown\"}"
 
-    // unescaped regex: (?i)(?:"(?:level|loglevel|lvl|SeverityText)":\s*"|\s+(?:level|loglevel|lvl)="?|\s+\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))("|\s+|-|\s*\])
+    // unescaped regex: (?i)(?:"(?:level|loglevel|levelname|lvl|SeverityText)":\s*"|\s+(?:level|loglevel|lvl)="?|\s+\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))("|\s+|-|\s*\])
     stage.regex {
-      expression = "(?i)(?:\"(?:level|loglevel|lvl|SeverityText)\":\\s*\"|\\s+(?:level|loglevel|lvl)=\"?|\\s+\\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))(\"|\\s+|-|\\s*\\])"
+      expression = "(?i)(?:\"(?:level|loglevel|levelname|lvl|SeverityText)\":\\s*\"|\\s+(?:level|loglevel|lvl)=\"?|\\s+\\[?)(?P<level>(DEBUG?|INFO|WARN(ING)?|ERR(OR)?|CRITICAL|FATAL|NOTICE|TRACE))(\"|\\s+|-|\\s*\\])"
     }
 
     // set the extracted level to be a label

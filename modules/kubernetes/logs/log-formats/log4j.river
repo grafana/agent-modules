@@ -52,9 +52,9 @@ loki.process "log_format_log4j" {
       pipeline_name = "pipeline for annotation || logs.agent.grafana.com/scrub-timestamp: true"
 
       // remove timestamp from the log line
-      // unescaped regex: ("@timestamp":\s*"[^"]+",)
+      // unescaped regex: (?i)("@?timestamp"\s*:\s*"[^"]+",)
       stage.replace {
-        expression = "(\"@timestamp\":\\s*\"[^\"]+\",)"
+        expression = "(?i)(\"@?timestamp\"\\s*:\\s*\"[^\"]+\",)"
         replace = ""
       }
     }
@@ -67,8 +67,8 @@ loki.process "log_format_log4j" {
 
       // remove level from the log line
       stage.replace {
-        // unescaped regex: ("level":\s*"[^"]+",)
-        expression = "(\"level\":\\s*\"[^\"]+\",)"
+        // unescaped regex: ("level"\s*:\s*"[^"]+",)
+        expression = "(\"level\"\\s*:\\s*\"[^\"]+\",)"
         replace = ""
       }
     }
@@ -81,8 +81,8 @@ loki.process "log_format_log4j" {
 
       // remove null properties
       stage.replace {
-        // unescaped regex: (,("[^"]+":\s*null)|("[^"]+":\s*null),)
-        expression = "(,(\"[^\"]+\":\\s*null)|(\"[^\"]+\":\\s*null),)"
+        // unescaped regex: (,("[^"]+"\s*:\s*null)|("[^"]+"\s*:\s*null),)
+        expression = "(,(\"[^\"]+\"\\s*:\\s*null)|(\"[^\"]+\"\\s*:\\s*null),)"
         replace = ""
       }
     }

@@ -77,8 +77,8 @@ loki.process "log_format_python" {
 
       // remove null properties
       stage.replace {
-        // unescaped regex: (,("[^"]+":\s*null)|("[^"]+":\s*null),)
-        expression = "(,(\"[^\"]+\":\\s*null)|(\"[^\"]+\":\\s*null),)"
+        // unescaped regex: (,("[^"]+"\s*:\s*null)|("[^"]+"\s*:\s*null),)
+        expression = "(,(\"[^\"]+\"\\s*:\\s*null)|(\"[^\"]+\"\\s*:\\s*null),)"
         replace = ""
       }
     }
