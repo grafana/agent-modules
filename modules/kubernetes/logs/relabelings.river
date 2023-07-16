@@ -42,7 +42,7 @@ module.git "relabelings_pod" {
 
 // apply pod specific relabelings
 discovery.relabel "logs" {
-  targets = argument.targets.values
+  targets = argument.targets.value
 
   // allow pods to declare their logs to be ingested or not, the following annotation is supported:
   //   logs.agent.grafana.com/ingest: false
