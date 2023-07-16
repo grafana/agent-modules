@@ -6,26 +6,26 @@ Arguments:
 */
 
 argument "loki_url" {
+  // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
   optional = false
-  comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
 }
 argument "loki_username" {
-  comment = "The Loki Username / Tenant ID"
+  // comment = "The Loki Username / Tenant ID"
   optional = false
 }
 argument "loki_password" {
-  comment = "The Loki Password / Token for the Tenant"
+  // comment = "The Loki Password / Token for the Tenant"
   optional = true
   default = ""
 }
 argument "tenant" {
-  comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = "primary|"
 }
 argument "keep_labels" {
+  // comment = "List of labels to keep before the log message is written to Loki"
   optional = true
-  comment = "List of labels to keep before the log message is written to Loki"
   default = [
     "app",
     "cluster",

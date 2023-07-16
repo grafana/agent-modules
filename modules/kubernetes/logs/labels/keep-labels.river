@@ -12,7 +12,7 @@ argument "forward_to" {
 
 argument "keep_labels" {
   optional = true
-  comment = "List of labels to keep before the log message is written to Loki"
+  // comment = "List of labels to keep before the log message is written to Loki"
   default = [
     "app",
     "cluster",
