@@ -64,7 +64,7 @@ loki.process "log_format_python" {
       // remove level from the log line
       stage.replace {
         // unescaped regex: (?i)"(log)?(level|lvl)(name)?"\s*:\s*"[^"]+",?
-        expression = "(?i)\"(log)?(level|lvl)(name)?\"\\s*:\\s*\"[^\"]+\",?"
+        expression = "(?i)(\"(log)?(level|lvl)(name)?\"\\s*:\\s*\"[^\"]+\",?)"
         replace = ""
       }
     }

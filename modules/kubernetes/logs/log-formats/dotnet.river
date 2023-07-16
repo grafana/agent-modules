@@ -61,7 +61,7 @@ loki.process "log_format_dotnet" {
       // remove level from the log line
       stage.replace {
         // unescaped regex: (?i)"LogLevel"\s*:\s*"[^"]+",?
-        expression = "(?i)\"LogLevel\"\\s*:\\s*\"[^\"]+\",?"
+        expression = "(?i)(\"LogLevel\"\\s*:\\s*\"[^\"]+\",?)"
         replace = ""
       }
     }

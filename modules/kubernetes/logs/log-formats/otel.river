@@ -62,7 +62,7 @@ loki.process "log_format_otel" {
       // remove level from the log line
       stage.replace {
         // unescaped regex: ("SeverityText"\s*:\s*"[^"]+",)
-        expression = "(\"SeverityText\"\\s*:\\s*\"[^\"]+\",)"
+        expression = "(?i)(\"SeverityText\"\\s*:\\s*\"[^\"]+\",)"
         replace = ""
       }
     }

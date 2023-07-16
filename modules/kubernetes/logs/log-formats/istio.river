@@ -70,7 +70,7 @@ loki.process "log_format_istio" {
       // remove level from the log line
       stage.replace {
         // unescaped regex: "level"\s*:\s*"[^"]+",?
-        expression = "\"level\"\\s*:\\s*\"[^\"]+\",?"
+        expression = "(?i)(\"level\"\\s*:\\s*\"[^\"]+\",?)"
         replace = ""
       }
     }
