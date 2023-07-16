@@ -31,8 +31,8 @@ discovery.file "pods" {
 }
 
 loki.source.file "pods" {
-    targets = discovery.file.pods.targets
-    forward_to = [loki.process.parse.receiver]
+  targets = discovery.file.pods.targets
+  forward_to = [loki.process.parse.receiver]
 }
 
 loki.process "parse" {
