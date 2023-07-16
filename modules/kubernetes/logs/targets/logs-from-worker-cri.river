@@ -12,6 +12,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "tenant" {
+  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  optional = true
+  default = "primary|"
+}
+
 discovery.kubernetes "pods" {
   role = "pod"
 }
@@ -23,6 +29,7 @@ module.git "relabelings_log" {
 
   arguments {
     targets = discovery.kubernetes.pods.targets
+    tenant = arguments.tenant.value
   }
 }
 
