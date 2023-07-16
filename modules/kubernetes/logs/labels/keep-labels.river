@@ -13,9 +13,11 @@ argument "forward_to" {
 argument "keep_labels" {
   optional = true
   default = [
+    "app",
     "cluster",
     "component",
     "deployment",
+    "env",
     "filename",
     "instance",
     "job",
@@ -23,6 +25,8 @@ argument "keep_labels" {
     "namespace",
     "region",
     "service",
+    "squad",
+    "team",
   ]
 }
 
