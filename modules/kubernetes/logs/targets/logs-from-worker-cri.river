@@ -29,7 +29,7 @@ module.git "relabelings_log" {
 
   arguments {
     targets = discovery.kubernetes.pods.targets
-    tenant = arguments.tenant.value
+    tenant = argument.tenant.value
   }
 }
 
