@@ -15,7 +15,7 @@ argument "tenant" {
 }
 
 export "relabelings" {
-  value = discovery.relabel.logs
+  value = module.git.relabelings_common.exports.relabelings.output
 }
 
 // apply common relabelings
@@ -25,7 +25,7 @@ module.git "relabelings_common" {
   path       = "modules/kubernetes/relabelings/common.river"
 
   arguments {
-    targets = argument.targets.value
+    targets = module.git.relabelings_pod.exports.relabelings.output
   }
 }
 
@@ -36,7 +36,7 @@ module.git "relabelings_pod" {
   path       = "modules/kubernetes/relabelings/pod.river"
 
   arguments {
-    targets = module.git.relabelings_common.exports.relabelings.output
+    targets = discovery.relabel.logs
   }
 }
 
