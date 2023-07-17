@@ -2,8 +2,8 @@
 The following items would need to be defined to include your own specific processing steps,
 this example removes the following modules:
 
-- masking
-- normalize filename
+  - masking
+  - normalize filename
 
 As well as adding custom pipeline processing stages after all of the log formats have been
 processed and forwards its results to the defaulting log level module
