@@ -1,5 +1,5 @@
 /*
-Module: logs-from-worker-cri
+Module: logs-from-worker
 Description: Performs Kubernetes service discovery for pods, applies relabelings, discovers available files on the
              worker node, and uses these are source files for loki and parses the files using the cri stage.
 
