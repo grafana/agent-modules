@@ -24,7 +24,7 @@ argument "loki_password" {
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
-  default = "primary|"
+  default = ".*"
 }
 
 argument "keep_labels" {
