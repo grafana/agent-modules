@@ -50,7 +50,7 @@ module.git "relabelings_pod" {
   }
 }
 
-// apply pod specific relabelings
+// apply pod log specific relabelings
 discovery.relabel "logs" {
   targets = module.git.relabelings_pod.exports.relabelings.output
 

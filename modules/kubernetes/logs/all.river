@@ -61,7 +61,7 @@ argument "git_rev" {
 module.git "log_targets" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
-  path = "modules/kubernetes/logs/targets/logs-from-worker-cri.river"
+  path = "modules/kubernetes/logs/targets/logs-from-worker.river"
 
   arguments {
     forward_to = module.git.log_formats_all.exports.process.receiver
