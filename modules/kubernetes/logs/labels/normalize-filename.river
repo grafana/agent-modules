@@ -32,7 +32,7 @@ loki.process "normalize_filename" {
 
   stage.template {
     source = "normalized_filename"
-    template = "'{{ .path }}{{ .job }}/{{ .container_folder }}.log"
+    template = "{{ .path }}{{ .job }}/{{ .container_folder }}.log"
   }
 
   stage.labels {
