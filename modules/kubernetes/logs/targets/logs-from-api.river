@@ -9,14 +9,24 @@ argument "forward_to" {
   optional = false
 }
 
+argument "git_repo" {
+  optional = false
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_revision" {
+  optional = false
+  default = coalesce(env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
 discovery.kubernetes "pods" {
   role = "pod"
 }
 
 module.git "relabelings_log" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/relabelings.river"
+  repository = argument.git_repo.value
+  revision   = argument.git_revision.value
+  path = "modules/kubernetes/logs/relabelings.river"
 
   arguments {
     targets = discovery.kubernetes.pods.targets

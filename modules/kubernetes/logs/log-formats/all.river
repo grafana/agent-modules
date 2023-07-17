@@ -8,14 +8,23 @@ argument "forward_to" {
   optional = false
 }
 
+argument "git_repo" {
+  optional = false
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+argument "git_revision" {
+  optional = false
+  default = coalesce(env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
 export "process" {
   value = module.git.log_format_common_log.exports.process
 }
 
 module.git "log_format_common_log" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/common-log.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/common-log.river"
 
   arguments {
     forward_to = module.git.log_format_dotnet.exports.process.receiver
@@ -23,9 +32,9 @@ module.git "log_format_common_log" {
 }
 
 module.git "log_format_dotnet" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/dotnet.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/dotnet.river"
 
   arguments {
     forward_to = module.git.log_format_istio.exports.process.receiver
@@ -33,9 +42,9 @@ module.git "log_format_dotnet" {
 }
 
 module.git "log_format_istio" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/istio.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/istio.river"
 
   arguments {
     forward_to = module.git.log_format_json.exports.process.receiver
@@ -43,9 +52,9 @@ module.git "log_format_istio" {
 }
 
 module.git "log_format_json" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/json.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/json.river"
 
   arguments {
     forward_to = module.git.log_format_klog.exports.process.receiver
@@ -53,9 +62,9 @@ module.git "log_format_json" {
 }
 
 module.git "log_format_klog" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/klog.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
     forward_to = module.git.log_format_log4j.exports.process.receiver
@@ -63,9 +72,9 @@ module.git "log_format_klog" {
 }
 
 module.git "log_format_log4j" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/log4j.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/log4j.river"
 
   arguments {
     forward_to = module.git.log_format_logfmt.exports.process.receiver
@@ -73,9 +82,9 @@ module.git "log_format_log4j" {
 }
 
 module.git "log_format_logfmt" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/logfmt.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/logfmt.river"
 
   arguments {
     forward_to = module.git.log_format_otel.exports.process.receiver
@@ -83,9 +92,9 @@ module.git "log_format_logfmt" {
 }
 
 module.git "log_format_otel" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/otel.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
     forward_to = module.git.log_format_postgres.exports.process.receiver
@@ -93,9 +102,9 @@ module.git "log_format_otel" {
 }
 
 module.git "log_format_postgres" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/otel.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
     forward_to = module.git.log_format_python.exports.process.receiver
@@ -103,9 +112,9 @@ module.git "log_format_postgres" {
 }
 
 module.git "log_format_python" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/python.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/python.river"
 
   arguments {
     forward_to = module.git.log_format_spring_boot.exports.process.receiver
@@ -113,9 +122,9 @@ module.git "log_format_python" {
 }
 
 module.git "log_format_spring_boot" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/spring-boot.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/spring-boot.river"
 
   arguments {
     forward_to = argument.forward_to.value

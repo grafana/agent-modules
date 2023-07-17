@@ -9,20 +9,24 @@ argument "loki_url" {
   // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
   optional = false
 }
+
 argument "loki_username" {
   // comment = "The Loki Username / Tenant ID"
   optional = false
 }
+
 argument "loki_password" {
   // comment = "The Loki Password / Token for the Tenant"
   optional = true
   default = ""
 }
+
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = "primary|"
 }
+
 argument "keep_labels" {
   // comment = "List of labels to keep before the log message is written to Loki"
   optional = true
@@ -44,10 +48,20 @@ argument "keep_labels" {
   ]
 }
 
+argument "git_repo" {
+  optional = false
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_revision" {
+  optional = false
+  default = coalesce(env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
 module.git "log_targets" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/targets/logs-from-worker-cri.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/targets/logs-from-worker-cri.river"
 
   arguments {
     forward_to = module.git.log_formats_all.exports.process.receiver
@@ -56,9 +70,9 @@ module.git "log_targets" {
 }
 
 module.git "log_formats_all" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/log-formats/all.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/log-formats/all.river"
 
   arguments {
     forward_to = module.git.log_level_default.exports.process.receiver
@@ -66,9 +80,9 @@ module.git "log_formats_all" {
 }
 
 module.git "log_level_default" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/labels/log-level.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
     forward_to = module.git.scrub_all.exports.process.receiver
@@ -76,9 +90,9 @@ module.git "log_level_default" {
 }
 
 module.git "drop_levels" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/drops/levels.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
     forward_to = module.git.scrub_all.exports.process.receiver
@@ -86,9 +100,9 @@ module.git "drop_levels" {
 }
 
 module.git "scrub_all" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/scrubs/all.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/scrubs/all.river"
 
   arguments {
     forward_to = module.git.embed_pod.exports.process.receiver
@@ -96,9 +110,9 @@ module.git "scrub_all" {
 }
 
 module.git "embed_pod" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/embed/pod.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/embed/pod.river"
 
   arguments {
     forward_to = module.git.mask_all.exports.process.receiver
@@ -106,9 +120,9 @@ module.git "embed_pod" {
 }
 
 module.git "mask_all" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/masks/all.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/masks/all.river"
 
   arguments {
     forward_to = module.git.label_normalize_filename.exports.process.receiver
@@ -116,9 +130,9 @@ module.git "mask_all" {
 }
 
 module.git "label_normalize_filename" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/labels/normalize-filename.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/labels/normalize-filename.river"
 
   arguments {
     forward_to = module.git.label_keep.exports.process.receiver
@@ -126,9 +140,9 @@ module.git "label_normalize_filename" {
 }
 
 module.git "label_keep" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/labels/keep-labels.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
     forward_to = loki.write.destination.receiver

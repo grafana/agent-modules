@@ -8,14 +8,24 @@ argument "forward_to" {
   optional = false
 }
 
+argument "git_repo" {
+  optional = false
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_revision" {
+  optional = false
+  default = coalesce(env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
 export "process" {
   value = module.git.drop_trace.exports.process
 }
 
 module.git "drop_trace" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/drops/level-trace.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/drops/level-trace.river"
 
   arguments {
     forward_to = module.git.drop_debug.exports.process.receiver
@@ -23,9 +33,9 @@ module.git "drop_trace" {
 }
 
 module.git "drop_debug" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/drops/level-debug.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/drops/level-debug.river"
 
   arguments {
     forward_to = module.git.drop_info.exports.process.receiver
@@ -33,9 +43,9 @@ module.git "drop_debug" {
 }
 
 module.git "drop_info" {
-  repository = "https://github.com/bentonam/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/drops/level-info.river"
+  repository = argument.git_repo.value
+  revision = argument.git_revision.value
+  path = "modules/kubernetes/logs/drops/level-info.river"
 
   arguments {
     forward_to = argument.forward_to.value
