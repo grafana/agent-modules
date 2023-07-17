@@ -72,7 +72,7 @@ discovery.relabel "logs" {
     target_label = "__tmp_ingest"
   }
 
-  // drop any targets that have scrape: false
+  // drop any targets that have ingest: false
   rule {
     action = "drop"
     source_labels = ["__tmp_ingest"]
