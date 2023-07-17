@@ -15,7 +15,7 @@ argument "tenant" {
 }
 
 export "relabelings" {
-  value = discovery.relabel.logs.output
+  value = discovery.relabel.logs
 }
 
 // apply common relabelings
