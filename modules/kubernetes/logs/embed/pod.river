@@ -24,7 +24,7 @@ loki.process "embed_pod" {
 
     // embed as json property
     stage.match {
-      selector = "{logs_agent_grafana_com_scrub_empties=~\"(?i)(dotnet-?json|istio|(generic-?)?json|log4j-?json|(otel|open-?telemetry)(-?json)?|python-?json)\"}"
+      selector = "{logs_agent_grafana_com_log_format=~\"(?i)(dotnet-?json|istio|(generic-?)?json|log4j-?json|(otel|open-?telemetry)(-?json)?|python-?json)\"}"
       // render a new label called log_line, and add the name of the pod to the end of the log message
       // knowing the pod name can be valuable for debugging, but it should not be a label in Loki due
       // to the high cardinality it would create.
@@ -41,7 +41,7 @@ loki.process "embed_pod" {
 
     // embed as text property
     stage.match {
-      selector = "{logs_agent_grafana_com_scrub_empties=~\"(?i)(dotnet-?json|istio|(generic-?)?json|log4j-?json|(otel|open-?telemetry)(-?json)?|python-?json)\"}"
+      selector = "{logs_agent_grafana_com_log_format=~\"(?i)(dotnet-?json|istio|(generic-?)?json|log4j-?json|(otel|open-?telemetry)(-?json)?|python-?json)\"}"
       // render a new label called log_line, and add the name of the pod to the end of the log message
       // knowing the pod name can be valuable for debugging, but it should not be a label in Loki due
       // to the high cardinality it would create.
