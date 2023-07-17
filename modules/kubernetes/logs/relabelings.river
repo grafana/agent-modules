@@ -92,7 +92,6 @@ discovery.relabel "logs" {
   // set the job label to be namespace / friendly pod name
   rule {
     action = "replace"
-    separator = "/"
     source_labels = [
       "deployment",
       "__meta_kubernetes_namespace",
@@ -102,42 +101,11 @@ discovery.relabel "logs" {
     target_label = "job"
   }
 
-  // set the pod name label
-  rule {
-    action = "replace"
-    source_labels = ["__meta_kubernetes_pod_name"]
-    target_label = "pod"
-  }
-
   // set the container label
   rule {
     action = "replace"
-    source_labels = ["__meta_kubernetes_container_name"]
+    source_labels = ["__meta_kubernetes_pod_container_name"]
     target_label = "container"
-  }
-
-  // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_pod_label_app",
-      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
-    ]
-    regex = "(?:;*)?([^;]+).*"
-    replacement = "$1"
-    target_label = "app"
-  }
-
-  // set the app component if specified as metadata labels "component:" or "app.kubernetes.io/component:"
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_pod_label_component",
-      "__meta_kubernetes_pod_label_app_kubernetes_io_component",
-    ]
-    regex = "(?:;*)?([^;]+).*"
-    replacement = "$1"
-    target_label = "component"
   }
 
   // make all labels on the pod available to the pipeline as labels,
