@@ -27,17 +27,10 @@ loki.process "log_format_logfmt" {
       expression = "(log)?(level|lvl)=\"?(?P<level>\\S+)\"?"
     }
 
-    // extract the component field
-    stage.logfmt {
-      mapping = {
-        component = "",
-      }
-    }
-
+    // set the extracted level value as a label
     stage.labels {
       values = {
         level = "",
-        component = "",
       }
     }
 
