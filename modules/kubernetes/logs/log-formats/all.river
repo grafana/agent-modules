@@ -24,6 +24,7 @@ export "process" {
 module.git "log_format_common_log" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/common-log.river"
 
   arguments {
@@ -34,6 +35,7 @@ module.git "log_format_common_log" {
 module.git "log_format_dotnet" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/dotnet.river"
 
   arguments {
@@ -44,6 +46,7 @@ module.git "log_format_dotnet" {
 module.git "log_format_istio" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/istio.river"
 
   arguments {
@@ -54,6 +57,7 @@ module.git "log_format_istio" {
 module.git "log_format_json" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/json.river"
 
   arguments {
@@ -64,6 +68,7 @@ module.git "log_format_json" {
 module.git "log_format_klog" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
@@ -74,6 +79,7 @@ module.git "log_format_klog" {
 module.git "log_format_log4j" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/log4j.river"
 
   arguments {
@@ -84,6 +90,7 @@ module.git "log_format_log4j" {
 module.git "log_format_logfmt" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/logfmt.river"
 
   arguments {
@@ -94,6 +101,7 @@ module.git "log_format_logfmt" {
 module.git "log_format_otel" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
@@ -104,6 +112,7 @@ module.git "log_format_otel" {
 module.git "log_format_postgres" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
@@ -114,6 +123,7 @@ module.git "log_format_postgres" {
 module.git "log_format_python" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/python.river"
 
   arguments {
@@ -124,6 +134,7 @@ module.git "log_format_python" {
 module.git "log_format_spring_boot" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/spring-boot.river"
 
   arguments {

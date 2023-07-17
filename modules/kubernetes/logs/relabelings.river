@@ -24,6 +24,11 @@ argument "git_rev" {
   default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
 export "relabelings" {
   value = discovery.relabel.logs
 }
@@ -32,6 +37,7 @@ export "relabelings" {
 module.git "relabelings_common" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/relabelings/common.river"
 
   arguments {
@@ -43,6 +49,7 @@ module.git "relabelings_common" {
 module.git "relabelings_pod" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/relabelings/pod.river"
 
   arguments {

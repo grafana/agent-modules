@@ -18,6 +18,11 @@ argument "git_rev" {
   default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
 export "process" {
   value = module.git.drop_trace.exports.process
 }
@@ -25,6 +30,7 @@ export "process" {
 module.git "drop_trace" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/drops/level-trace.river"
 
   arguments {
@@ -35,6 +41,7 @@ module.git "drop_trace" {
 module.git "drop_debug" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/drops/level-debug.river"
 
   arguments {
@@ -45,6 +52,7 @@ module.git "drop_debug" {
 module.git "drop_info" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/drops/level-info.river"
 
   arguments {

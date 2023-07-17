@@ -58,9 +58,15 @@ argument "git_rev" {
   default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
 module.git "log_targets" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/targets/logs-from-worker.river"
 
   arguments {
@@ -68,24 +74,28 @@ module.git "log_targets" {
     tenant = argument.tenant.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
 module.git "log_formats_all" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/log-formats/all.river"
 
   arguments {
     forward_to = module.git.log_level_default.exports.process.receiver
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
 module.git "log_level_default" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
@@ -96,30 +106,35 @@ module.git "log_level_default" {
 module.git "drop_levels" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
     forward_to = module.git.scrub_all.exports.process.receiver
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
 module.git "scrub_all" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/scrubs/all.river"
 
   arguments {
     forward_to = module.git.embed_pod.exports.process.receiver
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
 module.git "embed_pod" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/embed/pod.river"
 
   arguments {
@@ -130,18 +145,21 @@ module.git "embed_pod" {
 module.git "mask_all" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/masks/all.river"
 
   arguments {
     forward_to = module.git.label_normalize_filename.exports.process.receiver
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
 module.git "label_normalize_filename" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/labels/normalize-filename.river"
 
   arguments {
@@ -152,6 +170,7 @@ module.git "label_normalize_filename" {
 module.git "label_keep" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
   path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
