@@ -54,7 +54,7 @@ argument "git_repo" {
 }
 
 argument "git_rev" {
-  optional = false
+  optional = true
   default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
@@ -78,6 +78,8 @@ module.git "log_formats_all" {
 
   arguments {
     forward_to = module.git.log_level_default.exports.process.receiver
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
   }
 }
 
