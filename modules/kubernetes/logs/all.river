@@ -181,10 +181,10 @@ module.git "label_keep" {
 
 loki.write "destination" {
     endpoint {
-        url = env("LOGS_PUBLISHER_URL")
+        url = arguments.loki_url.value
         basic_auth {
-            username = env("LOGS_PUBLISHER_TENANT_OPS")
-            password = env("LOGS_PUBLISHER_TOKEN")
+            username = arguments.loki_username.value
+            password = arguments.loki_password.value
         }
     }
 }
