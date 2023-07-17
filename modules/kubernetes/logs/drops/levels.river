@@ -9,13 +9,13 @@ argument "forward_to" {
 }
 
 argument "git_repo" {
-  optional = false
+  optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
 }
 
-argument "git_revision" {
-  optional = false
-  default = coalesce(env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
 export "process" {
@@ -24,7 +24,7 @@ export "process" {
 
 module.git "drop_trace" {
   repository = argument.git_repo.value
-  revision = argument.git_revision.value
+  revision = argument.git_rev.value
   path = "modules/kubernetes/logs/drops/level-trace.river"
 
   arguments {
@@ -34,7 +34,7 @@ module.git "drop_trace" {
 
 module.git "drop_debug" {
   repository = argument.git_repo.value
-  revision = argument.git_revision.value
+  revision = argument.git_rev.value
   path = "modules/kubernetes/logs/drops/level-debug.river"
 
   arguments {
@@ -44,7 +44,7 @@ module.git "drop_debug" {
 
 module.git "drop_info" {
   repository = argument.git_repo.value
-  revision = argument.git_revision.value
+  revision = argument.git_rev.value
   path = "modules/kubernetes/logs/drops/level-info.river"
 
   arguments {
