@@ -66,7 +66,7 @@ discovery.relabel "container_runtime" {
 }
 
 discovery.file "pods" {
-  path_targets = module.git.relabelings_log.exports.relabelings.output
+  path_targets = discovery.relabel.container_runtime.output
 }
 
 loki.source.file "pods" {
@@ -105,6 +105,11 @@ loki.process "parse" {
       }
     }
 
+  }
+
+  // drop the temporary container runtime label as it is no longer needed
+  stage.label_drop {
+    values = ["tmp_container_runtime"]
   }
 
 }
