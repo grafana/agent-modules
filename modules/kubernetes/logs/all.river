@@ -181,10 +181,10 @@ module.git "label_keep" {
 
 loki.write "destination" {
     endpoint {
-        url = arguments.loki_url.value
+        url = argument.loki_url.value
         basic_auth {
-            username = arguments.loki_username.value
-            password = arguments.loki_password.value
+            username = argument.loki_username.value
+            password = argument.loki_password.value
         }
     }
 }
