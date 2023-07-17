@@ -1,0 +1,39 @@
+/*
+The following example shows using the default all logs processing module, for
+a multiple tenants and specifying the destination url/credentials via environment
+variables.
+*/
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+module.git "logs_primary" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/all.river"
+
+  arguments {
+    loki_url = env("LOGS_PUBLISHER_URL")
+    loki_username = env("LOGS_PUBLISHER_TENANT_DEFAULT")
+    loki_password = env("LOGS_PUBLISHER_TOKEN")
+    tenant = "primary|"
+    git_repo = "https://github.com/grafana/agent-modules.git"
+    git_rev = "main"
+  }
+}
+
+module.git "logs_op" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/all.river"
+
+  arguments {
+    loki_url = env("LOGS_PUBLISHER_URL")
+    loki_username = env("LOGS_PUBLISHER_TENANT_OPS")
+    loki_password = env("LOGS_PUBLISHER_TOKEN")
+    tenant = "ops"
+    git_repo = "https://github.com/grafana/agent-modules.git"
+    git_rev = "main"
+  }
+}
