@@ -26,7 +26,7 @@ argument "git_pull_freq" {
 }
 
 export "relabelings" {
-  value = module.git.relabelings_pod.exports.relabelings.output
+  value = module.git.relabelings_pod.exports.relabelings
 }
 
 // get the available endpoints
