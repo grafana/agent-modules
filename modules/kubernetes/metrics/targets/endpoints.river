@@ -38,7 +38,7 @@ module.git "relabelings_annotations" {
   path = "modules/kubernetes/metrics/relabelings/metric-annotations.river"
 
   arguments {
-    targets = discovery.kubernetes.pods.targets
+    targets = discovery.kubernetes.endpoints.targets
   }
 }
 
