@@ -1,0 +1,26 @@
+/*
+Module: relabelings-service
+Description: Handles relabelings for service that are common across sources i.e. metrics and logs.  The labels
+             may still be dropped through metric relabelings, pipeline stages, etc.
+Arguments:
+  targets: Discovered targets to apply relabelings to
+*/
+argument "targets" {
+  optional = false
+}
+
+export "relabelings" {
+  value = discovery.relabel.service
+}
+
+discovery.relabel "service" {
+  targets = argument.targets.value
+
+  // the endpoints name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_service_name"]
+    target_label = "service_name"
+  }
+
+}
