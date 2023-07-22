@@ -140,7 +140,7 @@ module.git "relabelings_common" {
   }
 }
 
-// apply common relabelings
+// apply endpoint relabelings
 module.git "relabelings_endpoints" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value

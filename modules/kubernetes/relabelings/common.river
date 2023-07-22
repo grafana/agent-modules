@@ -80,4 +80,13 @@ discovery.relabel "common" {
     target_label = "__tmp_tenant"
   }
 
+  // set the job label from the discovered annotation
+  rule {
+    action = "replace"
+    source_labels = ["__tmp_job"]
+    regex = "(.+)"
+    replacement = "$1"
+    target_label = "job"
+  }
+
 }

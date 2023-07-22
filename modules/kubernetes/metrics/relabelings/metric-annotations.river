@@ -215,4 +215,34 @@ discovery.relabel "metric_annotations" {
     target_label = "__tmp_timeout"
   }
 
+  // allow resources to declare their the job label value to use when collecting their metrics, the default value is "/metrics",
+  // the following annotations are supported:
+  //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
+  // or
+  //   prometheus.io/job: integrations/kubernetes/cadvisor
+  rule {
+    action = "replace"
+    replacement = ""
+    target_label = "__tmp_job"
+  }
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_job",
+      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_job",
+      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_job",
+      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_job",
+      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_job",
+      "__meta_kubernetes_pod_annotation_prometheus_io_job",
+      "__meta_kubernetes_service_annotation_prometheus_io_job",
+      "__meta_kubernetes_endpoint_annotation_prometheus_io_job",
+      "__meta_kubernetes_endpointslice_annotation_prometheus_io_job",
+      "__meta_kubernetes_ingress_annotation_prometheus_io_job",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "__tmp_job"
+  }
+
 }

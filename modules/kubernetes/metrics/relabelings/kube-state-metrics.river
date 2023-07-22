@@ -77,11 +77,16 @@ prometheus.relabel "kube_state_metrics" {
     replacement = "$1"
     target_label = "__name__"
   }
-  // set the job label
+  // set the job label, only if __tmp_job is not specified, the value of the annotation
+  // metrics.agent.grafana.com/job takes precedence
   rule {
     action = "replace"
-    source_labels = ["__meta_kubernetes_pod_name"]
-    regex = "(?i)^.*" + argument.pod_name.value + ".*"
+    source_labels = [
+      "__meta_kubernetes_pod_name",
+      "__tmp_job",
+    ]
+    separator = ";"
+    regex = "(?i)^.*" + argument.pod_name.value + "[^;]*;$"
     replacement = argument.job_label.value
     target_label = "job"
   }
