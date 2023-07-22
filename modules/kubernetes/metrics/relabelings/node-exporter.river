@@ -34,7 +34,7 @@ export "metric_relabelings" {
 }
 
 prometheus.relabel "node_exporter" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // due to the fact it is easier to perform a keep and maintain a whitelist, we have to take a
   // multi-step approach since the metrics could be coming from any job, not just node-exporter:

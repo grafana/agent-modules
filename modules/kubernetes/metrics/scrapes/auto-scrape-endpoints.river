@@ -100,7 +100,7 @@ module.git "relabelings_kube_state_metrics" {
   path = "modules/kubernetes/metrics/relabelings/kube-state-metrics.river"
 
   arguments {
-    forward_to = module.git.relabelings_node_exporter.exports.metric_relabelings.receiver
+    forward_to = [module.git.relabelings_node_exporter.exports.metric_relabelings.receiver]
   }
 }
 
