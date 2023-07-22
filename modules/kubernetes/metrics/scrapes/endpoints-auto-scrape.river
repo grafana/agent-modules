@@ -89,5 +89,22 @@ module.git "endpoints_targets" {
 
 prometheus.scrape "endpoints" {
   targets = module.git.endpoints_targets.exports.relabelings.output
+  forward_to = module.git.relabel_kube_state_metrics.exports.metric_relabelings.receiver
+}
+
+// metric relabelings
+module.git "relabel_kube_state_metrics" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/targets/endpoints.river"
+
+  arguments {
+    forward_to = argument.forward_to.value
+  }
+}
+
+// metric_relabeligns for endpoints scrape job
+prometheus.relabel "endpoints" {
   forward_to = argument.forward_to.value
 }

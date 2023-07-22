@@ -1,0 +1,42 @@
+argument "forward_to" {
+  optional = false
+}
+
+argument "job_label" {
+  optional = true
+  default = "integrations/kubernetes/kube-state-metrics"
+}
+
+argument "drop_metrics" {
+  optional = true
+  default = "^(ksm-)?kube-state-metrics[^;]*;kube_(configmap|deployment|endpoint|mutatingwebhookconfiguration|networkpolicy|persistentvolume|poddisruptionbudget|secret|service|storageclass|validatingwebhookconfiguration|volumeattachment|pod_(annotations|container_state|container_status_last_.*|kube_pod_container_status_(ready|running|terminated|waiting)|created|pod_init_.*|init_.*|labels|restart.*|spec.*|status_(container_ready_time|qos_class|ready|ready_time|scheduled|scheduled_time)|tolerations))"
+}
+
+export "metric_relabelings" {
+  value = prometheus.relabel.kube_state_metrics
+}
+
+prometheus.relabel "kube_state_metrics" {
+  forward_to = argument.forward_to.value
+
+  // set the job label
+  rule {
+    action = "replace"
+    source_labels = ["pod"]
+    regex = "^(ksm-)?kube-state-metrics.*"
+    replacement = argument.job_label.value
+    target_label = "job"
+  }
+
+  // drop metrics
+  rule {
+    action = "drop"
+    source_labels = [
+      "pod",
+      "__name__",
+    ]
+    separator = ";"
+    regex = argument.drop_metrics.value
+  }
+
+}
