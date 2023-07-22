@@ -25,6 +25,10 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
+export "relabelings" {
+  value = module.git.relabelings_pod.exports.relabelings.output
+}
+
 // get the available endpoints
 discovery.kubernetes "endpoints" {
   role = "endpoints"
