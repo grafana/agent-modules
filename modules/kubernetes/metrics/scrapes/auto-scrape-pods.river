@@ -80,7 +80,7 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
-module.git "pods_targets" {
+module.git "pod_targets" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
@@ -95,6 +95,6 @@ module.git "pods_targets" {
 }
 
 prometheus.scrape "pods" {
-  targets = module.git.pods_targets.exports.relabelings.output
-  forward_to = [argument.forward_to.value]
+  targets = module.git.pod_targets.exports.relabelings.output
+  forward_to = argument.forward_to.value
 }
