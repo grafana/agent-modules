@@ -1,0 +1,69 @@
+/*
+Module: metrics-all
+Description: Wrapper module to include all kubernetes metric modules and use cri parsing
+Arguments:
+  targets: Discovered targets to apply relabelings to
+*/
+
+argument "mimir_url" {
+  // comment = "The full URL address of mimir including the protocol, host and path i.e. https://example.com/mimir/api/v1/push"
+  optional = false
+}
+
+argument "mimir_username" {
+  // comment = "The mimir Username / Tenant ID"
+  optional = false
+}
+
+argument "mimir_password" {
+  // comment = "The mimir Password / Token for the Tenant"
+  optional = true
+  default = ""
+}
+
+argument "tenant" {
+  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  optional = true
+  default = ".*"
+}
+
+argument "git_repo" {
+  optional = true
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
+module.git "scrape_endpoints" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/scrapes/endpoints-auto-scrape.river"
+
+  arguments {
+    forward_to = [prometheus.remote_write.destination.receiver]
+    tenant = argument.tenant.value
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
+prometheus.remote_write "destination" {
+  endpoint {
+    url = argument.mimir_url.value
+
+    basic_auth {
+      username = argument.mimir_username.value
+      password = argument.mimir_password.value
+    }
+  }
+}

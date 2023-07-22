@@ -1,0 +1,94 @@
+/*
+Module: scrape-endpoints
+Description:
+  Kubernetes Service Endpoints Auto-Scraping
+  ------------------------------------------------------------------------------------------------------------------------------------
+  Each port attached to an endpoint is an eligible target, oftentimes endpoint will have multiple ports.
+  There may be instances when you want to scrape all ports or some ports and not others. To support this
+  the following annotations are available:
+
+  only scrape endpoints with scrape set to true, this can be single valued i.e. scrape all ports for
+  the endpoint:
+
+  metrics.agent.grafana.com/scrape: true
+  prometheus.io/scrape: true
+
+  the default scraping scheme is http, this can be specified as a single value which would override,
+  the schema being used for all ports attached to the endpoint:
+
+  metrics.agent.grafana.com/scheme: https
+  prometheus.io/scheme: https
+
+  the default path to scrape is /metrics, this can be specified as a single value which would override,
+  the scrape path being used for all ports attached to the endpoint:
+
+  metrics.agent.grafana.com/path: /metrics/some_path
+  prometheus.io/path: /metrics/some_path
+
+  the default port to scrape is the endpoint port, this can be specified as a single value which would
+  override the scrape port being used for all ports attached to the endpoint, note that even if aan endpoint had
+  multiple targets, the relabel_config targets are deduped before scraping:
+
+  metrics.agent.grafana.com/port: 8080
+  prometheus.io/port: 8080
+
+  the default interval to scrape is 1m, this can be specified as a single value which would override,
+  the scrape interval being used for all ports attached to the endpoint:
+
+  metrics.agent.grafana.com/interval: 5m
+  prometheus.io/interval: 5m
+
+  the default tieout for scraping is 10s, this can be specified as a single value which would override,
+  the scrape interval being used for all ports attached to the endpoint:
+
+  metrics.agent.grafana.com/timeout: 30s
+  prometheus.io/timeout: 30s
+
+Arguments:
+  forward_to: Where to send the resulting scrape job
+  tenant: The tenant annotation value to filter on
+*/
+argument "forward_to" {
+  optional = false
+}
+
+argument "tenant" {
+  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  optional = true
+  default = ".*"
+}
+
+argument "git_repo" {
+  optional = true
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
+module.git "endpoints_targets" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/targets/endpoints.river"
+
+  arguments {
+    forward_to = module.git.log_formats_all.exports.process.receiver
+    tenant = argument.tenant.value
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
+prometheus.scrape "endpoints" {
+  targets = module.git.endpoints_targets.exports.relabelings.output
+  forward_to = argument.forward_to.value
+}
