@@ -62,7 +62,7 @@ discovery.relabel "scrape_targets" {
       "__meta_kubernetes_endpoint_port_name",
     ]
     separator = ";"
-    regex: "^(true;.*|(|true);(.*metrics.*))$"
+    regex = "^(true;.*|(|true);(.*metrics.*))$"
   }
 
   // allow endpoints to declare what tenant their metrics should be written to, the following annotations are supported:
