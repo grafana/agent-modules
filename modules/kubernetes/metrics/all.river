@@ -46,7 +46,7 @@ module.git "scrape_endpoints" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/scrapes/endpoints-auto-scrape.river"
+  path = "modules/kubernetes/metrics/scrapes/auto-scrape-endpoints.river"
 
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
