@@ -80,7 +80,6 @@ module.git "endpoints_targets" {
   path = "modules/kubernetes/metrics/targets/endpoints.river"
 
   arguments {
-    forward_to = module.git.log_formats_all.exports.process.receiver
     tenant = argument.tenant.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
