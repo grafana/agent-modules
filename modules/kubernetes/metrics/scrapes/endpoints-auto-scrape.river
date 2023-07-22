@@ -89,7 +89,7 @@ module.git "endpoints_targets" {
 
 prometheus.scrape "endpoints" {
   targets = module.git.endpoints_targets.exports.relabelings.output
-  forward_to = module.git.relabel_kube_state_metrics.exports.metric_relabelings.receiver
+  forward_to = [module.git.relabel_kube_state_metrics.exports.metric_relabelings.receiver]
 }
 
 // metric relabelings
