@@ -53,7 +53,7 @@ loki.process "log_format_klog" {
       replace = "ERROR"
     }
 
-    // if the extracted level is I set INFO
+    // if the extracted level is D set DEBUG
     stage.replace {
       source = "level"
       expression = "(D)"
