@@ -21,6 +21,12 @@ argument "mimir_password" {
   default = ""
 }
 
+argument "blackbox_url" {
+  // comment = "The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115"
+  optional = true
+  defualt = ""
+}
+
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
@@ -100,6 +106,23 @@ module.git "scrape_pods" {
     git_pull_freq = argument.git_pull_freq.value
   }
 }
+
+module.git "probe_services" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/scrapes/auto-probe-services.river"
+
+  arguments {
+    forward_to = [prometheus.remote_write.destination.receiver]
+    blackbox_url = arguments.blackbox_url.value
+    tenant = argument.tenant.value
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
 
 prometheus.remote_write "destination" {
   endpoint {
