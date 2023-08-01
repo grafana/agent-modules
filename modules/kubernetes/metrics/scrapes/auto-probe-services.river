@@ -103,7 +103,7 @@ module.git "service_targets" {
 }
 
 prometheus.scrape "probe_services" {
-  targets = module.git.services_targets.exports.relabelings.output
+  targets = module.git.service_targets.exports.relabelings.output
   forward_to = [module.git.relabelings_blackbox.exports.metric_relabelings.receiver]
 }
 
