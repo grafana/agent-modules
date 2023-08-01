@@ -14,10 +14,10 @@ module.git "logs_primary" {
   path = "modules/kubernetes/logs/all.river"
 
   arguments {
-    loki_url = "<YOUR_LOKI_URL>"
-    loki_username = "<YOUR_LOKI_TENANT>"
-    loki_password = "<YOUR_TENANT_TOKEN>"
-    tenant = "primary|"
+    loki_url = env("LOKI_ENDPOINT")
+    loki_username = env("DEFAULT_TENANT_ID")
+    loki_password = env("DEFAULT_TENANT_TOKEN")
+    tenant = coalesce(env("DEFAULT_TENANT_NAME"), "primary|")
     git_repo = "https://github.com/grafana/agent-modules.git"
     git_rev = "main"
   }
@@ -29,10 +29,10 @@ module.git "logs_op" {
   path = "modules/kubernetes/logs/all.river"
 
   arguments {
-    loki_url = "<YOUR_LOKI_URL>"
-    loki_username = "<YOUR_LOKI_TENANT>"
-    loki_password = "<YOUR_TENANT_TOKEN>"
-    tenant = "ops"
+    loki_url = env("LOKI_ENDPOINT")
+    loki_username = env("OPS_TENANT_ID")
+    loki_password = env("OPS_TENANT_TOKEN")
+    tenant = coalesce(env("OPS_TENANT_NAME"), "ops")
     git_repo = "https://github.com/grafana/agent-modules.git"
     git_rev = "main"
   }

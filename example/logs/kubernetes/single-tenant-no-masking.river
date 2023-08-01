@@ -18,7 +18,7 @@ module.git "log_targets" {
 
   arguments {
     forward_to = module.git.log_formats_all.exports.process.receiver
-    tenant = "<YOUR_TENANT_NAME>"
+    tenant = coalesce(env("DEFAULT_TENANT_NAME"), "primary|")
   }
 }
 
@@ -99,10 +99,10 @@ module.git "label_keep" {
 
 loki.write "destination" {
     endpoint {
-        url = "<YOUR_LOKI_URL>"
+        url = env("DEFAULT_LOKI_ENDPOINT")
         basic_auth {
-            username = "<YOUR_LOKI_TENANT>"
-            password = "<YOUR_TENANT_TOKEN>"
+            username = env("DEFAULT_TENANT_ID")
+            password = env("DEFAULT_TENANT_TOKEN")
         }
     }
 }
