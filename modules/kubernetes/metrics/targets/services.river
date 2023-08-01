@@ -130,7 +130,7 @@ discovery.relabel "probe_targets" {
   rule{
     action = "replace"
     replacement = argument.blackbox_url.value
-    target_label = __address__
+    target_label = "__address__"
   }
 
   // allow endpoints to declare how often to scrape metrics, the following annotations are supported:
