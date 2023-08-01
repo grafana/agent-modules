@@ -24,7 +24,7 @@ argument "mimir_password" {
 argument "blackbox_url" {
   // comment = "The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115"
   optional = true
-  defualt = ""
+  default = ""
 }
 
 argument "tenant" {

@@ -139,7 +139,7 @@ discovery.relabel "probe_targets" {
   //   prometheus.io/interval: 5m
   rule{
     action = "replace"
-    source_labels = ["__tmp_interval"]
+    source_labels = ["__tmp_probe_interval"]
     target_label = "__scrape_interval__"
   }
 
@@ -149,7 +149,7 @@ discovery.relabel "probe_targets" {
   //   prometheus.io/timeout: 30s
   rule{
     action = "replace"
-    source_labels = ["__tmp_timeout"]
+    source_labels = ["__tmp_probe_timeout"]
     target_label = "__scrape_timeout__"
   }
 }

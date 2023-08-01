@@ -202,7 +202,7 @@ discovery.relabel "probe_annotations" {
   rule {
     action = "replace"
     replacement = "1m"
-    target_label = "__tmp_interval"
+    target_label = "__tmp_probe_interval"
   }
   rule {
     action = "replace"
@@ -216,7 +216,7 @@ discovery.relabel "probe_annotations" {
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
     replacement = "$1"
-    target_label = "__tmp_interval"
+    target_label = "__tmp_probe_interval"
   }
 
   // allow resources to declare the timeout of the scrape request, the default value is 10s,
@@ -225,7 +225,7 @@ discovery.relabel "probe_annotations" {
   rule {
     action = "replace"
     replacement = "1m"
-    target_label = "__tmp_timeout"
+    target_label = "__tmp_probe_timeout"
   }
   rule {
     action = "replace"
@@ -239,7 +239,7 @@ discovery.relabel "probe_annotations" {
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
     replacement = "$1"
-    target_label = "__tmp_timeout"
+    target_label = "__tmp_probe_timeout"
   }
 
   // allow resources to declare their the job label value to use probing, the default value is "blackbox-exporter",
