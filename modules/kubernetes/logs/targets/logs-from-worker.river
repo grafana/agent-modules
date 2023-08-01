@@ -73,7 +73,7 @@ discovery.relabel "container_runtime" {
 }
 
 discovery.file "pods" {
-  path_targets = discovery.relabel.container_runtime.output
+  files = discovery.relabel.container_runtime.output
 }
 
 loki.source.file "pods" {
