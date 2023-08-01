@@ -33,7 +33,7 @@ prometheus.relabel "blackbox_exporter" {
   rule {
     action = "drop"
     source_labels = ["__name__"]
-    regex = arguments.drop_metrics.value
+    regex = argument.drop_metrics.value
   }
 
 

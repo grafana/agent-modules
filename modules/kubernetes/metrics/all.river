@@ -115,7 +115,7 @@ module.git "probe_services" {
 
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
-    blackbox_url = arguments.blackbox_url.value
+    blackbox_url = argument.blackbox_url.value
     tenant = argument.tenant.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
