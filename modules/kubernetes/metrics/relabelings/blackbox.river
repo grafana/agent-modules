@@ -36,17 +36,11 @@ prometheus.relabel "blackbox_exporter" {
     regex = argument.drop_metrics.value
   }
 
-
   // set the job label, only if __tmp_probe_job is not specified, the value of the annotation
   // probes.agent.grafana.com/job takes precedence
   rule {
     action = "replace"
-    source_labels = [
-      "__meta_kubernetes_pod_name",
-      "__tmp_probe_job",
-    ]
-    separator = ";"
-    regex = "(?i)^.*" + argument.pod_name.value + "[^;]*;$"
+    source_labels = ["__tmp_probe_job"]
     replacement = argument.job_label.value
     target_label = "job"
   }
