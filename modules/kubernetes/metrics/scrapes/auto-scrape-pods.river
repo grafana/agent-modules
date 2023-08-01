@@ -45,7 +45,7 @@ Description:
   metrics.agent.grafana.com/interval: 5m
   prometheus.io/interval: 5m
 
-  the default tieout for scraping is 10s, this can be specified as a single value which would override,
+  the default timeout for scraping is 10s, this can be specified as a single value which would override,
   the scrape interval being used for all ports attached to the endpoint:
 
   metrics.agent.grafana.com/timeout: 30s
@@ -94,7 +94,7 @@ module.git "pod_targets" {
   }
 }
 
-prometheus.scrape "pods" {
+prometheus.scrape "scrape_pods" {
   targets = module.git.pod_targets.exports.relabelings.output
   forward_to = argument.forward_to.value
 }

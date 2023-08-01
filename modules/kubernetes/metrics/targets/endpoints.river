@@ -5,7 +5,7 @@ Arguments:
   forward_to: Module to forward the output to
 */
 argument "tenant" {
-  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  // comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = ".*"
 }
@@ -145,7 +145,7 @@ module.git "relabelings_endpoints" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/relabelings/common.river"
+  path = "modules/kubernetes/relabelings/endpoints.river"
 
   arguments {
     targets = module.git.relabelings_common.exports.relabelings.output
