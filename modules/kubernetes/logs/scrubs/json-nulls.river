@@ -1,6 +1,7 @@
 /*
 Module: scrub-json-nulls
-Description: Removes any json properties with a null value
+Description: Checks for the annotation logs.agent.grafana.com/scrub-nulls, if set to "true"
+             Removes any json properties with a null value
 Arguments:
   forward_to: Module to forward the output to
 */

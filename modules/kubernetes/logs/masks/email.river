@@ -1,6 +1,7 @@
 /*
 Module: mask-email
-Description: Allows for masking of email addresses in log entries through an annotation
+Description: Checks the logs.agent.grafana.com/mask-email annotation, if set to "true" any logs that match the email
+             pattern will have the value of the email replaced with "*email*hash*
 Arguments:
   forward_to: Module to forward the output to
 */

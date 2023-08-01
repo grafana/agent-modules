@@ -1,6 +1,7 @@
 /*
 Module: mask-credit-card
-Description: Allows for masking of card cards in log entries through an annotation
+Description: Checks the logs.agent.grafana.com/mask-credit-card annotation, if set to "true" any logs that match the credit
+             card pattern will have the value of the credit card replaced with "*credit-card*hash*
 Arguments:
   forward_to: Module to forward the output to
 */

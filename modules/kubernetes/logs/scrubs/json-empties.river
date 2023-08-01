@@ -1,6 +1,7 @@
 /*
 Module: scrub-json-empties
-Description: Removes any json properties with empty values i.e. "foo": "", "bar": [], "baz": {}
+Description: Checks for the annotation logs.agent.grafana.com/scrub-empties, if set to "true"
+             Removes any json properties with empty values i.e. "foo": "", "bar": [], "baz": {}
 Arguments:
   forward_to: Module to forward the output to
 */

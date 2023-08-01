@@ -1,6 +1,7 @@
 /*
 Module: mask-ipv6
-Description: Allows for masking of ipv6 addresses in log entries through an annotation
+Description: Checks the logs.agent.grafana.com/mask-ipv6 annotation, if set to "true" any logs that match the ipv6
+             pattern will have the value of the ipv6 replaced with "*ipv6*hash*
 Arguments:
   forward_to: Module to forward the output to
 */
