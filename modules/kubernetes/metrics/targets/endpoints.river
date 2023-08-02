@@ -58,13 +58,6 @@ discovery.relabel "scrape_targets" {
     regex = "^(?i)(Running|)$"
   }
 
-  // only keep endpoints that are ready
-  rule {
-    action = "keep"
-    source_labels = ["__meta_kubernetes_endpoint_ready"]
-    regex = "^(?i)true$"
-  }
-
   // only keep endpoint targets that have scrape: true or "metrics" in the port name
   rule {
     action = "keep"
