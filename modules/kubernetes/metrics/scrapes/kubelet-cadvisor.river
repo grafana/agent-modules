@@ -7,6 +7,7 @@ Arguments:
   tenant: The tenant annotation value to filter on
 */
 argument "forward_to" {
+  // comment = "Where to send the resulting probe job"
   optional = false
 }
 
@@ -14,6 +15,12 @@ argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = ".*"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
 }
 
 argument "git_repo" {
@@ -69,6 +76,10 @@ prometheus.scrape "kubelet_cadvisor" {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
     insecure_skip_verify = false
     server_name = "kubernetes"
+  }
+
+  clustering {
+    enabled = argument.clustering.value
   }
 }
 

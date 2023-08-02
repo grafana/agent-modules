@@ -21,6 +21,12 @@ argument "mimir_password" {
   default = ""
 }
 
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
 argument "blackbox_url" {
   // comment = "The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115"
   optional = true
@@ -57,11 +63,13 @@ module.git "scrape_kubelet_cadvisor" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
   }
 }
+
 module.git "scrape_kubelet" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
@@ -71,6 +79,7 @@ module.git "scrape_kubelet" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -86,6 +95,7 @@ module.git "scrape_endpoints" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -101,6 +111,7 @@ module.git "scrape_pods" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -115,8 +126,9 @@ module.git "probe_services" {
 
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
-    blackbox_url = argument.blackbox_url.value
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
+    blackbox_url = argument.blackbox_url.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -131,8 +143,9 @@ module.git "probe_ingresses" {
 
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
-    blackbox_url = argument.blackbox_url.value
     tenant = argument.tenant.value
+    clustering = argument.clustering.value
+    blackbox_url = argument.blackbox_url.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
