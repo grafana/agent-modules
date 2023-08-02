@@ -19,7 +19,7 @@ argument "drop_metrics" {
   optional = true
   // blackbox does not return that many metrics, however if certain metrics should be dropped they can be specified here
   // the default is "none" which will not match any of the returned metric names
-  default = "none"
+  default = "probe_ip_addr_hash"
   // comment = "Regex of metrics to drop"
 }
 
