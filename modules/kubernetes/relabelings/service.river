@@ -16,7 +16,7 @@ export "relabelings" {
 discovery.relabel "service" {
   targets = argument.targets.value
 
-  // the endpoints name
+  // the service name
   rule {
     action = "replace"
     source_labels = ["__meta_kubernetes_service_name"]
