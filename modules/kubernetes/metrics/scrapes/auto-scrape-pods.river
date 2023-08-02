@@ -103,9 +103,27 @@ module.git "pod_targets" {
 
 prometheus.scrape "scrape_pods" {
   targets = module.git.pod_targets.exports.relabelings.output
-  forward_to = argument.forward_to.value
+  forward_to = [prometheus.relabel.job.receiver]
 
   clustering {
     enabled = argument.clustering.value
+  }
+}
+
+prometheus.relabel "job" {
+  forward_to = argument.forward_to.value
+
+  // set the job label, only if job is not specified or contains "module.", the value of the annotation
+  // metrics.agent.grafana.com/job takes precedence
+  rule {
+    action = "replace"
+    source_labels = [
+      "pod",
+      "job",
+    ]
+    separator = ";"
+    regex = "(?i)^.*" + argument.pod_name.value + "[^;]*;(.*module\\..*|)$"
+    replacement = "kubernetes-pod-scrape"
+    target_label = "job"
   }
 }
