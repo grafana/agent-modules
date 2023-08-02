@@ -26,7 +26,7 @@ argument "git_pull_freq" {
 }
 
 export "relabelings" {
-  value = module.git.relabelings_pod.exports.relabelings
+  value = discovery.relabel.pod_labels.output
 }
 
 // get the available endpoints
@@ -71,6 +71,18 @@ discovery.relabel "scrape_targets" {
     source_labels = [
       "__tmp_scrape",
       "__meta_kubernetes_endpoint_port_name",
+    ]
+    separator = ";"
+    regex = "^(true;.*|(|true);(.*metrics.*))$"
+  }
+
+  // only keep endpoint targets which have not specified the port annotation or where the port annotation matches
+  // the current targets container port
+  rule {
+    action = "keep"
+    source_labels = [
+      "__tmp_port",
+      "__meta_kubernetes_pod_container_port_number",
     ]
     separator = ";"
     regex = "^(true;.*|(|true);(.*metrics.*))$"
@@ -148,18 +160,6 @@ module.git "relabelings_common" {
   }
 }
 
-// apply endpoint relabelings
-module.git "relabelings_endpoints" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/relabelings/endpoints.river"
-
-  arguments {
-    targets = module.git.relabelings_common.exports.relabelings.output
-  }
-}
-
 // apply common pod relabelings
 // Endpoints are typically associated with a service and a pod, per the documentation, if the endpoint
 // belongs to a service, make all of the service labels available, if the endpoints is backed by a pod
@@ -171,6 +171,16 @@ module.git "relabelings_pod" {
   path = "modules/kubernetes/relabelings/pod.river"
 
   arguments {
-    targets = module.git.relabelings_endpoints.exports.relabelings.output
+    targets = module.git.relabelings_common.exports.relabelings.output
+  }
+}
+
+discovery.relabel "pod_labels" {
+  targets = module.git.relabelings_pod.exports.relabelings.output
+  // as this can result in duplicate scrapes of the same target because the labels are different
+  // drop the container and component labels
+  rule {
+    action = "labeldrop"
+    regex = "container|component"
   }
 }

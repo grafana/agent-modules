@@ -26,7 +26,7 @@ argument "git_pull_freq" {
 }
 
 export "relabelings" {
-  value = module.git.relabelings_pod.exports.relabelings
+  value = discovery.relabel.pod_labels.output
 }
 
 // get the available pods
@@ -147,5 +147,15 @@ module.git "relabelings_pod" {
 
   arguments {
     targets = module.git.relabelings_common.exports.relabelings.output
+  }
+}
+
+discovery.relabel "pod_labels" {
+  targets = module.git.relabelings_pod.exports.relabelings.output
+  // as this can result in duplicate scrapes of the same target because the labels are different
+  // drop the container and component labels
+  rule {
+    action = "labeldrop"
+    regex = "container|component"
   }
 }
