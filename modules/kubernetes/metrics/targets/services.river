@@ -112,7 +112,7 @@ discovery.relabel "probe_targets" {
   rule{
     action = "replace"
     replacement = "/probe"
-    target_label = "__metrics_path"
+    target_label = "__metrics_path__"
   }
 
   // set the __address__ to send the scrape request to be the blackbox exporter service address that has been deployed

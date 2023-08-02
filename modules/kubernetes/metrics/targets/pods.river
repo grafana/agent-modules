@@ -104,7 +104,7 @@ discovery.relabel "scrape_targets" {
   rule{
     action = "replace"
     source_labels = ["__tmp_path"]
-    target_label = "__metrics_path"
+    target_label = "__metrics_path__"
   }
 
   // allow pods to declare how often to scrape metrics, the following annotations are supported:
