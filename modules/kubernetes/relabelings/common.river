@@ -69,7 +69,7 @@ discovery.relabel "common" {
       "__meta_kubernetes_pod_annotation_logs_agent_grafana_com_tenant",
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_node_annotation_metrics_agent_grafana_com_tenant",

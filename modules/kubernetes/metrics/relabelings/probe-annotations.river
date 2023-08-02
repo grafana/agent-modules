@@ -23,12 +23,12 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_probe",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_probe",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_probe",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_probe",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_probe",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_probe",
       "__meta_kubernetes_pod_annotation_prometheus_io_probe",
       "__meta_kubernetes_service_annotation_prometheus_io_probe",
-      "__meta_kubernetes_endpoint_annotation_prometheus_io_probe",
+      "__meta_kubernetes_endpoints_annotation_prometheus_io_probe",
       "__meta_kubernetes_endpointslice_annotation_prometheus_io_probe",
       "__meta_kubernetes_ingress_annotation_prometheus_io_probe",
     ]
@@ -50,17 +50,17 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_port",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_port",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_port",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_port",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_port",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_port",
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_port",
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_port",
-      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_port",
+      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_port",
       "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_port",
       "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_port",
       "__meta_kubernetes_pod_annotation_prometheus_io_port",
       "__meta_kubernetes_service_annotation_prometheus_io_port",
-      "__meta_kubernetes_endpoint_annotation_prometheus_io_port",
+      "__meta_kubernetes_endpoints_annotation_prometheus_io_port",
       "__meta_kubernetes_endpointslice_annotation_prometheus_io_port",
       "__meta_kubernetes_ingress_annotation_prometheus_io_port",
     ]
@@ -87,17 +87,17 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_path",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_path",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_path",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_path",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_path",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_path",
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_path",
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_path",
-      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_path",
+      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_path",
       "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_path",
       "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_path",
       "__meta_kubernetes_pod_annotation_prometheus_io_path",
       "__meta_kubernetes_service_annotation_prometheus_io_path",
-      "__meta_kubernetes_endpoint_annotation_prometheus_io_path",
+      "__meta_kubernetes_endpoints_annotation_prometheus_io_path",
       "__meta_kubernetes_endpointslice_annotation_prometheus_io_path",
       "__meta_kubernetes_ingress_annotation_prometheus_io_path",
     ]
@@ -124,13 +124,13 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_tenant",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_tenant",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_tenant",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_tenant",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_tenant",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_tenant",
       "__meta_kubernetes_node_annotation_probes_agent_grafana_com_tenant",
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_tenant",
+      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_node_annotation_metrics_agent_grafana_com_tenant",
@@ -157,7 +157,7 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_scheme",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_scheme",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_ingress_scheme",
@@ -183,12 +183,12 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_module",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_module",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_module",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_module",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_module",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_module",
       "__meta_kubernetes_pod_annotation_prometheus_io_module",
       "__meta_kubernetes_service_annotation_prometheus_io_module",
-      "__meta_kubernetes_endpoint_annotation_prometheus_io_module",
+      "__meta_kubernetes_endpoints_annotation_prometheus_io_module",
       "__meta_kubernetes_endpointslice_annotation_prometheus_io_module",
       "__meta_kubernetes_ingress_annotation_prometheus_io_module",
     ]
@@ -211,7 +211,7 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_interval",
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_interval",
-      "__meta_kubernetes_endpoint_annotation_metrics_agent_grafana_com_interval",
+      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_interval",
       "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_interval",
       "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_interval",
     ]
@@ -234,7 +234,7 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_timeout",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_timeout",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_timeout",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_timeout",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_timeout",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_timeout",
     ]
@@ -257,7 +257,7 @@ discovery.relabel "probe_annotations" {
     source_labels = [
       "__meta_kubernetes_pod_annotation_probes_agent_grafana_com_job",
       "__meta_kubernetes_service_annotation_probes_agent_grafana_com_job",
-      "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_job",
+      "__meta_kubernetes_endpoints_annotation_probes_agent_grafana_com_job",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_job",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_job",
     ]
