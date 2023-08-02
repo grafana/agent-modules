@@ -110,7 +110,7 @@ prometheus.scrape "scrape_pods" {
   }
 }
 
-prometheus.relabel "job" {
+prometheus.relabel "pods" {
   forward_to = argument.forward_to.value
 
   // set the job label, only if job is not specified or contains "module.", the value of the annotation
@@ -122,5 +122,11 @@ prometheus.relabel "job" {
     regex = "(?i)^(.*module\\..*|)$"
     replacement = "kubernetes-pod-scrape"
     target_label = "job"
+  }
+
+  // remove the instance label
+  rule {
+    action = "labeldrop"
+    regex = "instance"
   }
 }

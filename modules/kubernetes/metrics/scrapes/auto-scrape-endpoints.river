@@ -132,7 +132,7 @@ module.git "relabelings_node_exporter" {
   }
 }
 
-prometheus.relabel "job" {
+prometheus.relabel "endpoints" {
   forward_to = argument.forward_to.value
 
   // set the job label, only if job is not specified or contains "module.", the value of the annotation
@@ -144,5 +144,11 @@ prometheus.relabel "job" {
     regex = "(?i)^(.*module\\..*|)$"
     replacement = "kubernetes-endpoint-scrape"
     target_label = "job"
+  }
+
+  // remove the instance label
+  rule {
+    action = "labeldrop"
+    regex = "instance"
   }
 }
