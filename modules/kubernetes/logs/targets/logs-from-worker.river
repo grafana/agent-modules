@@ -72,12 +72,12 @@ discovery.relabel "container_runtime" {
 
 }
 
-discovery.file "pods" {
-  files = discovery.relabel.container_runtime.output
+local.file_match "pods" {
+  path_targets = discovery.relabel.container_runtime.output
 }
 
 loki.source.file "pods" {
-  targets = discovery.file.pods.targets
+  targets = local.file_match.pods.targets
   forward_to = [loki.process.parse.receiver]
 }
 
