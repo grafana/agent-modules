@@ -103,7 +103,7 @@ module.git "pod_targets" {
 
 prometheus.scrape "scrape_pods" {
   targets = module.git.pod_targets.exports.relabelings.output
-  forward_to = [prometheus.relabel.job.receiver]
+  forward_to = [prometheus.relabel.pods.receiver]
 
   clustering {
     enabled = argument.clustering.value

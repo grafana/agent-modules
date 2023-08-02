@@ -128,7 +128,7 @@ module.git "relabelings_node_exporter" {
   path = "modules/kubernetes/metrics/relabelings/node-exporter.river"
 
   arguments {
-    forward_to = [prometheus.relabel.job.receiver]
+    forward_to = [prometheus.relabel.endpoints.receiver]
   }
 }
 
