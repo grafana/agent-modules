@@ -2,12 +2,12 @@
 Module: mask-ssn
 Description: Checks the logs.agent.grafana.com/mask-ssn annotation, if set to "true" any logs that match the ssn
              pattern will have the value of the ssn replaced with "*ssn*hash*
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.mask_ssn

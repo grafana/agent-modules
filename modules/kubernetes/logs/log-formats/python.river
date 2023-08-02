@@ -1,12 +1,12 @@
 /*
 Module: log-format-python
 Description: Log Processing for Python
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_python

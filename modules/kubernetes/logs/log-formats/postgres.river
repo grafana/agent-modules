@@ -2,12 +2,12 @@
 Module: log-format-postgres
 Description: Handles formatting for log format of Postgres
 Docs: https://www.postgresql.org/docs/current/runtime-config-logging.html
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_postgres

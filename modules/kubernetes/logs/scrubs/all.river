@@ -1,12 +1,12 @@
 /*
 Module: scrub-all
 Description: Wrapper module to include all scrubing modules
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 argument "git_repo" {
   optional = true

@@ -1,13 +1,9 @@
 /*
 Module: scrape-kubelet-cadvisor
-Description:
-
-Arguments:
-  forward_to: Where to send the resulting scrape job
-  tenant: The tenant annotation value to filter on
+Description: Scrapes cAdvisor (Container Advisor Metrics)
 */
 argument "forward_to" {
-  // comment = "Where to send the resulting probe job"
+  // comment = "Where to send the results to"
   optional = false
 }
 

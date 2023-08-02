@@ -3,12 +3,12 @@ Module: log-level
 Description: Sets a default log level of "unknown", then based on known patterns attempts to assign an appropriate log
              log level based on the contents of the log line.  This should be considered as default/initial processing
              as there are modules for parsing specific log patterns.
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_level

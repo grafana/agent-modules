@@ -5,12 +5,12 @@ Description: Performs Kubernetes service discovery for pods, applies relabelings
 
              This requires the agent to deployed as a DaemonSet, as each pod will mount a volume to the worker
              node to retrieve the pod logs.
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."

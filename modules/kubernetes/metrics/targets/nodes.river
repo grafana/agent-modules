@@ -1,8 +1,6 @@
 /*
 Module: metrics-target-nodes
 Description: Performs Kubernetes service discovery for nodes, applies relabelings
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "tenant" {
   // comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."

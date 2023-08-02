@@ -1,8 +1,6 @@
 /*
 Module: metrics-all
 Description: Wrapper module to include all kubernetes metric modules and use cri parsing
-Arguments:
-  targets: Discovered targets to apply relabelings to
 */
 
 argument "mimir_url" {

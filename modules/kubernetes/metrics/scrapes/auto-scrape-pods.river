@@ -50,13 +50,9 @@ Description:
 
   metrics.agent.grafana.com/timeout: 30s
   prometheus.io/timeout: 30s
-
-Arguments:
-  forward_to: Where to send the resulting scrape job
-  tenant: The tenant annotation value to filter on
 */
 argument "forward_to" {
-  // comment = "Where to send the resulting probe job"
+  // comment = "Where to send the results to"
   optional = false
 }
 

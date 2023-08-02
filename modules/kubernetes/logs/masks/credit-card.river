@@ -2,12 +2,12 @@
 Module: mask-credit-card
 Description: Checks the logs.agent.grafana.com/mask-credit-card annotation, if set to "true" any logs that match the credit
              card pattern will have the value of the credit card replaced with "*credit-card*hash*
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.mask_credit_card

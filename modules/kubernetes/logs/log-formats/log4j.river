@@ -3,12 +3,12 @@ Module: log-format-log4j
 Description: Log Processing for Log4j
 Docs: https://logging.apache.org/log4j/2.x/manual/layouts.html#json-template-layout
       https://github.com/logstash/log4j-jsonevent-layout
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_log4j

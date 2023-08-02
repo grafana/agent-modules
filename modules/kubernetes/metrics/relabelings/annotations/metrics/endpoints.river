@@ -1,4 +1,5 @@
 argument "targets" {
+  // comment = "Discovered targets to apply relabelings to"
   optional = false
 }
 

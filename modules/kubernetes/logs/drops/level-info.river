@@ -4,12 +4,12 @@ Description: The default behavior is to keep info level messaging automatically,
              messages can dropped by adding the annotation:
 
              logs.agent.grafana.com/drop-info: true
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.drop_info

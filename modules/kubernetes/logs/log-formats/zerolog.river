@@ -2,12 +2,12 @@
 Module: log-format-zerolog
 Description: Handles formatting for log format of zerolog
 Docs: https://github.com/rs/zerolog
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_zerolog

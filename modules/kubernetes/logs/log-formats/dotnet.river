@@ -2,12 +2,12 @@
 Module: log-format-dotnet
 Description: Log Processing for .Net
 Docs: https://learn.microsoft.com/en-us/dotnet/core/extensions/console-log-formatter#json
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_dotnet

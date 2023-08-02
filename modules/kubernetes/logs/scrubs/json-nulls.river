@@ -2,12 +2,12 @@
 Module: scrub-json-nulls
 Description: Checks for the annotation logs.agent.grafana.com/scrub-nulls, if set to "true"
              Removes any json properties with a null value
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.scrub_json_nulls

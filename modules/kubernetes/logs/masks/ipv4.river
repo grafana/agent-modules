@@ -2,12 +2,12 @@
 Module: mask-ipv4
 Description: Checks the logs.agent.grafana.com/mask-ipv4 annotation, if set to "true" any logs that match the ipv4
              pattern will have the value of the ipv4 replaced with "*ipv4*hash*
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.mask_ipv4

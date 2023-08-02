@@ -57,7 +57,7 @@ Description:
   prometheus.io/timeout: 30s
 */
 argument "forward_to" {
-  // comment = "Where to send the resulting probe job"
+  // comment = "Where to send the results to"
   optional = false
 }
 

@@ -2,12 +2,12 @@
 Module: log-format-otel
 Description: Log Processing for OpenTelemetry
 Docs: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_otel

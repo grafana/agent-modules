@@ -2,12 +2,12 @@
 Module: log-format-istio
 Description: Log Processing for istio
 Docs: https://istio.io/latest/docs/tasks/observability/logs/access-log/
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_istio

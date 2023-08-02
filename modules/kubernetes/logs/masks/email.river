@@ -2,12 +2,12 @@
 Module: mask-email
 Description: Checks the logs.agent.grafana.com/mask-email annotation, if set to "true" any logs that match the email
              pattern will have the value of the email replaced with "*email*hash*
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.mask_email

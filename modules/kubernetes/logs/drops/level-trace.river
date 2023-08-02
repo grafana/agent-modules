@@ -4,12 +4,12 @@ Description: The default behavior is to drop trace level messaging automatically
              messages can still be logged by adding the annotation:
 
              logs.agent.grafana.com/drop-trace: false
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.drop_trace

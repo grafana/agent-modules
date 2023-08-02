@@ -2,12 +2,12 @@
 Module: log-format-spring-boot
 Description: Log Processing for Spring Boot
 Docs: https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_spring_boot

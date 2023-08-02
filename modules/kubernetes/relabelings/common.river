@@ -1,11 +1,10 @@
 /*
 Module: relabelings-common
 Description: Handles relabelings for extracting common fields across various roles
-Arguments:
-  targets: Discovered targets to apply relabelings to
 */
 
 argument "targets" {
+  // comment = "Discovered targets to apply relabelings to"
   optional = false
 }
 

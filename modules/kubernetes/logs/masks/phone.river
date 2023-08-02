@@ -2,12 +2,12 @@
 Module: mask-phone
 Description: Checks the logs.agent.grafana.com/mask-phone annotation, if set to "true" any logs that match the phone
              pattern will have the value of the phone replaced with "*phone*hash*
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.mask_phone

@@ -1,12 +1,12 @@
 /*
 Module: normalize-filename
 Description: Normalizes the kubernetes filename name, and reduces cardinality of the filename
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.normalize_filename

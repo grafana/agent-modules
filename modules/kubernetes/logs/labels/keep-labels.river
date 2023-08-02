@@ -3,12 +3,12 @@ Module: keep-labels
 Description: Pre-defined set of labels to keep, this stage should always be in-place as the previous relabeing
               stages make every pod label and annotation a label in the pipeline, which we do not want created
               in Loki as that would have extremely high-cardinality.
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 argument "keep_labels" {
   optional = true

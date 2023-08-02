@@ -4,10 +4,9 @@ Description: The default behavior is to drop debug level messaging automatically
              messages can still be logged by adding the annotation:
 
              logs.agent.grafana.com/drop-debug: false
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
 

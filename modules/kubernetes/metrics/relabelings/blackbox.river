@@ -4,8 +4,8 @@ Description: Handles metric relabelings for collected metrics from blackbox-expo
 Docs: https://github.com/prometheus/blackbox_exporter
 */
 argument "forward_to" {
-  optional = false
   // comment = "The module to forward the output to"
+  optional = false
 }
 
 argument "job_label" {

@@ -1,10 +1,9 @@
 /*
 Module: log-relabelings
 Description: Handles log relabelings
-Arguments:
-  targets: Discovered targets to apply relabelings to
 */
 argument "targets" {
+  // comment = "Discovered targets to apply relabelings to"
   optional = false
 }
 

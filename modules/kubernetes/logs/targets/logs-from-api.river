@@ -2,12 +2,12 @@
 Module: logs-from-api
 Description: Performs Kubernetes service discovery for pods, applies relabelings, the discovered target logs are
              then retrieved from the kubernetes api
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 argument "git_repo" {
   optional = true

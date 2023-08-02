@@ -1,8 +1,6 @@
 /*
 Module: log-all
 Description: Wrapper module to include all kubernetes logging modules and use cri parsing
-Arguments:
-  targets: Discovered targets to apply relabelings to
 */
 
 argument "loki_url" {

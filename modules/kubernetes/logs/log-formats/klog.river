@@ -2,12 +2,12 @@
 Module: log-format-klog
 Description: Log Processing for klog (used by kube-state-metrics and more in kube-system)
 Docs: https://github.com/kubernetes/klog
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.log_format_klog

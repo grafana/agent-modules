@@ -1,12 +1,12 @@
 /*
 Module: embed-pod
 Description: Embeds the name of the pod to the json or text log line
-Arguments:
-  forward_to: Module to forward the output to
 */
 argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
 }
+
 
 export "process" {
   value = loki.process.embed_pod
