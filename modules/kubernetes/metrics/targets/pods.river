@@ -134,7 +134,7 @@ module.git "relabelings_common" {
   path = "modules/kubernetes/relabelings/common.river"
 
   arguments {
-    targets = discovery.relabel.scrape_targets
+    targets = discovery.relabel.scrape_targets.output
   }
 }
 
