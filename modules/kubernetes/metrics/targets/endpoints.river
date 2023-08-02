@@ -69,18 +69,6 @@ discovery.relabel "scrape_targets" {
     regex = "^(true;.*|(|true);(.*metrics.*))$"
   }
 
-  // only keep endpoint targets which have not specified the port annotation or where the port annotation matches
-  // the current targets container port
-  rule {
-    action = "keep"
-    source_labels = [
-      "__tmp_port",
-      "__meta_kubernetes_pod_container_port_number",
-    ]
-    separator = ";"
-    regex = "^(true;.*|(|true);(.*metrics.*))$"
-  }
-
   // allow endpoints to declare what tenant their metrics should be written to, the following annotations are supported:
   //   metrics.agent.grafana.com/tenant: "primary"
   rule {
