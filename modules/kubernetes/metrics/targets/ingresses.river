@@ -53,17 +53,6 @@ module.git "relabelings_annotations" {
 discovery.relabel "probe_targets" {
   targets = module.git.relabelings_annotations.exports.relabelings.output
 
-  // only keep ingress targets that have probe: true, the following annotations are supported:
-  //   probes.agent.grafana.com/probe: "true"
-  // or
-  //  prometheus.io: "true"
-  rule {
-    action = "keep"
-    source_labels = ["__tmp_probe"]
-    separator = ";"
-    regex = "true"
-  }
-
   // allow ingresses to declare where tenant their metrics should be written to, the following annotations are supported:
   //   probes.agent.grafana.com/tenant: "primary"
   // or
@@ -106,7 +95,7 @@ discovery.relabel "probe_targets" {
       "__address__",
       "__tmp_probe_path",
     ]
-    separator = ":"
+    separator = ";"
     regex = "(.+);(.+);(.+)"
     replacement = "${1}${2}${3}"
     target_label = "__param_target"

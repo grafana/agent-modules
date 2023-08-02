@@ -29,6 +29,12 @@ discovery.relabel "probe_annotations" {
     replacement = "$1"
     target_label = "__tmp_probe"
   }
+  // only keep service targets that have probe: true, the following annotations are supported:
+  rule {
+    action = "keep"
+    source_labels = ["__tmp_probe"]
+    regex = "true"
+  }
 
   // allow resources to declare the port to use when probing, the default value is the discovered port from
   // service discovery, the following annotations are supported:
