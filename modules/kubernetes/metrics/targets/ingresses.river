@@ -92,8 +92,8 @@ discovery.relabel "probe_targets" {
       "__address__",
       "__tmp_probe_port",
     ]
-    separator = ":"
-    regex = "^([^:]+):(\\d+)"
+    separator = ";"
+    regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
     replacement = "$1:$2"
     target_label = "__address__"
   }

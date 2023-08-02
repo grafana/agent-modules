@@ -85,14 +85,15 @@ discovery.relabel "scrape_targets" {
 
   // allow pods to declare what port to collect metrics from, the following annotations are supported:
   //   metrics.agent.grafana.com/port: 9090
+  //   prometheus.io/port: 9090
   rule {
     action = "replace"
     source_labels = [
       "__address__",
       "__tmp_port",
     ]
-    separator = ":"
-    regex = "^([^:]+):(\\d+)"
+    separator = ";"
+    regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
     replacement = "$1:$2"
     target_label = "__address__"
   }
