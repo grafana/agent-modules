@@ -169,8 +169,20 @@ module.git "relabelings_pod" {
   }
 }
 
+// apply common service relabelings
+module.git "relabelings_service" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/relabelings/service.river"
+
+  arguments {
+    targets = module.git.relabelings_pod.exports.relabelings.output
+  }
+}
+
 discovery.relabel "pod_labels" {
-  targets = module.git.relabelings_pod.exports.relabelings.output
+  targets = module.git.relabelings_service.exports.relabelings.output
   // as this can result in duplicate scrapes of the same target because the labels are different
   // drop the container label
   rule {
