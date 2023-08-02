@@ -159,9 +159,9 @@ module.git "relabelings_pod" {
 discovery.relabel "pod_labels" {
   targets = module.git.relabelings_pod.exports.relabelings.output
   // as this can result in duplicate scrapes of the same target because the labels are different
-  // drop the container and component labels
+  // drop the container and instance labels
   rule {
     action = "labeldrop"
-    regex = "container|component"
+    regex = "container|instance"
   }
 }
