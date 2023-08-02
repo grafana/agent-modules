@@ -49,14 +49,6 @@ module.git "relabelings_annotations" {
 discovery.relabel "scrape_targets" {
   targets = module.git.relabelings_annotations.exports.relabelings.output
 
-  // only keep node targets that have scrape: true or not set
-  rule {
-    action = "keep"
-    source_labels = ["__tmp_scrape"]
-    separator = ";"
-    regex = "^(true|)"
-  }
-
   // allow nodes to declare what tenant their metrics should be written to, the following annotations are supported:
   //   metrics.agent.grafana.com/tenant: "primary"
   rule {
