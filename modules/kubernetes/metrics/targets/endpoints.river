@@ -66,7 +66,7 @@ discovery.relabel "scrape_targets" {
 
   // add a __tmp_scrape_port_named_metrics
   rule {
-    replacement = format(argument.scrape_port_named_metrics.value, "%t")
+    replacement = format("%t", argument.scrape_port_named_metrics.value)
     target_label = "__tmp_scrape_port_named_metrics"
   }
 
