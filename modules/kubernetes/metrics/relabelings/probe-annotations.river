@@ -143,7 +143,8 @@ discovery.relabel "probe_annotations" {
 
   // allow resources to declare the protocol to use when probing, the default value is "",
   // this is the protocol that is used when sending the request to blackbox exporter, it is NOT
-  // the protocol used
+  // the protocol used.  For ingresses, if the annotation is not specified default to the scheme
+  // defined for the ingress as it can only be http/https
   // the following the following annotations are supported:
   //   probes.agent.grafana.com/scheme: http
   rule {
@@ -159,6 +160,7 @@ discovery.relabel "probe_annotations" {
       "__meta_kubernetes_endpoint_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_endpointslice_annotation_probes_agent_grafana_com_scheme",
       "__meta_kubernetes_ingress_annotation_probes_agent_grafana_com_scheme",
+      "__meta_kubernetes_ingress_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
