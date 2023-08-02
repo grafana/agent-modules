@@ -24,14 +24,14 @@ argument "probe_timeout_offset" {
  * EXPORTS
  ********************************************/
 export "targets" {
-  value = discovery.relabel.relabel.output
+  value = discovery.relabel.default.output
 }
 
 /********************************************
  * LOGIC
  ********************************************/
 
-prometheus.exporter.blackbox "main" {
+prometheus.exporter.blackbox "base" {
   config_file	= argument.config_file.value
   config = argument.config.value
   probe_timeout_offset = argument.probe_timeout_offset.value
@@ -40,7 +40,7 @@ prometheus.exporter.blackbox "main" {
   }
 }
 
-discovery.relabel "relabel" {
+discovery.relabel "default" {
   targets = argument.targets.value
 
   rule {
@@ -55,11 +55,11 @@ discovery.relabel "relabel" {
 
   rule {
     target_label = "__address__"
-    replacement = prometheus.exporter.blackbox.main.targets[0].__address__
+    replacement = prometheus.exporter.blackbox.base.targets[0].__address__
   }
 
   rule {
     target_label = "__metrics_path__"
-    replacement  = prometheus.exporter.blackbox.main.targets[0].__metrics_path__
+    replacement  = prometheus.exporter.blackbox.base.targets[0].__metrics_path__
   }
 }
