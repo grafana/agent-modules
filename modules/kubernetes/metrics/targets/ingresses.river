@@ -42,7 +42,7 @@ module.git "relabelings_annotations" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/relabelings/probe-annotations.river"
+  path = "modules/kubernetes/metrics/relabelings/annotations/probes/ingress.river"
 
   arguments {
     targets = discovery.kubernetes.ingresses.targets

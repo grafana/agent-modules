@@ -22,15 +22,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_scrape",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_scrape",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_scrape",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_scrape",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_scrape",
       "__meta_kubernetes_pod_annotation_prometheus_io_scrape",
-      "__meta_kubernetes_service_annotation_prometheus_io_scrape",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_scrape",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_scrape",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_scrape",
     ]
     separator = ";"
     regex = "^(?:;*)?(true|false).*$"
@@ -52,15 +44,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_scheme",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_scheme",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_scheme",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_scheme",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_scheme",
       "__meta_kubernetes_pod_annotation_prometheus_io_scheme",
-      "__meta_kubernetes_service_annotation_prometheus_io_scheme",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_scheme",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_scheme",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -77,15 +61,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_port",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_port",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_port",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_port",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_port",
       "__meta_kubernetes_pod_annotation_prometheus_io_port",
-      "__meta_kubernetes_service_annotation_prometheus_io_port",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_port",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_port",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_port",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+).*$"
@@ -107,15 +83,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_path",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_path",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_path",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_path",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_path",
       "__meta_kubernetes_pod_annotation_prometheus_io_path",
-      "__meta_kubernetes_service_annotation_prometheus_io_path",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_path",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_path",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_path",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -135,14 +103,7 @@ discovery.relabel "metric_annotations" {
   }
   rule {
     action = "replace"
-    source_labels = [
-      "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_node_annotation_metrics_agent_grafana_com_tenant",
-    ]
+    source_labels = ["__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant"]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
     replacement = "$1"
@@ -163,15 +124,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_interval",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_interval",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_interval",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_interval",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_interval",
       "__meta_kubernetes_pod_annotation_prometheus_io_interval",
-      "__meta_kubernetes_service_annotation_prometheus_io_interval",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_interval",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_interval",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_interval",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -193,15 +146,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_timeout",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_timeout",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_timeout",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_timeout",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_timeout",
       "__meta_kubernetes_pod_annotation_prometheus_io_timeout",
-      "__meta_kubernetes_service_annotation_prometheus_io_timeout",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_timeout",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_timeout",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_timeout",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -223,15 +168,7 @@ discovery.relabel "metric_annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_job",
-      "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_job",
-      "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_job",
-      "__meta_kubernetes_endpointslice_annotation_metrics_agent_grafana_com_job",
-      "__meta_kubernetes_ingress_annotation_metrics_agent_grafana_com_job",
       "__meta_kubernetes_pod_annotation_prometheus_io_job",
-      "__meta_kubernetes_service_annotation_prometheus_io_job",
-      "__meta_kubernetes_endpoints_annotation_prometheus_io_job",
-      "__meta_kubernetes_endpointslice_annotation_prometheus_io_job",
-      "__meta_kubernetes_ingress_annotation_prometheus_io_job",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
