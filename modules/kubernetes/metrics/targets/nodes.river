@@ -31,7 +31,7 @@ export "relabelings" {
 
 // get the available nodes
 discovery.kubernetes "nodes" {
-  role = "pod"
+  role = "node"
 }
 
 // apply metric annotation relabelings
