@@ -10,6 +10,12 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "scrape_port_named_metrics" {
+  // comment = "Whether or not to automatically scrape endpoints that have a port with 'metrics' in the name"
+  optional = true
+  default = false
+}
+
 argument "git_repo" {
   optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
@@ -58,15 +64,22 @@ discovery.relabel "scrape_targets" {
     regex = "^(?i)(Running|)$"
   }
 
-  // only keep endpoint targets that have scrape: true or "metrics" in the port name
+  // add a __tmp_scrape_port_named_metrics
+  rule {
+    replacement = format(argument.scrape_port_named_metrics.value, "%t")
+    target_label = "__tmp_scrape_port_named_metrics"
+  }
+
+  // only keep endpoint targets that have scrape: true or "metrics" in the port name if the argument scrape_port_named_metrics
   rule {
     action = "keep"
     source_labels = [
       "__tmp_scrape",
+      "__tmp_scrape_port_named_metrics",
       "__meta_kubernetes_endpoint_port_name",
     ]
     separator = ";"
-    regex = "^(true;.*|(|true);(.*metrics.*))$"
+    regex = "^(true;.*|(|true);true;(.*metrics.*))$"
   }
 
   // allow endpoints to declare what tenant their metrics should be written to, the following annotations are supported:

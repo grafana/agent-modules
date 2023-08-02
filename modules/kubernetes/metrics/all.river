@@ -21,6 +21,12 @@ argument "mimir_password" {
   default = ""
 }
 
+argument "scrape_port_named_metrics" {
+  // comment = "Whether or not to automatically scrape endpoints that have a port with 'metrics' in the name"
+  optional = true
+  default = false
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -96,6 +102,7 @@ module.git "scrape_endpoints" {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
     clustering = argument.clustering.value
+    scrape_port_named_metrics = argument.scrape_port_named_metrics.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
