@@ -49,7 +49,7 @@ Arguments:
   tenant: The tenant annotation value to filter on
 */
 argument "forward_to" {
-  // comment = "Where to send the results to"
+  // comment = "Where to send the resulting probe job"
   optional = false
 }
 
