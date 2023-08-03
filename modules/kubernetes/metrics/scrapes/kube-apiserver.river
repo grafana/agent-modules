@@ -1,6 +1,6 @@
 /*
-Module: scrape-kubelet-resource
-Description: Scrapes Kube resource, most of these same metrics can come from cAdvisor use only if necessary
+Module: scrape-kube-apiserver
+Description: Scrapes Kube apiserver, most of these same metrics can come from cAdvisor use only if necessary
 */
 argument "forward_to" {
   // comment = "Where to send the results to"
@@ -34,39 +34,53 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
-module.git "node_targets" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/targets/nodes.river"
-
-  arguments {
-    tenant = argument.tenant.value
-    git_repo = argument.git_repo.value
-    git_rev = argument.git_rev.value
-    git_pull_freq = argument.git_pull_freq.value
-  }
+// get the available endpoints
+discovery.kubernetes "endpoints" {
+  role = "endpoints"
 }
 
-discovery.relabel "kubelet_resource" {
-  targets = module.git.node_targets.exports.relabelings.output
+discovery.relabel "kube_apiserver" {
+  targets = discovery.kubernetes.endpoints.targets
 
-  // set the path to use for kubelet-resource
+  // only keep namespace=default, service=kubernetes, port=https
+  rule {
+    action = "keep"
+    source_label = [
+      "__meta_kubernetes_namespace",
+      "__meta_kubernetes_service_name",
+      "__meta_kubernetes_endpoint_port_name",
+    ]
+    regex = "default;kubernetes;https"
+  }
+
+  // set the job to be the component
   rule {
     action = "replace"
-    source_labels = ["__meta_kubernetes_node_name"]
-    regex = "(.+)"
-    replacement = "/api/v1/nodes/${1}/proxy/metrics/resource"
-    target_label = "__metrics_path__"
+    source_labels = ["__meta_kubernetes_pod_label_component"]
+    target_label = "job"
+  }
+
+  // set the namespace
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
+  // set the service_name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_service_name"]
+    target_label = "service"
   }
 
 }
 
-prometheus.scrape "kubelet_resource" {
-  targets = discovery.relabel.kubelet_resource.output
+prometheus.scrape "kube_apiserver" {
+  targets = discovery.relabel.kube_apiserver.output
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-  forward_to = [module.git.relabelings_kubelet_resource.exports.metric_relabelings.receiver]
+  forward_to = [module.git.relabelings_kube_apiserver.exports.metric_relabelings.receiver]
 
   tls_config {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
@@ -80,11 +94,11 @@ prometheus.scrape "kubelet_resource" {
 }
 
 // metric relabelings
-module.git "relabelings_kubelet_resource" {
+module.git "relabelings_kube_apiserver" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/relabelings/kubelet-resource.river"
+  path = "modules/kubernetes/metrics/relabelings/kube-apiserver.river"
 
   arguments {
     forward_to = argument.forward_to.value
