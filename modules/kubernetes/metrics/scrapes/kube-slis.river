@@ -1,6 +1,6 @@
 /*
-Module: scrape-kubelet-cadvisor
-Description: Scrapes cAdvisor (Container Advisor Metrics)
+Module: scrape-kube-slis
+Description: Scrapes Kube SLIs
 */
 argument "forward_to" {
   // comment = "Where to send the results to"
@@ -48,10 +48,10 @@ module.git "node_targets" {
   }
 }
 
-discovery.relabel "kubelet_slis" {
+discovery.relabel "kube_slis" {
   targets = module.git.node_targets.exports.relabelings.output
 
-  // set the path to use for cadvisor
+  // set the path to use for kube-slis
   rule {
     action = "replace"
     source_labels = ["__meta_kubernetes_node_name"]
@@ -62,11 +62,11 @@ discovery.relabel "kubelet_slis" {
 
 }
 
-prometheus.scrape "kubelet_slis" {
-  targets = discovery.relabel.kubelet_slis.output
+prometheus.scrape "kube_slis" {
+  targets = discovery.relabel.kube_slis.output
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-  forward_to = [module.git.kubelet_slis.exports.metric_relabelings.receiver]
+  forward_to = [module.git.relabelings_kube_slis.exports.metric_relabelings.receiver]
 
   tls_config {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
@@ -80,7 +80,7 @@ prometheus.scrape "kubelet_slis" {
 }
 
 // metric relabelings
-module.git "relabelings_kubelet_slis" {
+module.git "relabelings_kube_slis" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
