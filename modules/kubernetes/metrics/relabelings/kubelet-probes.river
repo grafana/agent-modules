@@ -1,6 +1,6 @@
 /*
-Module: relabelings-kubelet-slis
-Description: Handles metric relabelings for collected metrics from kube-slis
+Module: relabelings-kubelet-probes
+Description: Handles metric relabelings for collected metrics from kubelet-probes
 */
 argument "forward_to" {
   optional = false
@@ -10,15 +10,15 @@ argument "forward_to" {
 argument "job_label" {
   optional = true
   // from Grafana Cloud Integration:
-  default = "integrations/kubernetes/slis"
+  default = "integrations/kubernetes/probes"
   // comment = "The job label to add for all cadvisor metrics"
 }
 
 export "metric_relabelings" {
-  value = prometheus.relabel.kube_slis
+  value = prometheus.relabel.kubelet_probes
 }
 
-prometheus.relabel "kube_slis" {
+prometheus.relabel "kubelet_probes" {
   forward_to = argument.forward_to.value
 
   // set the job label

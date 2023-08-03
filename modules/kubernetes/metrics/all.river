@@ -90,11 +90,11 @@ module.git "scrape_kubelet" {
   }
 }
 
-module.git "scrape_kube_slis" {
+module.git "scrape_kubelet_probes" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/scrapes/kube-slis.river"
+  path = "modules/kubernetes/metrics/scrapes/kubelet-probes.river"
 
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]

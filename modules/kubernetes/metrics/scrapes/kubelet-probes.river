@@ -1,6 +1,6 @@
 /*
-Module: scrape-kube-slis
-Description: Scrapes Kube SLIs
+Module: scrape-kubelet-probes
+Description: Scrapes Kube probes
 */
 argument "forward_to" {
   // comment = "Where to send the results to"
@@ -48,25 +48,25 @@ module.git "node_targets" {
   }
 }
 
-discovery.relabel "kube_slis" {
+discovery.relabel "kubelet_probes" {
   targets = module.git.node_targets.exports.relabelings.output
 
-  // set the path to use for kube-slis
+  // set the path to use for kubelet-probes
   rule {
     action = "replace"
     source_labels = ["__meta_kubernetes_node_name"]
     regex = "(.+)"
-    replacement = "/api/v1/nodes/${1}/proxy/metrics/slis"
+    replacement = "/api/v1/nodes/${1}/proxy/metrics/probes"
     target_label = "__metrics_path__"
   }
 
 }
 
-prometheus.scrape "kube_slis" {
-  targets = discovery.relabel.kube_slis.output
+prometheus.scrape "kubelet_probes" {
+  targets = discovery.relabel.kubelet_probes.output
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-  forward_to = [module.git.relabelings_kube_slis.exports.metric_relabelings.receiver]
+  forward_to = [module.git.relabelings_kubelet_probes.exports.metric_relabelings.receiver]
 
   tls_config {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
@@ -80,11 +80,11 @@ prometheus.scrape "kube_slis" {
 }
 
 // metric relabelings
-module.git "relabelings_kube_slis" {
+module.git "relabelings_kubelet_probes" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/relabelings/kube-slis.river"
+  path = "modules/kubernetes/metrics/relabelings/kubelet-probes.river"
 
   arguments {
     forward_to = argument.forward_to.value
