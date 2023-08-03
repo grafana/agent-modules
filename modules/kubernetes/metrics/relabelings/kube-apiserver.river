@@ -9,7 +9,7 @@ argument "forward_to" {
 
 argument "job_label" {
   optional = true
-  default = "apiserver"
+  default = "integrations/kubernetes/apiserver"
   // comment = "The job label to add for all apiserver"
 }
 

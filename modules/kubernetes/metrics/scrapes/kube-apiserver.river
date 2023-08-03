@@ -53,13 +53,6 @@ discovery.relabel "kube_apiserver" {
     regex = "default;kubernetes;https"
   }
 
-  // set the job to be the component
-  rule {
-    action = "replace"
-    source_labels = ["__meta_kubernetes_pod_label_component"]
-    target_label = "job"
-  }
-
   // set the namespace
   rule {
     action = "replace"
