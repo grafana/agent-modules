@@ -1,6 +1,6 @@
 /*
-Module: relabelings-kubelet-resources
-Description: Handles metric relabelings for collected metrics from kubelet-resources
+Module: relabelings-kubelet-resource
+Description: Handles metric relabelings for collected metrics from kubelet-resource
 */
 argument "forward_to" {
   optional = false
@@ -10,15 +10,15 @@ argument "forward_to" {
 argument "job_label" {
   optional = true
   // from Grafana Cloud Integration:
-  default = "integrations/kubernetes/resources"
+  default = "integrations/kubernetes/resource"
   // comment = "The job label to add for all cadvisor metrics"
 }
 
 export "metric_relabelings" {
-  value = prometheus.relabel.kubelet_resources
+  value = prometheus.relabel.kubelet_resource
 }
 
-prometheus.relabel "kubelet_resources" {
+prometheus.relabel "kubelet_resource" {
   forward_to = argument.forward_to.value
 
   // set the job label
