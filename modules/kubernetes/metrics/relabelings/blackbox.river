@@ -12,7 +12,7 @@ argument "job_label" {
   optional = true
   // from Grafana Cloud Integration:
   default = "integrations/blackbox_exporter"
-  // comment = "The job label to add for all node-exporter"
+  // comment = "The job label to add for all blackbox-exporter"
 }
 
 argument "drop_metrics" {
