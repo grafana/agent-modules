@@ -33,10 +33,6 @@ export "relabelings" {
   value = module.git.relabelings_static.exports.relabelings
 }
 
-export "relabelings" {
-  value = discovery.relabel.common
-}
-
 discovery.relabel "common" {
   targets = argument.targets.value
 
