@@ -133,6 +133,9 @@ module.git "relabelings_common" {
 
   arguments {
     targets = discovery.relabel.scrape_targets.output
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
