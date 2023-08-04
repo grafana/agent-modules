@@ -101,4 +101,5 @@ module.git "relabelings_common" {
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
+  }
 }
