@@ -8,10 +8,34 @@ argument "targets" {
   optional = false
 }
 
-argument "static_labels" {
-  // comment = "Static labels to add to every collected metrics"
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
   optional = true
-  default = {}
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_team" {
+  // comment = "Static team label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_squad" {
+  // comment = "Static squad label to add to all collected metrics"
+  optional = true
+  default = ""
 }
 
 export "relabelings" {
@@ -23,38 +47,32 @@ discovery.relabel "static" {
 
   rule {
     action = "replace"
-    replacement = coalesce(argument.static_labels.value.cluster, "")
+    replacement = argument.label_cluster.value
     target_label = "cluster"
   }
 
   rule {
     action = "replace"
-    replacement = coalesce(argument.static_labels.value.env, "")
+    replacement = argument.label_env.value
     target_label = "env"
   }
 
   rule {
     action = "replace"
-    replacement = coalesce(argument.static_labels.value.region, "")
+    replacement = argument.label_region.value
     target_label = "region"
   }
 
   rule {
     action = "replace"
-    replacement = coalesce(argument.static_labels.value.team, "")
+    replacement = argument.label_team.value
     target_label = "team"
   }
 
   rule {
     action = "replace"
-    replacement = coalesce(argument.static_labels.value.squad, "")
+    replacement = argument.label_squad.value
     target_label = "squad"
-  }
-
-  rule {
-    action = "replace"
-    replacement = coalesce(argument.static_labels.value.platform, "")
-    target_label = "platform"
   }
 
 }

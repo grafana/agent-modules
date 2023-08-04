@@ -8,10 +8,34 @@ argument "targets" {
   optional = false
 }
 
-argument "static_labels" {
-  // comment = "Static labels to add to every collected metrics"
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
   optional = true
-  default = {}
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_team" {
+  // comment = "Static team label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_squad" {
+  // comment = "Static squad label to add to all collected metrics"
+  optional = true
+  default = ""
 }
 
 argument "git_repo" {
@@ -120,5 +144,10 @@ module.git "relabelings_static" {
 
   arguments {
     targets = discovery.relabel.common.output
+    label_cluster = argument.label_cluster.value
+    label_env = argument.label_env.value
+    label_region = argument.label_region.value
+    label_team = argument.label_team.value
+    label_squad = argument.label_squad.value
   }
 }

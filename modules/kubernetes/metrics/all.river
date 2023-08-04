@@ -19,10 +19,34 @@ argument "mimir_password" {
   default = ""
 }
 
-argument "static_labels" {
-  // comment = "Static labels to add to every collected metrics"
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
   optional = true
-  default = {}
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_team" {
+  // comment = "Static team label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_squad" {
+  // comment = "Static squad label to add to all collected metrics"
+  optional = true
+  default = ""
 }
 
 argument "scrape_port_named_metrics" {
