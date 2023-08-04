@@ -3,6 +3,10 @@ Module: relabelings-static
 Description: Handles relabelings to add static labels to all targets, this isn't possible to do dynamically at the moment,
              so we simply look for commonly accepted labels that might be added i.e. cluster, env, team, squad, region, etc.
 */
+argument "targets" {
+  // comment = "Discovered targets to apply relabelings to"
+  optional = false
+}
 
 argument "static_labels" {
   // comment = "Static labels to add to every collected metrics"
