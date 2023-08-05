@@ -8,6 +8,24 @@ argument "targets" {
   optional = false
 }
 
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
 export "relabelings" {
   value = discovery.relabel.static
 }
