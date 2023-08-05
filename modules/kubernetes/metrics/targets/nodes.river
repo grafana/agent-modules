@@ -47,6 +47,13 @@ module.git "relabelings_annotations" {
 discovery.relabel "scrape_targets" {
   targets = module.git.relabelings_annotations.exports.relabelings.output
 
+  // set the instance label to the node name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_node_name"]
+    target_label = "instance"
+  }
+
   // allow nodes to declare what tenant their metrics should be written to, the following annotations are supported:
   //   metrics.agent.grafana.com/tenant: "primary"
   rule {

@@ -141,4 +141,22 @@ prometheus.relabel "endpoints" {
     replacement = "kubernetes-endpoint-scrape"
     target_label = "job"
   }
+
+  // remove the instance label from everything, except when the controller type is a daemonset
+  rule {
+    action = "labeldrop"
+    regex = "instance"
+  }
+
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_controller_kind",
+      "__meta_kubernetes_pod_node_name",
+    ]
+    separator = ";"
+    regex = "DaemonSet;(.+)"
+    replacement = "$1"
+    target_label = "instance"
+  }
 }
