@@ -50,6 +50,7 @@ argument "keep_labels" {
     "app",
     "cluster",
     "component",
+    "container",
     "deployment",
     "env",
     "filename",
@@ -203,7 +204,6 @@ loki.write "destination" {
         username = argument.loki_username.value
         password = argument.loki_password.value
     }
-
   }
 
   external_labels = {

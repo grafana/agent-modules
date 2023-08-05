@@ -17,6 +17,7 @@ argument "keep_labels" {
     "app",
     "cluster",
     "component",
+    "container",
     "deployment",
     "env",
     "filename",
