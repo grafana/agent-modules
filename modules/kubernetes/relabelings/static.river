@@ -51,16 +51,4 @@ discovery.relabel "static" {
     target_label = "region"
   }
 
-  rule {
-    action = "replace"
-    replacement = argument.label_team.value
-    target_label = "team"
-  }
-
-  rule {
-    action = "replace"
-    replacement = argument.label_squad.value
-    target_label = "squad"
-  }
-
 }
