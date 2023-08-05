@@ -141,10 +141,4 @@ prometheus.relabel "endpoints" {
     replacement = "kubernetes-endpoint-scrape"
     target_label = "job"
   }
-
-  // remove the instance label
-  rule {
-    action = "labeldrop"
-    regex = "instance"
-  }
 }

@@ -120,9 +120,4 @@ prometheus.relabel "pods" {
     target_label = "job"
   }
 
-  // remove the instance label
-  rule {
-    action = "labeldrop"
-    regex = "instance"
-  }
 }
