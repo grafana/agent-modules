@@ -135,5 +135,8 @@ module.git "relabelings_static" {
     label_cluster = argument.label_cluster.value
     label_env = argument.label_env.value
     label_region = argument.label_region.value
+    label_cluster = argument.label_cluster.value
+    label_env = argument.label_env.value
+    label_region = argument.label_region.value
   }
 }
