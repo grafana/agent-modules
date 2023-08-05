@@ -72,24 +72,6 @@ argument "tenant" {
   default = ".*"
 }
 
-argument "label_cluster" {
-  // comment = "Static cluster label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_env" {
-  // comment = "Static env label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_region" {
-  // comment = "Static region label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -119,9 +101,6 @@ module.git "service_targets" {
 
   arguments {
     tenant = argument.tenant.value
-    label_cluster = argument.label_cluster.value
-    label_env = argument.label_env.value
-    label_region = argument.label_region.value
     blackbox_url = argument.blackbox_url.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value

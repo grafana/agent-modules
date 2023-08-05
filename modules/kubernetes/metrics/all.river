@@ -231,5 +231,20 @@ prometheus.remote_write "destination" {
       username = argument.mimir_username.value
       password = argument.mimir_password.value
     }
+
+    write_relabel_config {
+			replacement = argument.label_cluster.value
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = argument.label_env.value
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = argument.label_region.value
+			target_label  = "region"
+		}
   }
 }

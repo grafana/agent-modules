@@ -25,6 +25,24 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
 argument "keep_labels" {
   // comment = "List of labels to keep before the log message is written to Loki"
   optional = true
@@ -44,24 +62,6 @@ argument "keep_labels" {
     "squad",
     "team",
   ]
-}
-
-argument "label_cluster" {
-  // comment = "Static cluster label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_env" {
-  // comment = "Static env label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_region" {
-  // comment = "Static region label to add to all collected metrics"
-  optional = true
-  default = ""
 }
 
 argument "git_repo" {
@@ -88,9 +88,6 @@ module.git "log_targets" {
   arguments {
     forward_to = module.git.log_formats_all.exports.process.receiver
     tenant = argument.tenant.value
-    label_cluster = argument.label_cluster.value
-    label_env = argument.label_env.value
-    label_region = argument.label_region.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -199,11 +196,19 @@ module.git "label_keep" {
 }
 
 loki.write "destination" {
-    endpoint {
-        url = argument.loki_url.value
-        basic_auth {
-            username = argument.loki_username.value
-            password = argument.loki_password.value
-        }
+  endpoint {
+    url = argument.loki_url.value
+
+    basic_auth {
+        username = argument.loki_username.value
+        password = argument.loki_password.value
     }
+
+  }
+
+  external_labels = {
+    "cluster" = argument.label_cluster.value,
+    "env" = argument.label_env.value,
+    "region" = argument.label_region.value,
+  }
 }

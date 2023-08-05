@@ -8,24 +8,6 @@ argument "targets" {
   optional = false
 }
 
-argument "label_cluster" {
-  // comment = "Static cluster label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_env" {
-  // comment = "Static env label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_region" {
-  // comment = "Static region label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
 argument "git_repo" {
   optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
@@ -132,11 +114,5 @@ module.git "relabelings_static" {
 
   arguments {
     targets = discovery.relabel.common.output
-    label_cluster = argument.label_cluster.value
-    label_env = argument.label_env.value
-    label_region = argument.label_region.value
-    label_cluster = argument.label_cluster.value
-    label_env = argument.label_env.value
-    label_region = argument.label_region.value
   }
 }
