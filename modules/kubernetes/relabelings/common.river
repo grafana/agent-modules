@@ -26,18 +26,6 @@ argument "label_region" {
   default = ""
 }
 
-argument "label_team" {
-  // comment = "Static team label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_squad" {
-  // comment = "Static squad label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
 argument "git_repo" {
   optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
@@ -147,7 +135,5 @@ module.git "relabelings_static" {
     label_cluster = argument.label_cluster.value
     label_env = argument.label_env.value
     label_region = argument.label_region.value
-    label_team = argument.label_team.value
-    label_squad = argument.label_squad.value
   }
 }

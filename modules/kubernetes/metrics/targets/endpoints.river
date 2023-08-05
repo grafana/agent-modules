@@ -8,6 +8,24 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
 argument "scrape_port_named_metrics" {
   // comment = "Whether or not to automatically scrape endpoints that have a port with 'metrics' in the name"
   optional = true
@@ -149,6 +167,9 @@ module.git "relabelings_common" {
 
   arguments {
     targets = discovery.relabel.scrape_targets.output
+    label_cluster = argument.label_cluster.value
+    label_env = argument.label_env.value
+    label_region = argument.label_region.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value

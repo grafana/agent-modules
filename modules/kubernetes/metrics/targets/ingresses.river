@@ -8,6 +8,24 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
 argument "blackbox_url" {
   // comment = "The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115"
   optional = false
@@ -152,6 +170,9 @@ module.git "relabelings_common" {
 
   arguments {
     targets = discovery.relabel.probe_targets.output
+    label_cluster = argument.label_cluster.value
+    label_env = argument.label_env.value
+    label_region = argument.label_region.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value

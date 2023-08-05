@@ -26,18 +26,6 @@ argument "label_region" {
   default = ""
 }
 
-argument "label_team" {
-  // comment = "Static team label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_squad" {
-  // comment = "Static squad label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
 export "relabelings" {
   value = discovery.relabel.static
 }
