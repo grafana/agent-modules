@@ -1,0 +1,123 @@
+/*
+The following items would need to be defined to include your own specific processing steps,
+this example removes the following modules:
+
+  - masking
+  - normalize filename
+
+As well as adding custom pipeline processing stages after all of the log formats have been
+processed and forwards its results to the defaulting log level module
+*/
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+module.git "log_targets" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/targets/logs-from-worker.river"
+
+  arguments {
+    forward_to = module.git.log_formats_all.exports.process.receiver
+    tenant = coalesce(env("DEFAULT_TENANT_NAME"), "primary|")
+  }
+}
+
+module.git "log_formats_all" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/log-formats/all.river"
+
+  arguments {
+    forward_to = loki.process.custom.receiver
+  }
+}
+
+loki.process "custom" {
+  forward_to = [module.git.log_level_default.exports.process.receiver]
+
+  // your custom stages here
+
+  stage.labels {
+    values = {
+      foo = "bar",
+    }
+  }
+
+}
+
+module.git "log_level_default" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/labels/log-level.river"
+
+  arguments {
+    forward_to = module.git.scrub_all.exports.process.receiver
+  }
+}
+
+module.git "drop_levels" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/drops/levels.river"
+
+  arguments {
+    forward_to = module.git.scrub_all.exports.process.receiver
+  }
+}
+
+module.git "scrub_all" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/scrubs/all.river"
+
+  arguments {
+    forward_to = module.git.embed_pod.exports.process.receiver
+  }
+}
+
+module.git "embed_pod" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/embed/pod.river"
+
+  arguments {
+    forward_to = module.git.label_keep.exports.process.receiver
+  }
+}
+
+module.git "label_keep" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision = "main"
+  path = "modules/kubernetes/logs/labels/keep-labels.river"
+
+  arguments {
+    forward_to = loki.write.destination.receiver
+    keep_labels = [
+      "app",
+      "cluster",
+      "component",
+      "deployment",
+      "env",
+      "instance",
+      "job",
+      "level",
+      "namespace",
+      "region",
+      "service",
+      "squad",
+      "team",
+    ]
+  }
+}
+
+loki.write "destination" {
+    endpoint {
+        url = env("DEFAULT_LOKI_ENDPOINT")
+        basic_auth {
+            username = env("DEFAULT_TENANT_ID")
+            password = env("DEFAULT_TENANT_TOKEN")
+        }
+    }
+}

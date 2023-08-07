@@ -1,0 +1,25 @@
+/*
+Module: relabelings-endpoints
+Description: Handles relabelings for endpoints that are common across sources i.e. metrics and logs.  The labels
+             may still be dropped through metric relabelings, pipeline stages, etc.
+*/
+argument "targets" {
+  // comment = "Discovered targets to apply relabelings to"
+  optional = false
+}
+
+export "relabelings" {
+  value = discovery.relabel.endpoints
+}
+
+discovery.relabel "endpoints" {
+  targets = argument.targets.value
+
+  // the endpoints name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_endpoints_name"]
+    target_label = "endpoints_name"
+  }
+
+}

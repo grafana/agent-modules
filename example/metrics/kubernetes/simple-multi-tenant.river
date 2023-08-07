@@ -1,0 +1,37 @@
+/*
+The following example shows using the default all metrics processing module, for
+a multiple tenants and specifying the destination url/credentials via environment
+variables.
+*/
+logging {
+  level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+  format = "logfmt"
+}
+
+module.git "metrics_primary" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/metrics/all.river"
+
+  arguments {
+    mimir_url = env("METRICS_PRIMARY_URL")
+    mimir_username = env("METRICS_PRIMARY_TENANT")
+    mimir_password = env("METRICS_PRIMARY_TOKEN")
+    tenant = "primary|"
+    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+  }
+}
+
+module.git "metrics_ops" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/metrics/all.river"
+
+  arguments {
+    mimir_url = env("METRICS_OPS_URL")
+    mimir_username = env("METRICS_OPS_TENANT")
+    mimir_password = env("METRICS_OPS_TOKEN")
+    tenant = "ops"
+    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+  }
+}
