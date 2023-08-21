@@ -22,4 +22,21 @@ discovery.relabel "service" {
     target_label = "service"
   }
 
+  // set whether or not the service is headless, by checking for the exist of a label:
+  // service.kubernetes.io/headless: ""
+  rule {
+    action = "replace"
+    replacement = "false"
+    target_label = "__tmp_headless"
+  }
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_service_labelpresent_service_kubernetes_io_headless",
+      "__meta_kubernetes_endpoints_labelpresent_service_kubernetes_io_headless",
+    ]
+    regex = "^(?:;*)?(true).*$"
+    replacement = "$1"
+    target_label = "__tmp_headless"
+  }
 }
