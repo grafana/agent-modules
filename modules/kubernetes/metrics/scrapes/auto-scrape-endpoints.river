@@ -142,21 +142,30 @@ prometheus.relabel "endpoints" {
     target_label = "job"
   }
 
-  // remove the instance label from everything, except when the controller type is a daemonset
-  rule {
-    action = "labeldrop"
-    regex = "instance"
-  }
-
+  // set the job label, only if job is "kubernetes-endpoint-scrape" and the label app.kubernetes.io/name exists
+  // on the service, endpoint or pod, set the value to ${namespace}/${name}
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_pod_controller_kind",
-      "__meta_kubernetes_pod_node_name",
+      "job",
+      "__meta_kubernetes_namespace",
+      "__meta_kubernetes_service_label_app_kubernetes_io_name",
+      "__meta_kubernetes_endpoints_label_app_kubernetes_io_name",
+      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
     ]
     separator = ";"
-    regex = "DaemonSet;(.+)"
-    replacement = "$1"
+    regex = "^(?i)kubernetes-endpoint-scrape;([^;]+);(?:;*)?([^;]+).*$"
+    replacement = "$1/$2"
+    target_label = "job"
+  }
+
+  // set the instance label to the name of the pod that was scraped, there are many dashboards and rules that rely on the
+  // instance label being present as it is automatically assigned to the scraped target if not set.  However, we don't
+  // want to create high-cardinality unnecessairly, so it does not make sense to have it be the worker node the pod is on.
+  rule {
+    action = "replace"
+    source_labels = ["pod"]
+    regex = "(.+)"
     target_label = "instance"
   }
 }
