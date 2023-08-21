@@ -37,7 +37,8 @@ discovery.relabel "metric_annotations" {
       "__meta_kubernetes_endpoints_label_metrics_agent_grafana_com_service_monitor",
     ]
     separator = ";"
-    regex = "^(?:;*)?(true|false).*$"
+    // only allow empty or true, otherwise defaults to false
+    regex = "^(?:;*)?(true)(;|true)*$"
     replacement = "$1"
     target_label = "__tmp_scrape"
   }
