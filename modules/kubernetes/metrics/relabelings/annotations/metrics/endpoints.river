@@ -14,6 +14,11 @@ discovery.relabel "metric_annotations" {
   //   metrics.agent.grafana.com/scrape: false
   // or
   //   prometheus.io/scrape: true
+  //
+  // the label prometheus.io/service-monitor: "false" is a common label for headless services, when performing endpoint
+  // service discovery, if there is both a load-balanced service and headless service, this can result in duplicate
+  // scrapes if the name of the service is attached as a label.  any targets with this label or annotation set should be dropped
+
   rule {
     action = "replace"
     replacement = "false"
@@ -26,6 +31,10 @@ discovery.relabel "metric_annotations" {
       "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_scrape",
       "__meta_kubernetes_service_annotation_prometheus_io_scrape",
       "__meta_kubernetes_endpoints_annotation_prometheus_io_scrape",
+      "__meta_kubernetes_service_label_prometheus_io_service_monitor",
+      "__meta_kubernetes_endpoints_label_prometheus_io_service_monitor",
+      "__meta_kubernetes_service_label_metrics_agent_grafana_com_service_monitor",
+      "__meta_kubernetes_endpoints_label_metrics_agent_grafana_com_service_monitor",
     ]
     separator = ";"
     regex = "^(?:;*)?(true|false).*$"
