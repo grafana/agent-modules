@@ -157,22 +157,6 @@ module.git "scrape_endpoints" {
   }
 }
 
-module.git "scrape_pods" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/scrapes/auto-scrape-pods.river"
-
-  arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
-    tenant = argument.tenant.value
-    clustering = argument.clustering.value
-    git_repo = argument.git_repo.value
-    git_rev = argument.git_rev.value
-    git_pull_freq = argument.git_pull_freq.value
-  }
-}
-
 module.git "probe_services" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
