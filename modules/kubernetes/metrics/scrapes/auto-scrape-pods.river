@@ -99,49 +99,22 @@ module.git "pod_targets" {
 
 prometheus.scrape "scrape_pods" {
   targets = module.git.pod_targets.exports.relabelings.output
-  forward_to = [prometheus.relabel.pods.receiver]
+  forward_to = [module.git.relabelings_auto_scrape.exports.metric_relabelings.receiver]
 
   clustering {
     enabled = argument.clustering.value
   }
 }
 
-prometheus.relabel "pods" {
-  forward_to = argument.forward_to.value
+// metric relabelings
+module.git "relabelings_auto_scrape" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/relabelings/auto-scrape.river"
 
-  // set the job label, only if job is not specified or contains "module.", the value of the annotation
-  // metrics.agent.grafana.com/job takes precedence
-  rule {
-    action = "replace"
-    source_labels = ["job"]
-    separator = ";"
-    regex = "(?i)^(.*module\\..*|)$"
-    replacement = "kubernetes-pod-scrape"
-    target_label = "job"
-  }
-
-  // set the job label, only if job is "kubernetes-pod-scrape" and the label app.kubernetes.io/name exists
-  // on the service, endpoint or pod, set the value to ${namespace}/${name}
-  rule {
-    action = "replace"
-    source_labels = [
-      "job",
-      "__meta_kubernetes_namespace",
-      "app",
-    ]
-    separator = ";"
-    regex = "^(.*module\\.[^;]*|);([^;]+);(.+)$"
-    replacement = "$1/$2"
-    target_label = "job"
-  }
-
-  // set the instance label to the name of the pod that was scraped, there are many dashboards and rules that rely on the
-  // instance label being present as it is automatically assigned to the scraped target if not set.  However, we don't
-  // want to create high-cardinality unnecessairly, so it does not make sense to have it be the worker node the pod is on.
-  rule {
-    action = "replace"
-    source_labels = ["pod"]
-    regex = "(.+)"
-    target_label = "instance"
+  arguments {
+    forward_to = argument.forward_to.value
+    job_label = "kubernetes-pod-auto-scrape"
   }
 }
