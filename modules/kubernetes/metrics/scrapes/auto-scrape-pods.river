@@ -130,7 +130,7 @@ prometheus.relabel "pods" {
       "app",
     ]
     separator = ";"
-    regex = "^kubernetes-endpoint-scrape;([^;]+);(.+)$"
+    regex = "^(.*module\\.[^;]*|);([^;]+);(.+)$"
     replacement = "$1/$2"
     target_label = "job"
   }
