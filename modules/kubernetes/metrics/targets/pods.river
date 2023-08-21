@@ -159,4 +159,18 @@ discovery.relabel "pod_labels" {
     action = "labeldrop"
     regex = "container"
   }
+
+  // add a label for the port that is being scraped, separately from the the instance / __address__,
+  // only if there is not a port label defined already
+  rule {
+    action = "replace"
+    source_labels = [
+      "port",
+      "__address__",
+    ]
+    separator = ";"
+    regex = "^;[^;:]+:(\\d+)"
+    replacement = "$1"
+    target_label = "port"
+  }
 }
