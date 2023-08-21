@@ -149,12 +149,10 @@ prometheus.relabel "endpoints" {
     source_labels = [
       "job",
       "__meta_kubernetes_namespace",
-      "__meta_kubernetes_service_label_app_kubernetes_io_name",
-      "__meta_kubernetes_endpoints_label_app_kubernetes_io_name",
-      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+      "app",
     ]
     separator = ";"
-    regex = "^(?i)kubernetes-endpoint-scrape;([^;]+);(?:;*)?([^;]+).*$"
+    regex = "^kubernetes-endpoint-scrape;([^;]+);(.+)$"
     replacement = "$1/$2"
     target_label = "job"
   }
