@@ -57,7 +57,7 @@ discovery.relabel "pods" {
       "__meta_kubernetes_pod_name",
     ]
     action = "replace"
-    regex = "^(ReplicaSet);(.*)(-[^-]+)(-[^-]{5})$"
+    regex = "^(ReplicaSet);(.*)(-[^-]+)(-[^-]{5})?$"
     replacement = "$1/$2"
     target_label = "deployment"
   }
