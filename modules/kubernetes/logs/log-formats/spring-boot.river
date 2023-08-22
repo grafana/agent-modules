@@ -8,7 +8,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_spring_boot
 }
@@ -16,10 +15,18 @@ export "process" {
 loki.process "log_format_spring_boot" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to springboot then process the line as spring-boot
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains springboot and the line matches the format, then process the line as spring-boot
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: spring-boot"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)spring-?boot\"}"
+    // unescaped regex: ^\d{4}.+(INFO|ERROR|WARN|DEBUG|TRACE)\s+\d+\s+[^\[]+\[\S+\]\s+\S+\s+:\s+.*$
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(spring-?boot)\\s*,?[^\"]*\"} |~ \"^\\d{4}.+(INFO|ERROR|WARN|DEBUG|TRACE)\\s+\\d+\\s+[^\\[]+\\[\\S+\\]\\s+\\S+\\s+:\\s+.*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "spring-boot",
+      }
+    }
 
     // extract the timestamp, level, traceId, spanId, processId, thread, logger from the log line
     stage.regex {

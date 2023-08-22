@@ -7,7 +7,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_logfmt
 }
@@ -15,11 +14,19 @@ export "process" {
 loki.process "log_format_logfmt" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to logfmt then process the line as
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains logfmt and the line matches the format, then process the line as
   // a logfmt (https://github.com/go-logfmt/logfmt)
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: logfmt"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)logfmt\"}"
+    // unescaped regex: (\w+=("[^"]*"|\S+))(\s+(\w+=("[^"]*"|\S+)))*\s*
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(logfmt)\\s*,?[^\"]*\"} |~ \"(\\w+=(\"[^\"]*\"|\\S+))(\\s+(\\w+=(\"[^\"]*\"|\\S+)))*\\s*\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "logfmt",
+      }
+    }
 
     // while the level could be extracted as logfmt, this allows for multiple possible log levels formats
     // i.e. loglevel=info, level=info, lvl=info, loglvl=info

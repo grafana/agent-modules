@@ -9,7 +9,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_log4j
 }
@@ -17,10 +16,17 @@ export "process" {
 loki.process "log_format_log4j" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to log4j-json then process the line as log4j-json
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains log4j-json and the line matches the format, then process the line as log4j-json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: log4j-json"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)log4j-?json\"}"
+    selector = "{logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?(log4j-?json),?[^\"]*\"} |~ \"^\\s*\{.+\}\\s*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "log4j",
+      }
+    }
 
     stage.json {
       expressions = {
@@ -75,10 +81,18 @@ loki.process "log_format_log4j" {
 
   }
 
-  // check logs.agent.grafana.com/log-format annotation, if set to log4j-text then process the line as log4j-text
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains log4j-text and the line matches the format, then process the line as log4j-text
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: log4j-text"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)log4j(-?te?xt)?\"}"
+    // unescaped regex: ^\d{4}[^\[]+\[\S+\]\s+\w+\s+\S+\s+-\s+.*$
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(log4j(-?te?xt)?)\\s*,?[^\"]*\"} |~ \"^\\d{4}[^\\[]+\\[\\S+\\]\\s+\\w+\\s+\\S+\\s+-\\s+.*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "log4j",
+      }
+    }
 
     // extract the timestamp, level, traceId, spanId, processId, thread, logger from the log line
     stage.regex {
