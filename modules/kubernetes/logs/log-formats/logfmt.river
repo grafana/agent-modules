@@ -19,7 +19,7 @@ loki.process "log_format_logfmt" {
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: logfmt"
     // unescaped regex: (\w+=("[^"]*"|\S+))(\s+(\w+=("[^"]*"|\S+)))*\s*
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(logfmt)\\s*,?[^\"]*\"}"
+    selector = "{logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(logfmt)\\s*,?[^\"]*\"}"
 
     // set the log_type
     stage.static_labels{
