@@ -57,6 +57,7 @@ argument "keep_labels" {
     "instance",
     "job",
     "level",
+    "log_type",
     "namespace",
     "region",
     "service",
