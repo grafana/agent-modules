@@ -143,7 +143,7 @@ module.git "log_format_spring_boot" {
   path = "modules/kubernetes/logs/log-formats/spring-boot.river"
 
   arguments {
-    forward_to = module.git.log_format_zerolog.exports.process.receiver
+    forward_to = module.git.log_format_syslog.exports.process.receiver
   }
 }
 
