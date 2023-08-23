@@ -55,6 +55,11 @@ discovery.relabel "scrape_targets" {
     source_labels = ["__meta_kubernetes_pod_phase"]
     regex = "^(?i)(Running|)$"
   }
+  rule {
+    action = "keep"
+    source_labels = ["__meta_kubernetes_pod_ready"]
+    regex = "true"
+  }
 
   // only keep endpoint targets that have scrape: true
   rule {
@@ -153,6 +158,14 @@ module.git "relabelings_pod" {
 
 discovery.relabel "pod_labels" {
   targets = module.git.relabelings_pod.exports.relabelings.output
+
+  // if the container is an init container, drop it
+  rule {
+    action = "drop"
+    source_labels = ["__meta_kubernetes_pod_container_init"]
+    regex = "true"
+  }
+
   // as this can result in duplicate scrapes of the same target because the labels are different
   // drop the container label
   rule {
