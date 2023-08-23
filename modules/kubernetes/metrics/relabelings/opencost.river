@@ -28,7 +28,7 @@ argument "keep_metrics" {
 }
 
 export "metric_relabelings" {
-  value = prometheus.relabel.kube_state_metrics
+  value = prometheus.relabel.opencost
 }
 
 prometheus.relabel "opencost" {
