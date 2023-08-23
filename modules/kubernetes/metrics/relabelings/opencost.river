@@ -23,7 +23,7 @@ argument "pod_name" {
 
 argument "keep_metrics" {
   optional = true
-  default = ".*"
+  default = "(.*)"
   // comment = "Regex of metrics to keep"
 }
 
