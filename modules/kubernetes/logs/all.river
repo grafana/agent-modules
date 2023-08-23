@@ -117,7 +117,7 @@ module.git "log_level_default" {
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
-    forward_to = module.git.scrub_all.exports.process.receiver
+    forward_to = module.git.drop_levels.exports.process.receiver
   }
 }
 
