@@ -19,7 +19,7 @@ loki.process "log_format_spring_boot" {
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: spring-boot"
     // unescaped regex: ^\d{4}.+(INFO|ERROR|WARN|DEBUG|TRACE)\s+\d+\s+[^\[]+\[\S+\]\s+\S+\s+:\s+.*$
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(spring-?boot)\\s*,?[^\"]*\"} |~ \"^\\d{4}.+(INFO|ERROR|WARN|DEBUG|TRACE)\\s+\\d+\\s+[^\\[]+\\[\\S+\\]\\s+\\S+\\s+:\\s+.*$\""
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(spring-?boot).*\"} |~ \"^\\\\d{4}.+(INFO|ERROR|WARN|DEBUG|TRACE)\\\\s+\\\\d+\\\\s+[^\\\\[]+\\\\[\\\\S+\\\\]\\\\s+\\\\S+\\\\s+:\\\\s+.*$\""
 
     // set the log_type
     stage.static_labels{

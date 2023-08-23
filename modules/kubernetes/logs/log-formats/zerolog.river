@@ -19,7 +19,7 @@ loki.process "log_format_zerolog" {
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: zerolog"
     // unescaped regex: ^.+(TRC|DBG|INF|WRN|ERR|FTL|PNC)[^=]+(\w+=("[^"]*"|\S+))(\s+(\w+=("[^"]*"|\S+)))*\s*$
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)(?i)[^\"]*,?\\s*(zero-?log)\\s*,?[^\"]*\"} |~ \"^.+(TRC|DBG|INF|WRN|ERR|FTL|PNC)[^=]+(\w+=(\"[^\"]*\"|\\S+))(\\s+(\\w+=(\"[^\"]*\"|\\S+)))*\\s*$"
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(zero-?log).*\"} |~ \"^.+(TRC|DBG|INF|WRN|ERR|FTL|PNC)[^=]+(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+))(\\\\s+(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+)))*\\\\s*$"
 
     // set the log_type
     stage.static_labels{

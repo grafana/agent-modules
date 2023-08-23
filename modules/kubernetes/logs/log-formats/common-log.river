@@ -19,7 +19,7 @@ loki.process "log_format_clf" {
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: clf"
     // unescaped regex: \S+\s+\S+\s+\S+\s+\[\S+\s+\S+\]\s+"[^"]+"\s+\d+\s+\d+
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*((apache|nginx|common-?log|clf))\\s*,?[^\"]*\"} |~ \"^\\S+\\s+\\S+\\s+\\S+\\s+\\[\\S+\\s+\\S+\\]\\s+\"[^\"]+\"\\s+\\d+\\s+\\d+$\""
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*((apache|nginx|common-?log|clf)).*\"} |~ \"^\\\\S+\\\\s+\\\\S+\\\\s+\\\\S+\\\\s+\\\\[\\\\S+\\\\s+\\\\S+\\\\]\\\\s+\\\"[^\\\"]+\\\"\\\\s+\\\\d+\\\\s+\\\\d+$\""
 
     // clf doesn't have a log level, set default to info, set the log_type
     stage.static_labels{

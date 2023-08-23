@@ -20,7 +20,7 @@ loki.process "log_format_klog" {
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: klog"
     // unescaped regex: ^[IWED]\d+\s+\d{2}:\d{2}:\d{2}\.\d+\s+\d+\s+\S+:\d+\]\s+.*$
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(klog)\\s*,?[^\"]*\"} |~ \"^[IWED]\\d+\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d+\\s+\\d+\\s+\\S+:\\d+\\]\\s+.*$\""
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(klog).*\"} |~ \"^[IWED]\\\\d+\\\\s+\\\\d{2}:\\\\d{2}:\\\\d{2}\\\\.\\\\d+\\\\s+\\\\d+\\\\s+\\\\S+:\\\\d+\\\\]\\\\s+.*$\""
 
     // set the log_type
     stage.static_labels{

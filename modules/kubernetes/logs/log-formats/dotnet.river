@@ -18,7 +18,8 @@ loki.process "log_format_dotnet" {
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains python-json and the line matches the format, then process the line as python-json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: dotnet-json"
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(dotnet-?json)\\s*,?[^\"]*\"} |~ \"^\\s*\{.+\}\\s*$\""
+    // unescaped regex: ^\s*\{.+\}\s*$
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(dotnet-?json).**\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
 
     // set the log_type
     stage.static_labels{

@@ -17,7 +17,7 @@ loki.process "log_format_json" {
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains json and the line matches the format, then process the line as json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: json"
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*((generic-?)?json)\\s*,?[^\"]*\"} |~ \"^\\s*\{.+\}\\s*$\""
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*((generic-?)?json).*\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
 
     // set the log_type
     stage.static_labels{

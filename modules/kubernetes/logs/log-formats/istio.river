@@ -18,7 +18,7 @@ loki.process "log_format_istio" {
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains istio and the line matches the format, then process the line as json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: istio"
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(istio-?(json)?)\\s*,?[^\"]*\"} |~ \"^\\s*\{.+\}\\s*$\""
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(istio-?(json)?).*\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
 
     // not all istio logs contain a level, default to info and set the log_type
     stage.static_labels{

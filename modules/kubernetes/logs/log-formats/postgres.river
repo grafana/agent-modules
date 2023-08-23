@@ -18,7 +18,7 @@ loki.process "log_format_postgres" {
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains postgres then process the line
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: postgres"
-    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i)[^\"]*,?\\s*(postgres)\\s*,?[^\"]*\"}"
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(postgres).*\"}"
 
     // set the log_type
     stage.static_labels{
