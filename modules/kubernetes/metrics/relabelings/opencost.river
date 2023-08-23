@@ -56,6 +56,21 @@ prometheus.relabel "opencost" {
     target_label = "exported_container"
   }
 
+  // opencost looks for an "app" label for dashboard population, based on the values from the metric kube_pod_labels
+  // so there is something consistent, copy the first value from each of the following labels, and assign it to "app"
+  rule {
+    action = "replace"
+    source_labels = [
+      "app",
+      "label_app_kubernetes_io_name",
+      "label_k8s_app",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "app"
+  }
+
   // due to the fact it is easier to perform a keep and maintain a whitelist, we have to take a
   // multi-step approach since the metrics could be coming from any job, not just opencost:
   //
