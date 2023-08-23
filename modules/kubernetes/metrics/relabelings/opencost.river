@@ -61,13 +61,13 @@ prometheus.relabel "opencost" {
   rule {
     action = "replace"
     source_labels = [
-      "__name__",
+      "pod",
       "label_app",
       "label_app_kubernetes_io_name",
       "label_k8s_app",
     ]
     separator = ";"
-    regex = "^kube_pod_labels;(?:;*)?([^;]+).*$"
+    regex = "^.*" + argument.pod_name.value + ".*;(?:;*)?([^;]+).*$"
     replacement = "$1"
     target_label = "label_app"
   }
