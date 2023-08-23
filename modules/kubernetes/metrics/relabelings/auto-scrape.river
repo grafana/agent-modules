@@ -56,15 +56,4 @@ prometheus.relabel "auto_scrape" {
     target_label = "instance"
   }
 
-  // if a collected metric contains a label that is already set i.e. "namespace", it will be changed to "exported_namespace"
-  // to avoid a collision, but this is not desirable for most cases.  move these back and drop and labels that start with
-  // exported_
-  rule {
-    action = "labelmap"
-    regex = "exported_(.+)"
-  }
-  rule {
-    action = "labeldrop"
-    regex = "exported_(.+)"
-  }
 }
