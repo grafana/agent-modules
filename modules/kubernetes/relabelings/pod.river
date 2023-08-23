@@ -96,7 +96,7 @@ discovery.relabel "pods" {
     ]
     action = "replace"
     regex = "^;(.+)$"
-    replacement = "Pod/$2"
+    replacement = "Pod/$1"
     target_label = "deployment"
   }
 
