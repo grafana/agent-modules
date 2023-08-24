@@ -1,4 +1,4 @@
-# Grafana Agent Telemetry to LGTM Stack Module
+# Grafana Agent Dynamic Blackbox Exporter
 
 A module to add a dynamic target list to blackbox exporter.
 
