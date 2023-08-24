@@ -36,6 +36,28 @@ export "metric_relabelings" {
 prometheus.relabel "kube_state_metrics" {
   forward_to = argument.forward_to.value
 
+  // kube-state-metrics typically expects the following labels to be present:
+  // - exported_namespace
+  // - exported_instance
+  // - exported_pod
+  // - exported_container
+  //
+  // to be present, the exported_ is a prefix added when there are label collisions, meaning the metrics returned
+  // have labels that already exist.  This all works, except for container, if using Service Discovery endpoint/pod
+  // and the pod has multiple containers that expose ports this can result in potentially duplicate scrape jobs,
+  // which would lead to duplicate metrics.  The configuration is to typically not keep a "container" label, as it
+  // can cause duplicate scrapes and incorrect metric calculations for instances where a pod has multiple containers
+  // and multiple ports even if a single port should be scraped.  However, for opencost dashboards/rules to work correctly,
+  // this should be added, since it is not auto-generated and the container label returned from opencost is just "container"
+  // we need to copy it
+  rule {
+    action = "replace"
+    source_labels = ["container"]
+    regex = "(.+)"
+    replacement = "$1"
+    target_label = "exported_container"
+  }
+
   // due to the fact it is easier to perform a keep and maintain a whitelist, we have to take a
   // multi-step approach since the metrics could be coming from any job, not just kube-state-metrics:
   //

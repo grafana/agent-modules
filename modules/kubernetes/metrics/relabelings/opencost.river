@@ -34,7 +34,7 @@ export "metric_relabelings" {
 prometheus.relabel "opencost" {
   forward_to = argument.forward_to.value
 
-  // opencost typically expects theeeee following labels to be present:
+  // opencost typically expects the following labels to be present:
   // - exported_namespace
   // - exported_instance
   // - exported_pod
