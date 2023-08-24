@@ -4,7 +4,7 @@ A module to add a dynamic target list to blackbox exporter.
 
 The `prometheus.exporter.blackbox` component expects a series of target blocks as part of its configuration and doesn't accept a list of targets from another component.
 
-This module allows a list of targets to be passed to blackbox exporter for scraping.
+This module allows a list of targets from another component to be used by blackbox exporter for scraping.
 
 ## Agent Version
 
