@@ -29,7 +29,8 @@ Add modules to the `modules` folder. Each module must have a README.MD that prov
 * Exports
 * Example
 
-Module contents should be ordered:
-* `arguments`
-* `exports`
-* body of the module
+Modules must contain the following elements:
+* Arguments
+* Exports
+* The body of the module
+
