@@ -49,6 +49,12 @@ argument "drop_debug" {
   default = "true"
 }
 
+argument "label_job" {
+  // comment = "The job label to set for all collected logs"
+  optional = true
+  default = "loki.source.journal.kubelet"
+}
+
 argument "label_cluster" {
   // comment = "Static cluster label to add to all collected metrics"
   optional = true
@@ -195,5 +201,6 @@ loki.write "destination" {
     "cluster" = argument.label_cluster.value,
     "env" = argument.label_env.value,
     "region" = argument.label_region.value,
+    "job" = argument.label_job.value,
   }
 }
