@@ -1,0 +1,148 @@
+/*
+Module: log-kubelet
+Description: Retrieves and processes the systemd journal logs for the kubelet
+*/
+
+argument "loki_url" {
+  // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
+  optional = false
+}
+
+argument "loki_username" {
+  // comment = "The Loki Username / Tenant ID"
+  optional = false
+}
+
+argument "loki_password" {
+  // comment = "The Loki Password / Token for the Tenant"
+  optional = true
+  default = ""
+}
+
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "keep_labels" {
+  // comment = "List of labels to keep before the log message is written to Loki"
+  optional = true
+  default = [
+    "app",
+    "cluster",
+    "component",
+    "container",
+    "deployment",
+    "env",
+    "filename",
+    "instance",
+    "job",
+    "level",
+    "log_type",
+    "namespace",
+    "region",
+    "service",
+    "squad",
+    "team",
+  ]
+}
+
+loki.source.journal "kubelet" {
+  max_age = "12h"
+  path = "/var/log/journal"
+  forward_to = [loki.process.add_labels.receiver]
+}
+
+// since the logs are coming from journal, we need to inject labels for downstream processing
+loki.process "add_labels" {
+  forward_to = [module.git.log_format_klog.exports.process.receiver]
+
+  // default level to unknown
+  stage.static_labels {
+    values = {
+      // set the log format
+      logs_agent_grafana_com_log_format = "klog",
+      // set an instance label to be the hostname
+      instance = env("HOSTNAME"),
+    }
+  }
+
+}
+
+module.git "log_format_klog" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/log-formats/klog.river"
+
+  arguments {
+    forward_to = module.git.log_level_default.exports.process.receiver
+  }
+}
+
+module.git "log_level_default" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/labels/log-level.river"
+
+  arguments {
+    forward_to = module.git.drop_levels.exports.process.receiver
+  }
+}
+
+module.git "drop_levels" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/drops/levels.river"
+
+  arguments {
+    forward_to = module.git.label_keep.exports.process.receiver
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
+module.git "label_keep" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/labels/keep-labels.river"
+
+  arguments {
+    forward_to = loki.write.destination.receiver
+    keep_labels = argument.keep_labels.value
+  }
+}
+
+loki.write "destination" {
+  endpoint {
+    url = argument.loki_url.value
+
+    basic_auth {
+        username = argument.loki_username.value
+        password = argument.loki_password.value
+    }
+  }
+
+  external_labels = {
+    "cluster" = argument.label_cluster.value,
+    "env" = argument.label_env.value,
+    "region" = argument.label_region.value,
+  }
+}
