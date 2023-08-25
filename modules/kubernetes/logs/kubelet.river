@@ -106,25 +106,27 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
+loki.relabel "journal" {
+  forward_to = []
+  rule {
+    action = "replace"
+    source_labels = ["__journal__systemd_unit"]
+    target_label = "unit"
+  }
+
+  rule {
+    action = "labelmap"
+    regex = "__journal__(.+)"
+  }
+}
+
 loki.source.journal "kubelet" {
   max_age = argument.journal_max_age.value
   path = argument.journal_path.value
   forward_to = [module.git.log_format_klog.exports.process.receiver, loki.echo.testing.receiver]
-  relabel_rules {
-    rule {
-      action = "replace"
-      source_labels = ["__journal__systemd_unit"]
-      target_label = "systemd_unit"
-    }
-
-    rule {
-      action = "labelmap"
-      regex = "__journal__(.+)"
-    }
-  }
-
-  labels {
-    job = argument.label_job.value
+  relabel_rules = loki.relabel.journal.rules
+  labels = {
+    job = argument.label_job.value,
     // set the log format
     logs_agent_grafana_com_log_format = "klog",
     // set whether or not to scrub the timestamp
