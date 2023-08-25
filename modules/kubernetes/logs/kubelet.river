@@ -79,19 +79,14 @@ argument "keep_labels" {
   default = [
     "app",
     "cluster",
-    "component",
-    "container",
-    "deployment",
     "env",
-    "filename",
     "instance",
     "job",
     "level",
     "log_type",
-    "namespace",
     "region",
-    "service",
     "squad",
+    "systemd_unit"
     "team",
   ]
 }
@@ -114,30 +109,36 @@ argument "git_pull_freq" {
 loki.source.journal "kubelet" {
   max_age = argument.journal_max_age.value
   path = argument.journal_path.value
-  forward_to = [loki.process.add_labels.receiver]
-}
+  forward_to = [module.git.log_format_klog.exports.process.receiver, loki.echo.testing.receiver]
+  relabel_rules {
+    rule {
+      action = "replace"
+      source_labels = ["__journal__systemd_unit"]
+      target_label = "systemd_unit"
+    }
 
-// since the logs are coming from journal, we need to inject labels for downstream processing
-loki.process "add_labels" {
-  forward_to = [module.git.log_format_klog.exports.process.receiver]
-
-  // default level to unknown
-  stage.static_labels {
-    values = {
-      // set the log format
-      logs_agent_grafana_com_log_format = "klog",
-      // set whether or not to scrub the timestamp
-      logs_agent_grafana_com_scrub_timestamp = argument.scrub_timestamp.value,
-      // set whether or not to scrub the log level
-      logs_agent_grafana_com_scrub_level = argument.scrub_level.value,
-      // set whether or not to drop debug level messages
-      logs_agent_grafana_com_log_format = argument.drop_debug.value,
-      // set an instance label to be the hostname
-      instance = env("HOSTNAME"),
+    rule {
+      action = "labelmap"
+      regex = "__journal__(.+)"
     }
   }
 
+  labels {
+    job = argument.label_job.value
+    // set the log format
+    logs_agent_grafana_com_log_format = "klog",
+    // set whether or not to scrub the timestamp
+    logs_agent_grafana_com_scrub_timestamp = argument.scrub_timestamp.value,
+    // set whether or not to scrub the log level
+    logs_agent_grafana_com_scrub_level = argument.scrub_level.value,
+    // set whether or not to drop debug level messages
+    logs_agent_grafana_com_log_format = argument.drop_debug.value,
+    // set an instance label to be the hostname
+    instance = env("HOSTNAME"),
+  }
 }
+
+loki.echo "testing" {}
 
 module.git "log_format_klog" {
   repository = argument.git_repo.value
