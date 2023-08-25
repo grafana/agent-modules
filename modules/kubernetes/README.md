@@ -8,7 +8,7 @@ The following pod annotations are supported:
 | :--------------- | :-----------|
 | `logs.agent.grafana.com/scrape` | Allow a pod to declare it's logs should be dropped. |
 | `logs.agent.grafana.com/tenant` | Allow a pod to override the tenant for its logs. |
-| `logs.agent.grafana.com/log-format` | If specified additional processing is performed to extract details based on the specified format.  The following formats are currently supported: <ul><li>common-log<li>donet<li>istio<li>json<li>klog<li>log4j<li>logfmt<li>otel<li>postgres<li>python<li>spring-boot<li>zerolog</ul> |
+| `logs.agent.grafana.com/log-format` | If specified additional processing is performed to extract details based on the specified format.  This value can be a comma-delimited list, in the instances a pod may have multiple containers.  The following formats are currently supported: <ul><li>common-log<li>donet<li>istio<li>json<li>klog<li>log4j<li>logfmt<li>otel<li>postgres<li>python<li>spring-boot<li>syslog<li>zerolog</ul> |
 | `logs.agent.grafana.com/scrub-level` | Boolean whether or not the level should be dropped from the log message (as it is a label). |
 | `logs.agent.grafana.com/scrub-timestamp` | Boolean whether or not the timestamp should be dropped from the log message (as it is metadata). |
 | `logs.agent.grafana.com/scrub-nulls` | Boolean whether or not keys with null values should be dropped from json, reducing the size of the log message. |
@@ -27,11 +27,11 @@ The following pod annotations are supported:
 ---
 ## Metrics
 
-The following pod annotations are supported are supported for gathering of metrics:
+The following pod annotations are supported are supported for gathering of metrics for pods and endpoints:
 
 | Annotation       | Description |
 | :--------------- | :-----------|
-| `metrics.agent.grafana.com/scrape` <br> `prometheus.io/scrape` | Boolean whether or not to scrape the endpoint / pod for metrics. *Note*: If a pod exposes multiple ports, all ports would be scraped for metrics.  To limit this behavior specify the port annotation to limit the scrape to a single port. |
+| `metrics.agent.grafana.com/scrape` <br> `prometheus.io/scrape` | Boolean whether or not to scrape the endpoint / pod for metrics. *Note*: If a pod exposes multiple ports, all ports would be scraped for metrics.  To limit this behavior specify the port annotation to limit the scrape to a single port. If the label `prometheus.io/service-monitor` or `metrics.agent.grafana.com/service-monitor` is set to `"false"` that is interpreted as a `scrape: "false"` |
 | `metrics.agent.grafana.com/scheme` <br> `prometheus.io/scheme` | The default scraping scheme is `http`, this can be specified as a single value which would override, the schema being used for all ports attached to the endpoint / pod. |
 | `metrics.agent.grafana.com/path` <br> `prometheus.io/path` | The default path to scrape is `/metrics`, this can be specified as a single value which would override, the scrape path being used for all ports attached to the endpoint / pod. |
 | `metrics.agent.grafana.com/port` <br> `prometheus.io/port` | The default port to scrape is the endpoint port, this can be specified as a single value which would override the scrape port being used for all ports attached to the endpoint, note that even if aan endpoint had multiple targets, the relabel_config targets are deduped before scraping |
@@ -40,7 +40,7 @@ The following pod annotations are supported are supported for gathering of metri
 | `metrics.agent.grafana.com/interval` <br> `prometheus.io/interval` | The default interval to scrape is `1m`, this can be specified as a single value which would override, the scrape interval being used for all ports attached to the endpoint / pod. |
 | `metrics.agent.grafana.com/timeout` <br> `prometheus.io/timeout` | The default timeout for scraping is `10s`, this can be specified as a single value which would override, the scrape interval being used for all ports attached to the endpoint / pod. |
 
-The following pod annotations are supported are supported for probes and the gathering of metrics from blackbox exporter:
+The following service / ingress annotations are supported are supported for probes and the gathering of metrics from blackbox exporter:
 
 | Annotation       | Description |
 | :--------------- | :-----------|

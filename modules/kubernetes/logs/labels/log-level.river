@@ -9,7 +9,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_level
 }
@@ -25,6 +24,19 @@ loki.process "log_level" {
     stage.static_labels {
       values = {
         level = "unknown",
+      }
+    }
+
+  }
+
+  // if a log_type is not set, default it to unknown
+  stage.match {
+    selector = "{log_type=\"\"}"
+
+    // default level to unknown
+    stage.static_labels {
+      values = {
+        log_type = "unknown",
       }
     }
 

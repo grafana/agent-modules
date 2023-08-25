@@ -124,39 +124,30 @@ module.git "relabelings_node_exporter" {
   path = "modules/kubernetes/metrics/relabelings/node-exporter.river"
 
   arguments {
-    forward_to = [prometheus.relabel.endpoints.receiver]
+    forward_to = [module.git.relabelings_opencost.exports.metric_relabelings.receiver]
   }
 }
 
-prometheus.relabel "endpoints" {
-  forward_to = argument.forward_to.value
+module.git "relabelings_opencost" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/relabelings/opencost.river"
 
-  // set the job label, only if job is not specified or contains "module.", the value of the annotation
-  // metrics.agent.grafana.com/job takes precedence
-  rule {
-    action = "replace"
-    source_labels = ["job"]
-    separator = ";"
-    regex = "(?i)^(.*module\\..*|)$"
-    replacement = "kubernetes-endpoint-scrape"
-    target_label = "job"
+  arguments {
+    forward_to = [module.git.relabelings_auto_scrape.exports.metric_relabelings.receiver]
   }
+}
 
-  // remove the instance label from everything, except when the controller type is a daemonset
-  rule {
-    action = "labeldrop"
-    regex = "instance"
-  }
+// metric relabelings
+module.git "relabelings_auto_scrape" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/relabelings/auto-scrape.river"
 
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_pod_controller_kind",
-      "__meta_kubernetes_pod_node_name",
-    ]
-    separator = ";"
-    regex = "DaemonSet;(.+)"
-    replacement = "$1"
-    target_label = "instance"
+  arguments {
+    forward_to = argument.forward_to.value
+    job_label = "kubernetes-endpoint-auto-scrape"
   }
 }

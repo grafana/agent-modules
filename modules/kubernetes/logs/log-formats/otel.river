@@ -8,7 +8,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_otel
 }
@@ -16,10 +15,17 @@ export "process" {
 loki.process "log_format_otel" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to otel then process the line as otel
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains otel and the line matches the format, then process the line as otel
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: otel"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)(otel|open-?telemetry)(-?json)?\"}"
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*((otel|open-?telemetry)(-?json)).*\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "otel",
+      }
+    }
 
     // extract the SeverityText (level), and service.name
     // Docs: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/README.md#service

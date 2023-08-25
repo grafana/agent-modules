@@ -61,6 +61,11 @@ discovery.relabel "scrape_targets" {
     source_labels = ["__meta_kubernetes_pod_phase"]
     regex = "^(?i)(Running|)$"
   }
+  rule {
+    action = "keep"
+    source_labels = ["__meta_kubernetes_pod_ready"]
+    regex = "true"
+  }
 
   // add a __tmp_scrape_port_named_metrics
   rule {
@@ -184,10 +189,32 @@ module.git "relabelings_service" {
 
 discovery.relabel "pod_labels" {
   targets = module.git.relabelings_service.exports.relabelings.output
+
+  // if the container is an init container, drop it
+  rule {
+    action = "drop"
+    source_labels = ["__meta_kubernetes_pod_container_init"]
+    regex = "true"
+  }
+
   // as this can result in duplicate scrapes of the same target because the labels are different
   // drop the container label
   rule {
     action = "labeldrop"
     regex = "container"
+  }
+
+  // add a label for the port that is being scraped, separately from the the instance / __address__,
+  // only if there is not a port label defined already
+  rule {
+    action = "replace"
+    source_labels = [
+      "port",
+      "__address__",
+    ]
+    separator = ";"
+    regex = "^;[^;:]+:(\\d+)"
+    replacement = "$1"
+    target_label = "port"
   }
 }

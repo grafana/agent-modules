@@ -3,6 +3,11 @@ Module: scrape-kube-dns
 Description: Scrapes Kube dns, most of these same metrics can come from cAdvisor use only if necessary.  If using annotations
              then this module does not need to be used as the kube-dns pods most likely already have the annotation
              prometheus.io/scrape: true set
+
+             !!Note!!
+             This module most likely does not need to be included, if you're using the auto-scrape-pods.river module, as
+             most kube-dns pods have the annotation prometheus.io/scrape: "true" set already on the pods but not the services.
+
 */
 argument "forward_to" {
   // comment = "Where to send the results to"

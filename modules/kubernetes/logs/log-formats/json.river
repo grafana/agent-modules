@@ -7,7 +7,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_json
 }
@@ -15,10 +14,17 @@ export "process" {
 loki.process "log_format_json" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to json then process the line as json
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains json and the line matches the format, then process the line as json
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: json"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)(generic-?)?json\"}"
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*((generic-?)?json).*\"} |~ \"^\\\\s*\\\\{.+\\\\}\\\\s*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "json",
+      }
+    }
 
     // extract the level
     stage.json {

@@ -8,7 +8,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_zerolog
 }
@@ -16,10 +15,18 @@ export "process" {
 loki.process "log_format_zerolog" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to postgres then process the line
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains postgres then process the line
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: zerolog"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)zero-?log\"}"
+    // unescaped regex: ^.+(TRC|DBG|INF|WRN|ERR|FTL|PNC)[^=]+(\w+=("[^"]*"|\S+))(\s+(\w+=("[^"]*"|\S+)))*\s*$
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(zero-?log).*\"} |~ \"^.+(TRC|DBG|INF|WRN|ERR|FTL|PNC)[^=]+(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+))(\\\\s+(\\\\w+=(\\\"[^\\\"]*\\\"|\\\\S+)))*\\\\s*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "zerolog",
+      }
+    }
 
     // extract the level from the log
     // unescaped regex: (?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2}(T|\s+)[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]+[^ ]*\s+)(?P<level>(TRC|DBG|INF|WRN|ERR|FTL|PNC)).+

@@ -8,7 +8,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.log_format_klog
 }
@@ -16,11 +15,19 @@ export "process" {
 loki.process "log_format_klog" {
   forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/log-format annotation, if set to klog then process the line as
+  // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains klog and the line matches the format, then process the line as
   // a klog (https://github.com/kubernetes/klog)
   stage.match {
     pipeline_name = "pipeline for annotation || logs.agent.grafana.com/log-format: klog"
-    selector = "{logs_agent_grafana_com_log_format=~\"(?i)klog\"}"
+    // unescaped regex: ^[IWED]\d+\s+\d{2}:\d{2}:\d{2}\.\d+\s+\d+\s+\S+:\d+\]\s+.*$
+    selector = "{log_type=\"\", logs_agent_grafana_com_log_format=~\"(?i).*(klog).*\"} |~ \"^[IWED]\\\\d+\\\\s+\\\\d{2}:\\\\d{2}:\\\\d{2}\\\\.\\\\d+\\\\s+\\\\d+\\\\s+\\\\S+:\\\\d+\\\\]\\\\s+.*$\""
+
+    // set the log_type
+    stage.static_labels{
+      values = {
+        log_type = "klog",
+      }
+    }
 
     // extract log level, klog uses a single letter code for the level followed by the month and day i.e. I0119
     stage.regex {
