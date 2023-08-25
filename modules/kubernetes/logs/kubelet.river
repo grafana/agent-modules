@@ -31,6 +31,24 @@ argument "journal_path" {
   default = "/var/log/journal"
 }
 
+argument "scrub_level" {
+  // comment = "Whether or not to scrub the log level from the log line"
+  optional = true
+  default = "false"
+}
+
+argument "scrub_timestamp" {
+  // comment = "Whether or not to scrub the timestamp from the log line"
+  optional = true
+  default = "false"
+}
+
+argument "drop_debug" {
+  // comment = "Whether or not to drop debug messages"
+  optional = true
+  default = "true"
+}
+
 argument "label_cluster" {
   // comment = "Static cluster label to add to all collected metrics"
   optional = true
@@ -102,6 +120,12 @@ loki.process "add_labels" {
     values = {
       // set the log format
       logs_agent_grafana_com_log_format = "klog",
+      // set whether or not to scrub the timestamp
+      logs_agent_grafana_com_scrub_timestamp = argument.scrub_timestamp.value,
+      // set whether or not to scrub the log level
+      logs_agent_grafana_com_scrub_level = argument.scrub_level.value,
+      // set whether or not to drop debug level messages
+      logs_agent_grafana_com_log_format = argument.drop_debug.value,
       // set an instance label to be the hostname
       instance = env("HOSTNAME"),
     }
