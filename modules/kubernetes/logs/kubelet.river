@@ -86,7 +86,7 @@ argument "keep_labels" {
     "log_type",
     "region",
     "squad",
-    "systemd_unit"
+    "systemd_unit",
     "team",
   ]
 }
