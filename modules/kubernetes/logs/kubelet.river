@@ -31,6 +31,12 @@ argument "journal_path" {
   default = "/var/log/journal"
 }
 
+argument "journal_filter" {
+  // comment = "Filter the system unit files to read from the journal"
+  optional = true
+  default = ".+"
+}
+
 argument "scrub_level" {
   // comment = "Whether or not to scrub the log level from the log line"
   optional = true
@@ -86,7 +92,7 @@ argument "keep_labels" {
     "log_type",
     "region",
     "squad",
-    "systemd_unit",
+    "unit",
     "team",
   ]
 }
@@ -108,6 +114,14 @@ argument "git_pull_freq" {
 
 loki.relabel "journal" {
   forward_to = []
+
+  // filter unit files
+  rule {
+    action = "keep"
+    source_labels = ["__journal__systemd_unit"]
+    regex = argument.journal_filter.value
+  }
+
   // copy all journal labels and make the available to the pipeline stages as labels, there is a label keep defined to filter
   // out unwanted labels, the following labels are available:
   // - boot_id
@@ -133,11 +147,18 @@ loki.relabel "journal" {
     regex = "__journal__(.+)"
   }
 
+  rule {
+    action = "replace"
+    source_labels = ["__journal__systemd_unit"]
+    replacement = "$1"
+    target_label = "unit"
+  }
+
   // kubelet logs are in klog format
   rule {
     action = "replace"
     source_labels = ["__journal__systemd_unit"]
-    regex = "kubelet.service"
+    regex = "(kubelet|node-problem-detector)\\.service"
     replacement = "klog"
     target_label = "logs_agent_grafana_com_log_format"
   }
@@ -146,7 +167,7 @@ loki.relabel "journal" {
   rule {
     action = "replace"
     source_labels = ["__journal__systemd_unit"]
-    regex = "containerd.service"
+    regex = "(containerd).service"
     replacement = "logfmt"
     target_label = "logs_agent_grafana_com_log_format"
   }
