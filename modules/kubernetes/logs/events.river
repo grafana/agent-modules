@@ -24,7 +24,6 @@ argument "loki_password" {
 argument "namespaces" {
   // comment = "Namespaces to watch for Events in, by default [] = all namespaces"
   optional = true
-  default = []
 }
 
 argument "label_job" {
