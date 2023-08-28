@@ -21,11 +21,6 @@ argument "loki_password" {
   default = ""
 }
 
-argument "namespaces" {
-  // comment = "Namespaces to watch for Events in, by default [] = all namespaces"
-  optional = true
-}
-
 argument "label_job" {
   // comment = "The job label to set for all collected logs"
   optional = true
@@ -84,7 +79,6 @@ argument "git_pull_freq" {
 }
 
 loki.source.kubernetes_events "events" {
-  namespaces = argument.namespaces.value
   forward_to = [loki.relabel.events.receiver]
 }
 
