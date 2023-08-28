@@ -64,9 +64,20 @@ argument "keep_labels" {
     "log_type",
     "region",
     "squad",
-    "unit",
     "team",
   ]
+}
+
+argument "drop_debug" {
+  // comment = "Whether or not to drop debug messages"
+  optional = true
+  default = "true"
+}
+
+argument "drop_info" {
+  // comment = "Whether or not to drop info messages"
+  optional = true
+  default = "false"
 }
 
 argument "git_repo" {
@@ -107,6 +118,18 @@ loki.relabel "events" {
     target_label = "level"
   }
 
+  // set the annotations for drop_debug and drop_info
+  rule {
+    action = "replace"
+    replacement = argument.drop_debug.value
+    target_label = "logs_agent_grafana_com_drop_debug"
+  }
+  rule {
+    action = "replace"
+    replacement = argument.drop_info.value
+    target_label = "logs_agent_grafana_com_drop_info"
+  }
+
 }
 
 module.git "log_format_logfmt" {
@@ -137,6 +160,20 @@ loki.process "events" {
     values = {
       instance = "",
       level = "",
+    }
+  }
+
+  // since we're using the level label derived from the "type" property, one type is "Normal" which is not a log level
+  // and will not properly color to an info level message, set the level to info.  This is also relavent for if dropping
+  // info level messages is desired. As Normal will contain messages about pods starting, stopping, etc. which may be
+  // something undesirable to keep.
+  stage.match {
+    selector = "{level=~\"Normal\"}"
+
+    stage.static_labels {
+      values = {
+        level = "Info",
+      }
     }
   }
 
