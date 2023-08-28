@@ -1,0 +1,107 @@
+/*
+Module: log-kubelet
+Description: Retrieves and processes the systemd journal logs for the kubelet
+*/
+
+argument "loki_url" {
+  // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
+  optional = false
+}
+
+argument "loki_username" {
+  // comment = "The Loki Username / Tenant ID"
+  optional = false
+}
+
+argument "loki_password" {
+  // comment = "The Loki Password / Token for the Tenant"
+  optional = true
+  default = ""
+}
+
+argument "namespaces" {
+  // comment = "Namespaces to watch for Events in, by default [] = all namespaces"
+  optional = true
+  default = []
+}
+
+argument "label_job" {
+  // comment = "The job label to set for all collected logs"
+  optional = true
+  default = "loki.source.kubernetes_events"
+}
+
+argument "label_cluster" {
+  // comment = "Static cluster label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_env" {
+  // comment = "Static env label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "label_region" {
+  // comment = "Static region label to add to all collected metrics"
+  optional = true
+  default = ""
+}
+
+argument "keep_labels" {
+  // comment = "List of labels to keep before the log message is written to Loki"
+  optional = true
+  default = [
+    "app",
+    "cluster",
+    "env",
+    "instance",
+    "job",
+    "level",
+    "log_type",
+    "region",
+    "squad",
+    "unit",
+    "team",
+  ]
+}
+
+argument "git_repo" {
+  optional = true
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
+argument "git_pull_freq" {
+  optional = true
+  default = "5m"
+}
+
+loki.source.kubernetes_events "events" {
+  // Only watch for events in the kube-system namespace.
+  namespaces = argument.namespaces.value
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "destination" {
+  endpoint {
+    url = argument.loki_url.value
+
+    basic_auth {
+        username = argument.loki_username.value
+        password = argument.loki_password.value
+    }
+  }
+
+  external_labels = {
+    "cluster" = argument.label_cluster.value,
+    "env" = argument.label_env.value,
+    "region" = argument.label_region.value,
+    "job" = argument.label_job.value,
+  }
+}
