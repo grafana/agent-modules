@@ -1,6 +1,8 @@
 /*
-Module: log-kubelet
-Description: Retrieves and processes the systemd journal logs for the kubelet
+Module: logs-kubernetes-events
+Description: Retrieves and processes kubernetes events.  This module should only be deployed as part of a StatefulSet with
+             a single replica.  As events are captured from API calls, any more than a single pod would result in duplicate
+              events being sent to Loki.
 */
 
 argument "loki_url" {
@@ -85,7 +87,7 @@ argument "git_pull_freq" {
 loki.source.kubernetes_events "events" {
   // Only watch for events in the kube-system namespace.
   namespaces = argument.namespaces.value
-  forward_to = [loki.write.local.receiver]
+  forward_to = [loki.write.destination.receiver]
 }
 
 loki.write "destination" {
