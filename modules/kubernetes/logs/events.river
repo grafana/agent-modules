@@ -127,10 +127,28 @@ module.git "drop_levels" {
   path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
-    forward_to = module.git.label_keep.exports.process.receiver
+    forward_to = loki.process.events.receiver
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
+// set the instance label to the source host
+loki.process "events" {
+  forward_to = [module.git.label_keep.exports.process.receiver]
+
+  stage.logfmt {
+    mapping = {
+      "instance" = "sourcehost",
+    }
+  }
+
+  // set the instance extracted value as a label
+  stage.labels {
+    values = {
+      instance = "",
+    }
   }
 }
 
