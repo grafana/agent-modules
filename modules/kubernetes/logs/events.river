@@ -114,17 +114,6 @@ module.git "log_format_klog" {
   path = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
-    forward_to = module.git.log_level_default.exports.process.receiver
-  }
-}
-
-module.git "log_level_default" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/labels/log-level.river"
-
-  arguments {
     forward_to = module.git.drop_levels.exports.process.receiver
   }
 }
