@@ -181,7 +181,7 @@ loki.process "events" {
   // look for certain keywords and set a log level based on that
   // i.e. msg="Successfully assigned agents/blackbox-prometheus-blackbox-exporter-696d8fcd54-8qgz5 to gke-dev-default-pool-0a5344ff-0eea"
   stage.match {
-    selector = "{instance=~\".*module.git|\"}"
+    selector = "{instance=~\".*module.git.*|\"}"
 
     // while the level could be extracted as logfmt, this allows for multiple possible log levels formats
     // i.e. loglevel=info, level=info, lvl=info, loglvl=info
