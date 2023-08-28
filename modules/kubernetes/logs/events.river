@@ -98,6 +98,13 @@ loki.relabel "events" {
     target_label = "logs_agent_grafana_com_log_format"
   }
 
+  // default to log level info as events don't always have a level
+  rule {
+    action = "replace"
+    replacement = "info"
+    target_label = "level"
+  }
+
 }
 
 module.git "log_format_klog" {
