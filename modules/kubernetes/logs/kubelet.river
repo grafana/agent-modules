@@ -177,7 +177,7 @@ loki.relabel "journal" {
 loki.source.journal "kubelet" {
   max_age = argument.journal_max_age.value
   path = argument.journal_path.value
-  forward_to = [module.git.log_format_klog.exports.process.receiver, loki.echo.testing.receiver]
+  forward_to = [module.git.log_format_klog.exports.process.receiver]
   relabel_rules = loki.relabel.journal.rules
   labels = {
     job = argument.label_job.value,
@@ -193,8 +193,6 @@ loki.source.journal "kubelet" {
     instance = env("HOSTNAME"),
   }
 }
-
-loki.echo "testing" {}
 
 module.git "log_format_klog" {
   repository = argument.git_repo.value
