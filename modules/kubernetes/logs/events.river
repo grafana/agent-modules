@@ -85,13 +85,6 @@ loki.source.kubernetes_events "events" {
 loki.relabel "events" {
   forward_to = [module.git.log_format_klog.exports.process.receiver]
 
-  // events are in klog format
-  rule {
-    action = "replace"
-    replacement = "klog"
-    target_label = "logs_agent_grafana_com_log_format"
-  }
-
   // default to log level info as events don't always have a level
   rule {
     action = "replace"
@@ -99,43 +92,6 @@ loki.relabel "events" {
     target_label = "level"
   }
 
-}
-
-module.git "log_format_klog" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/log-formats/klog.river"
-
-  arguments {
-    forward_to = module.git.drop_levels.exports.process.receiver
-  }
-}
-
-module.git "drop_levels" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/drops/levels.river"
-
-  arguments {
-    forward_to = module.git.label_keep.exports.process.receiver
-    git_repo = argument.git_repo.value
-    git_rev = argument.git_rev.value
-    git_pull_freq = argument.git_pull_freq.value
-  }
-}
-
-module.git "label_keep" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/labels/keep-labels.river"
-
-  arguments {
-    forward_to = loki.write.destination.receiver
-    keep_labels = argument.keep_labels.value
-  }
 }
 
 loki.write "destination" {
