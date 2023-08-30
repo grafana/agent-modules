@@ -17,6 +17,8 @@ module.git "metrics_primary" {
     mimir_url = env("METRICS_PRIMARY_URL")
     mimir_username = env("METRICS_PRIMARY_TENANT")
     mimir_password = env("METRICS_PRIMARY_TOKEN")
+    // match aything with the annotation:
+    // metrics.agent.grafana.com/tenant: primary or the annotation is not set
     tenant = "primary|"
     blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
   }
@@ -31,6 +33,7 @@ module.git "metrics_ops" {
     mimir_url = env("METRICS_OPS_URL")
     mimir_username = env("METRICS_OPS_TENANT")
     mimir_password = env("METRICS_OPS_TOKEN")
+    // metrics.agent.grafana.com/tenant: ops
     tenant = "ops"
     blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
   }
