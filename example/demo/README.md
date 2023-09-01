@@ -19,7 +19,7 @@ left where possible and REDACTED where not.
 
 ```bash
 export AGENT_MODE="flow"
-export AGENT_CONFIG_FOLDER="/mnt/c/workspace/agent-modules/example"
+export AGENT_CONFIG_FOLDER="/mnt/c/workspace/agent-modules/example/demo"
 export AGENT_LOG_LEVEL="debug"
 export METRIC_URL="https://prometheus-us-central1.grafana.net/api/prom/push"
 export METRIC_USERNAME="REDACTED"
