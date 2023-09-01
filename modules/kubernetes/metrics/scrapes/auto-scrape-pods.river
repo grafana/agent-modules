@@ -52,69 +52,69 @@ Description:
   prometheus.io/timeout: 30s
 */
 argument "forward_to" {
-  // comment = "Where to send the results to"
-  optional = false
+	// comment = "Where to send the results to"
+	optional = false
 }
 
 argument "tenant" {
-  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
-  optional = true
-  default = ".*"
+	// comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+	optional = true
+	default  = ".*"
 }
 
 argument "clustering" {
-  // comment = "Whether or not clustering should be enabled"
-  optional = true
-  default = false
+	// comment = "Whether or not clustering should be enabled"
+	optional = true
+	default  = false
 }
 
 argument "git_repo" {
-  optional = true
-  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+	optional = true
+	default  = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
 }
 
 argument "git_rev" {
-  optional = true
-  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+	optional = true
+	default  = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
 argument "git_pull_freq" {
-  optional = true
-  default = "5m"
+	optional = true
+	default  = "5m"
 }
 
 module.git "pod_targets" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/targets/pods.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/metrics/targets/pods.river"
 
-  arguments {
-    tenant = argument.tenant.value
-    git_repo = argument.git_repo.value
-    git_rev = argument.git_rev.value
-    git_pull_freq = argument.git_pull_freq.value
-  }
+	arguments {
+		tenant        = argument.tenant.value
+		git_repo      = argument.git_repo.value
+		git_rev       = argument.git_rev.value
+		git_pull_freq = argument.git_pull_freq.value
+	}
 }
 
 prometheus.scrape "scrape_pods" {
-  targets = module.git.pod_targets.exports.relabelings.output
-  forward_to = [module.git.relabelings_auto_scrape.exports.metric_relabelings.receiver]
+	targets    = module.git.pod_targets.exports.relabelings.output
+	forward_to = [module.git.relabelings_auto_scrape.exports.metric_relabelings.receiver]
 
-  clustering {
-    enabled = argument.clustering.value
-  }
+	clustering {
+		enabled = argument.clustering.value
+	}
 }
 
 // metric relabelings
 module.git "relabelings_auto_scrape" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/metrics/relabelings/auto-scrape.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/metrics/relabelings/auto-scrape.river"
 
-  arguments {
-    forward_to = argument.forward_to.value
-    job_label = "kubernetes-pod-auto-scrape"
-  }
+	arguments {
+		forward_to = argument.forward_to.value
+		job_label  = "kubernetes-pod-auto-scrape"
+	}
 }

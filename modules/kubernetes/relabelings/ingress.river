@@ -4,22 +4,21 @@ Description: Handles relabelings for ingress that are common across sources i.e.
              may still be dropped through metric relabelings, pipeline stages, etc.
 */
 argument "targets" {
-  // comment = "Discovered targets to apply relabelings to"
-  optional = false
+	// comment = "Discovered targets to apply relabelings to"
+	optional = false
 }
 
 export "relabelings" {
-  value = discovery.relabel.ingress
+	value = discovery.relabel.ingress
 }
 
 discovery.relabel "ingress" {
-  targets = argument.targets.value
+	targets = argument.targets.value
 
-  // the ingress name
-  rule {
-    action = "replace"
-    source_labels = ["__meta_kubernetes_ingress_name"]
-    target_label = "ingress_name"
-  }
-
+	// the ingress name
+	rule {
+		action        = "replace"
+		source_labels = ["__meta_kubernetes_ingress_name"]
+		target_label  = "ingress_name"
+	}
 }

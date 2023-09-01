@@ -4,19 +4,19 @@ a single tenant and specifying the destination url/credentials via environment
 variables.
 */
 logging {
-  level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
-  format = "logfmt"
+	level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+	format = "logfmt"
 }
 
 module.git "metrics_primary" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/metrics/all.river"
+	repository = "https://github.com/grafana/agent-modules.git"
+	revision   = "main"
+	path       = "modules/kubernetes/metrics/all.river"
 
-  arguments {
-    mimir_url = env("DEFAULT_METRICS_URL")
-    mimir_username = env("DEFAULT_METRICS_TENANT")
-    mimir_password = env("DEFAULT_METRICS_TOKEN")
-    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
-  }
+	arguments {
+		mimir_url      = env("DEFAULT_METRICS_URL")
+		mimir_username = env("DEFAULT_METRICS_TENANT")
+		mimir_password = env("DEFAULT_METRICS_TOKEN")
+		blackbox_url   = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+	}
 }

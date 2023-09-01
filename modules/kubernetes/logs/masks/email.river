@@ -4,28 +4,26 @@ Description: Checks the logs.agent.grafana.com/mask-email annotation, if set to 
              pattern will have the value of the email replaced with "*email*hash*
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
-  optional = false
+	// comment = "The module to forward the output to"
+	optional = false
 }
 
-
 export "process" {
-  value = loki.process.mask_email
+	value = loki.process.mask_email
 }
 
 loki.process "mask_email" {
-  forward_to = [argument.forward_to.value]
+	forward_to = [argument.forward_to.value]
 
-  // check logs.agent.grafana.com/mask-email annotation, if true the data will be masked as *email*salt*
-  stage.match {
-    pipeline_name = "pipeline for annotation || logs.agent.grafana.com/mask-email: true"
-    selector = "{logs_agent_grafana_com_mask_email=~\"(?i)true\"}"
+	// check logs.agent.grafana.com/mask-email annotation, if true the data will be masked as *email*salt*
+	stage.match {
+		pipeline_name = "pipeline for annotation || logs.agent.grafana.com/mask-email: true"
+		selector      = "{logs_agent_grafana_com_mask_email=~\"(?i)true\"}"
 
-    stage.replace {
-      // unescaped regex: ([\w\.=-]+@[\w\.-]+\.[\w]{2,64})
-      expression = "([\\w\\.=-]+@[\\w\\.-]+\\.[\\w]{2,64})"
-      replace = "*email*{{ .Value | Hash \"salt\" }}*"
-    }
-  }
-
+		stage.replace {
+			// unescaped regex: ([\w\.=-]+@[\w\.-]+\.[\w]{2,64})
+			expression = "([\\w\\.=-]+@[\\w\\.-]+\\.[\\w]{2,64})"
+			replace    = "*email*{{ .Value | Hash \"salt\" }}*"
+		}
+	}
 }

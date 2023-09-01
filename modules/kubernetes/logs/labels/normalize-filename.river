@@ -3,13 +3,12 @@ Module: normalize-filename
 Description: Normalizes the kubernetes filename name, and reduces cardinality of the filename
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
-  optional = false
+	// comment = "The module to forward the output to"
+	optional = false
 }
 
-
 export "process" {
-  value = loki.process.normalize_filename
+	value = loki.process.normalize_filename
 }
 /*
 Normalize the filename, the label "filename" is automatically created from
@@ -22,23 +21,22 @@ Example:
   Becomes: /var/log/pods/agents/agent-logs-grafana-agent/config-reloader.log
 */
 loki.process "normalize_filename" {
-  forward_to = [argument.forward_to.value]
+	forward_to = [argument.forward_to.value]
 
-  stage.regex {
-    // unescaped regex: ^(?P<path>\/([^\/_]+\/)+)[^\/]+\/(?P<container_folder>[^\/]+)\/[0-9]+\.log
-    expression = "^(?P<path>\\/([^\\/_]+\\/)+)[^\\/]+\\/(?P<container_folder>[^\\/]+)\\/[0-9]+\\.log"
-    source = "filename"
-  }
+	stage.regex {
+		// unescaped regex: ^(?P<path>\/([^\/_]+\/)+)[^\/]+\/(?P<container_folder>[^\/]+)\/[0-9]+\.log
+		expression = "^(?P<path>\\/([^\\/_]+\\/)+)[^\\/]+\\/(?P<container_folder>[^\\/]+)\\/[0-9]+\\.log"
+		source     = "filename"
+	}
 
-  stage.template {
-    source = "normalized_filename"
-    template = "{{ .path }}{{ .job }}/{{ .container_folder }}.log"
-  }
+	stage.template {
+		source   = "normalized_filename"
+		template = "{{ .path }}{{ .job }}/{{ .container_folder }}.log"
+	}
 
-  stage.labels {
-    values = {
-      filename = "normalized_filename",
-    }
-  }
-
+	stage.labels {
+		values = {
+			filename = "normalized_filename",
+		}
+	}
 }

@@ -3,91 +3,91 @@ Module: mask-all
 Description: Wrapper module to include all masking modules
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
-  optional = false
+	// comment = "The module to forward the output to"
+	optional = false
 }
 
 argument "git_repo" {
-  optional = true
-  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+	optional = true
+	default  = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
 }
 
 argument "git_rev" {
-  optional = true
-  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+	optional = true
+	default  = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
 }
 
 argument "git_pull_freq" {
-  optional = true
-  default = "5m"
+	optional = true
+	default  = "5m"
 }
 
 export "process" {
-  value = module.git.mask_ssn.exports.process
+	value = module.git.mask_ssn.exports.process
 }
 
 module.git "mask_ssn" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/ssn.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/ssn.river"
 
-  arguments {
-    forward_to = module.git.mask_credit_card.exports.process.receiver
-  }
+	arguments {
+		forward_to = module.git.mask_credit_card.exports.process.receiver
+	}
 }
 
 module.git "mask_credit_card" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/credit-card.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/credit-card.river"
 
-  arguments {
-    forward_to = module.git.mask_email.exports.process.receiver
-  }
+	arguments {
+		forward_to = module.git.mask_email.exports.process.receiver
+	}
 }
 
 module.git "mask_email" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/email.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/email.river"
 
-  arguments {
-    forward_to = module.git.mask_phone.exports.process.receiver
-  }
+	arguments {
+		forward_to = module.git.mask_phone.exports.process.receiver
+	}
 }
 
 module.git "mask_phone" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/phone.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/phone.river"
 
-  arguments {
-    forward_to = module.git.mask_ipv4.exports.process.receiver
-  }
+	arguments {
+		forward_to = module.git.mask_ipv4.exports.process.receiver
+	}
 }
 
 module.git "mask_ipv4" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/ipv4.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/ipv4.river"
 
-  arguments {
-    forward_to = module.git.mask_ipv6.exports.process.receiver
-  }
+	arguments {
+		forward_to = module.git.mask_ipv6.exports.process.receiver
+	}
 }
 
 module.git "mask_ipv6" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/masks/ipv6.river"
+	repository     = argument.git_repo.value
+	revision       = argument.git_rev.value
+	pull_frequency = argument.git_pull_freq.value
+	path           = "modules/kubernetes/logs/masks/ipv6.river"
 
-  arguments {
-    forward_to = argument.forward_to.value
-  }
+	arguments {
+		forward_to = argument.forward_to.value
+	}
 }

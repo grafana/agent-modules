@@ -5,36 +5,35 @@ Description: Pre-defined set of labels to keep, this stage should always be in-p
               in Loki as that would have extremely high-cardinality.
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
-  optional = false
+	// comment = "The module to forward the output to"
+	optional = false
 }
 
-
 argument "keep_labels" {
-  optional = true
-  // comment = "List of labels to keep before the log message is written to Loki"
-  default = [
-    "app",
-    "cluster",
-    "component",
-    "container",
-    "deployment",
-    "env",
-    "filename",
-    "instance",
-    "job",
-    "level",
-    "log_type",
-    "namespace",
-    "region",
-    "service",
-    "squad",
-    "team",
-  ]
+	optional = true
+	// comment = "List of labels to keep before the log message is written to Loki"
+	default = [
+		"app",
+		"cluster",
+		"component",
+		"container",
+		"deployment",
+		"env",
+		"filename",
+		"instance",
+		"job",
+		"level",
+		"log_type",
+		"namespace",
+		"region",
+		"service",
+		"squad",
+		"team",
+	]
 }
 
 export "process" {
-  value = loki.process.keep_labels
+	value = loki.process.keep_labels
 }
 /*
 As all of the pod labels and annotations we transformed into labels in the previous relabelings to make
@@ -44,10 +43,9 @@ Not every log has to contain these labels, but this list should reflect the set 
 to explicitly allow.
 */
 loki.process "keep_labels" {
-  forward_to = [argument.forward_to.value]
+	forward_to = [argument.forward_to.value]
 
-  stage.label_keep {
-    values = argument.keep_labels.value
-  }
-
+	stage.label_keep {
+		values = argument.keep_labels.value
+	}
 }
