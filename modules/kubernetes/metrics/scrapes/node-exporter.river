@@ -18,10 +18,13 @@ argument "app_name" {
 }
 
 argument "job_label" {
+  // comment = "The job label to add for all node-exporter, see ../relabelings/node-exporter.river for the default value""
   optional = true
-  // from Grafana Cloud Integration:
-  default = "integrations/node_exporter"
-  // comment = "The job label to add for all node-exporter"
+}
+
+argument "keep_metrics" {
+  // comment = "Regex of metrics to keep, see ../relabelings/node-exporter.river for the default value"
+  optional = true
 }
 
 argument "clustering" {
@@ -79,9 +82,8 @@ discovery.relabel "node_exporter" {
 }
 
 prometheus.scrape "node_exporter" {
-  targets = discovery.relabel.kube_state_metrics.output
+  targets = discovery.relabel.node_exporter.output
   forward_to = [module.git.relabelings_node_exporter.exports.metric_relabelings.receiver]
-  job_name = argument.job_label.value
 
   clustering {
     enabled = argument.clustering.value
@@ -97,5 +99,7 @@ module.git "relabelings_node_exporter" {
 
   arguments {
     forward_to = argument.forward_to.value
+    job_label = argument.job_label.value
+    keep_metrics = argument.keep_metrics.value
   }
 }

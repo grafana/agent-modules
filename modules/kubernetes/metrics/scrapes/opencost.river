@@ -16,10 +16,13 @@ argument "app_name" {
 }
 
 argument "job_label" {
+  // comment = "The job label to add for all opencost, see ../relabelings/opencost.river for the default value""
   optional = true
-  // from Grafana Cloud Integration:
-  default = "integrations/kubernetes/opencost"
-  // comment = "The job label to add for all opencost"
+}
+
+argument "keep_metrics" {
+  // comment = "Regex of metrics to keep, see ../relabelings/opencost.river for the default value"
+  optional = true
 }
 
 argument "clustering" {
@@ -79,7 +82,6 @@ discovery.relabel "opencost" {
 prometheus.scrape "opencost" {
   targets = discovery.relabel.opencost.output
   forward_to = [module.git.opencost.exports.metric_relabelings.receiver]
-  job_name = argument.job_label.value
 
   clustering {
     enabled = argument.clustering.value
@@ -95,5 +97,7 @@ module.git "relabelings_opencost" {
 
   arguments {
     forward_to = argument.forward_to.value
+    job_label = argument.job_label.value
+    keep_metrics = argument.keep_metrics.value
   }
 }
