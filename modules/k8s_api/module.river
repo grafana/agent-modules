@@ -1,0 +1,125 @@
+// forward_metrics_to must be a list(MetricsReceiver) where collected metrics
+// should be forwarded.
+argument "forward_metrics_to" {
+	optional = false
+}
+
+// scrape_interval is a duration which specifies how frequently to collect
+// metrics.
+argument "scrape_interval" {
+	optional = true
+	default  = "60s"
+}
+
+// scrape_timeout is a duration which specifies how long to wait for a single
+// metrics collection to complete.
+argument "scrape_timeout" {
+	optional = true
+	default  = "10s"
+}
+
+discovery.kubernetes "nodes" {
+	role = "node"
+}
+
+discovery.kubernetes "kube_state_metrics" {
+	role = "pod"
+
+	namespaces {
+		names = ["kube-system"]
+	}
+
+	selectors {
+		role  = "pod"
+		label = "app.kubernetes.io/name=kube-state-metrics"
+	}
+}
+
+discovery.relabel "kube_state_metrics" {
+	targets = discovery.kubernetes.kube_state_metrics.targets
+
+	rule {
+		replacement  = "integrations/kubernetes/kube-state-metrics"
+		target_label = "job"
+	}
+}
+
+discovery.relabel "kubelets" {
+	targets = discovery.kubernetes.nodes.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "integrations/kubernetes/kubelet"
+	}
+
+	rule {
+		target_label = "__scheme__"
+		replacement  = "https"
+	}
+
+	rule {
+		target_label = "__address__"
+		replacement  = "kubernetes.default.svc.cluster.local:443"
+	}
+
+	rule {
+		regex         = "(.+)"
+		replacement   = "/api/v1/nodes/${1}/proxy/metrics"
+		source_labels = ["__meta_kubernetes_node_name"]
+		target_label  = "__metrics_path__"
+	}
+}
+
+discovery.relabel "cadvisor" {
+	targets = discovery.kubernetes.nodes.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "integrations/kubernetes/cadvisor"
+	}
+
+	rule {
+		target_label = "__scheme__"
+		replacement  = "https"
+	}
+
+	rule {
+		target_label = "__address__"
+		replacement  = "kubernetes.default.svc.cluster.local:443"
+	}
+
+	rule {
+		regex         = "(.+)"
+		replacement   = "/api/v1/nodes/${1}/proxy/metrics/cadvisor"
+		source_labels = ["__meta_kubernetes_node_name"]
+		target_label  = "__metrics_path__"
+	}
+}
+
+prometheus.scrape "kubernetes" {
+	targets = concat(
+		discovery.relabel.cadvisor.output,
+		discovery.relabel.kubelets.output,
+		discovery.relabel.kube_state_metrics.output,
+	)
+	forward_to = [prometheus.relabel.kubernetes.receiver]
+
+	bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+	scrape_interval = argument.scrape_interval.value
+	scrape_timeout  = argument.scrape_timeout.value
+
+	tls_config {
+		ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	}
+}
+
+prometheus.relabel "kubernetes" {
+	rule {
+		source_labels = ["__name__"]
+		action        = "keep"
+		regex         = "up|kubelet_certificate_manager_client_expiration_renew_errors|kube_replicaset_owner|container_network_receive_packets_dropped_total|container_network_receive_packets_total|go_goroutines|kube_statefulset_status_replicas_updated|kubelet_running_pods|cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests|container_network_transmit_packets_dropped_total|namespace_cpu:kube_pod_container_resource_limits:sum|kube_node_status_condition|kubelet_running_pod_count|container_memory_cache|kube_pod_status_phase|kube_job_status_start_time|container_memory_rss|machine_memory_bytes|kubelet_pleg_relist_duration_seconds_count|storage_operation_errors_total|kube_daemonset_status_desired_number_scheduled|kube_job_status_active|kube_node_status_capacity|node_namespace_pod_container:container_memory_rss|container_memory_working_set_bytes|kube_pod_info|kubelet_runtime_operations_total|kube_statefulset_status_replicas|kubelet_running_container_count|kubelet_node_config_error|process_resident_memory_bytes|kubelet_volume_stats_inodes|kube_daemonset_status_number_misscheduled|kube_job_failed|kube_deployment_metadata_generation|kube_namespace_status_phase|container_fs_writes_bytes_total|kube_resourcequota|kubelet_runtime_operations_errors_total|kube_statefulset_status_observed_generation|kube_node_info|node_namespace_pod_container:container_memory_swap|kube_statefulset_metadata_generation|kube_deployment_status_observed_generation|kube_horizontalpodautoscaler_spec_min_replicas|kubernetes_build_info|kubelet_pleg_relist_duration_seconds_bucket|kube_daemonset_status_current_number_scheduled|node_quantile:kubelet_pleg_relist_duration_seconds:histogram_quantile|container_fs_writes_total|kubelet_cgroup_manager_duration_seconds_count|kube_node_spec_taint|kubelet_server_expiration_renew_errors|container_network_transmit_bytes_total|namespace_memory:kube_pod_container_resource_requests:sum|kube_daemonset_status_number_available|namespace_cpu:kube_pod_container_resource_requests:sum|kube_node_status_allocatable|kubelet_pleg_relist_interval_seconds_bucket|kube_pod_container_resource_limits|kube_statefulset_status_current_revision|kube_horizontalpodautoscaler_status_current_replicas|kubelet_running_containers|namespace_workload_pod|rest_client_requests_total|kube_statefulset_status_replicas_ready|kubelet_certificate_manager_server_ttl_seconds|container_cpu_cfs_periods_total|kubelet_pod_start_duration_seconds_count|kube_deployment_status_replicas_updated|kube_pod_owner|kubelet_pod_start_duration_seconds_bucket|kubelet_pod_worker_duration_seconds_bucket|kubelet_node_name|kubelet_volume_stats_capacity_bytes|kube_statefulset_replicas|node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate|node_namespace_pod_container:container_memory_working_set_bytes|container_network_receive_bytes_total|kubelet_cgroup_manager_duration_seconds_bucket|container_network_transmit_packets_total|container_fs_reads_total|container_cpu_cfs_throttled_periods_total|kubelet_volume_stats_available_bytes|kube_statefulset_status_update_revision|kube_deployment_status_replicas_available|kubelet_certificate_manager_client_ttl_seconds|kubelet_pod_worker_duration_seconds_count|kube_deployment_spec_replicas|container_cpu_usage_seconds_total|cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits|storage_operation_duration_seconds_count|container_fs_reads_bytes_total|kubelet_volume_stats_inodes_used|namespace_memory:kube_pod_container_resource_limits:sum|volume_manager_total_volumes|node_namespace_pod_container:container_memory_cache|kube_pod_container_resource_requests|container_memory_swap|kube_horizontalpodautoscaler_status_desired_replicas|kube_daemonset_status_updated_number_scheduled|cluster:namespace:pod_memory:active:kube_pod_container_resource_limits|process_cpu_seconds_total|cluster:namespace:pod_memory:active:kube_pod_container_resource_requests|namespace_workload_pod:kube_pod_owner:relabel|kube_pod_container_status_waiting_reason|kube_horizontalpodautoscaler_spec_max_replicas|kube_namespace_status_phase|container_cpu_usage_seconds_total|kube_pod_status_phase|kube_pod_start_time|kube_pod_container_status_restarts_total|kube_pod_container_info|kube_pod_container_status_waiting_reason|kube_daemonset.*|kube_replicaset.*|kube_statefulset.*|kube_job.*|kube_node.*|node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate|cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests|namespace_cpu:kube_pod_container_resource_requests:sum"
+	}
+
+	forward_to = argument.forward_metrics_to.value
+}
