@@ -1,0 +1,142 @@
+// forward_metrics_to must be a list(MetricsReceiver) where collected metrics
+// should be forwarded.
+argument "forward_metrics_to" {
+	optional = false
+}
+
+// forward_metrics_to must be a list(LogsReceiver) where collected logs should
+// be forwarded.
+argument "forward_logs_to" {
+	optional = false
+}
+
+// scrape_interval is a duration which specifies how frequently to collect
+// metrics.
+argument "scrape_interval" {
+	optional = true
+	default  = "60s"
+}
+
+// scrape_timeout is a duration which specifies how long to wait for a single
+// metrics collection to complete.
+argument "scrape_timeout" {
+	optional = true
+	default  = "10s"
+}
+
+discovery.kubernetes "pods" {
+	role = "pod"
+}
+
+discovery.relabel "pods" {
+	targets = discovery.kubernetes.pods.targets
+
+	rule {
+		source_labels = [
+			"__meta_kubernetes_pod_label_app_kubernetes_io_instance",
+			"__meta_kubernetes_pod_label_app_kubernetes_io_name",
+		]
+		target_label = "__helm_name__"
+		separator    = "-"
+		regex        = "(.+-.+)"
+	}
+
+	rule {
+		// Try to identify a service name to eventually form the job label. We'll
+		// prefer the first of the below labels, in descending order.
+		source_labels = [
+			"__meta_kubernetes_pod_label_k8s_app",
+			"__meta_kubernetes_pod_label_app",
+			"__meta_kubernetes_pod_label_name",
+			"__helm_name__",
+			"__meta_kubernetes_pod_controller_name",
+			"__meta_kubernetes_pod_name",
+		]
+		target_label = "__service__"
+
+		// Our in-memory string will be something like A;B;C;D;E;F, where any of the
+		// letters could be replaced with a label value or be empty if the label
+		// value did not exist.
+		//
+		// We want to match for the very first sequence of non-semicolon characters
+		// which is either prefaced by zero or more semicolons, and is followed by
+		// zero or more semicolons before the rest of the string.
+		//
+		// This is a very annoying way of being able to do conditionals, and
+		// ideally we can use River expressions in the future to make this much
+		// less bizarre.
+		regex = ";*([^;]+);*.*"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_node_name"]
+		target_label  = "__host__"
+	}
+
+	rule {
+		source_labels = [
+			"__meta_kubernetes_namespace",
+			"__service__",
+		]
+		target_label = "job"
+		separator    = "/"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_namespace"]
+		target_label  = "namespace"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_name"]
+		target_label  = "pod"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_container_name"]
+		target_label  = "container"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_label_app"]
+		target_label  = "app"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+		target_label  = "name"
+	}
+}
+
+discovery.relabel "metrics_pods" {
+	targets = discovery.relabel.pods.output
+
+	rule {
+		action        = "keep"
+		regex         = ".*-metrics"
+		source_labels = ["__meta_kubernetes_pod_container_port_name"]
+	}
+
+	rule {
+		action        = "drop"
+		regex         = "Succeeded|Failed"
+		source_labels = ["__meta_kubernetes_pod_phase"]
+	}
+
+	rule {
+		action        = "replace"
+		separator     = ":"
+		source_labels = ["__meta_kubernetes_pod_name", "__meta_kubernetes_pod_container_name", "__meta_kubernetes_pod_container_port_name"]
+		target_label  = "instance"
+	}
+}
+
+prometheus.scrape "metrics_pods" {
+	targets    = discovery.relabel.metrics_pods.output
+	forward_to = argument.forward_metrics_to.value
+}
+
+loki.source.kubernetes "pods" {
+	targets    = discovery.relabel.pods.output
+	forward_to = argument.forward_logs_to.value
+}

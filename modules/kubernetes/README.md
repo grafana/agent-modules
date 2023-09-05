@@ -53,4 +53,4 @@ The following service / ingress annotations are supported are supported for prob
 | `probes.agent.grafana.com/interval` | The default interval to probe is `1m`, this can be specified as a single value which would override, the probe interval being used for all ports attached to the service / ingress. |
 | `probes.agent.grafana.com/timeout` | The default timeout for scraping is `10s`, this can be specified as a single value which would override, the probe interval being used for all ports attached to the service / ingress. |
 
-See [/example/metrics/kubernetes](../../example/metrics/kubernetes) for working example configurations.
+See [/example/kubernetes/metrics](../../example/kubernetes/metrics/) for working example configurations.
