@@ -143,6 +143,24 @@ discovery.relabel "scrape_targets" {
     source_labels = ["__tmp_timeout"]
     target_label = "__scrape_timeout__"
   }
+
+  // set the instance label to the name of the pod that was scraped, there are many dashboards and rules that rely on the
+  // instance label being present as it is automatically assigned to the scraped target if not set.  However, we don't
+  // want to create high-cardinality unnecessairly, so it does not make sense to have it be the worker node the pod is on
+  // for every controller type, the only time this is necessary is when the pod is associated with a DaemonSet, in which
+  // case the node the pod is on is used as instance.
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_controller_kind",
+      "__meta_kubernetes_pod_node_name",
+      "__meta_kubernetes_pod_name",
+    ]
+    separator = ";"
+    regex = "(?:DaemonSet;|[^;]+;[^;]+;)([^;]+)"
+    replacement = "$1"
+    target_label = "instance"
+  }
 }
 
 // apply common relabelings

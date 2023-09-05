@@ -4,7 +4,7 @@ Description: Wrapper module to include all kubernetes metric modules and use cri
 */
 
 argument "mimir_url" {
-  // comment = "The full URL address of mimir including the protocol, host and path i.e. https://example.com/mimir/api/v1/push"
+  // comment = "The full URL address of mimir including the protocol, host and path i.e. https://example.com/api/prom/push"
   optional = false
 }
 
