@@ -133,7 +133,7 @@ discovery.relabel "metric_annotations" {
     source_labels = [
       "__meta_kubernetes_service_annotation_metrics_agent_grafana_com_tenant",
       "__meta_kubernetes_endpoints_annotation_metrics_agent_grafana_com_tenant",
-      "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant"
+      "__meta_kubernetes_pod_annotation_metrics_agent_grafana_com_tenant",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
