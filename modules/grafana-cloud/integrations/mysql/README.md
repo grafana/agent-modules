@@ -8,6 +8,44 @@ Some examples can be found below.
 
 ### Linux/MacOS/Windows (single host)
 
+#### Single instance on one host
+
+```
+module.git "grafana_cloud" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/grafana-cloud/autoconfigure/module.river"
+
+  arguments {
+    stack_name = "<stack name>"
+    token = "<stack token>"
+  }
+}
+
+prometheus.exporter.mysql "mysql" {
+  data_source_name = "<username>:<password>@(<host>:<port>)/"
+}
+
+loki.source.file "mysql" {
+  targets = [
+    { __path__ = "/var/log/mysql/mysql.log" },
+  ]
+  forward_to = [module.file.mysql.exports.logs_receiver]
+}
+
+module.file "mysql" {
+  filename = "/config/modules/grafana-cloud/integrations/mysql/module.river"
+
+  arguments {
+    instance = "<mysql instance name>"
+    metrics_targets = prometheus.exporter.mysql.mysql.targets
+    metrics_receiver = [module.file.grafana_cloud.exports.metrics_receiver]
+    logs_receiver = [module.file.grafana_cloud.exports.logs_receiver]
+  }
+}
+```
+
+
 #### Multiple instances on the same host
 
 Note that this is an unrealistic example since the hosts would likely be different, and the log files in the same location on each host.
