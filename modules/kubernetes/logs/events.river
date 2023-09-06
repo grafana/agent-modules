@@ -57,6 +57,7 @@ argument "keep_labels" {
   default = [
     "app",
     "cluster",
+    "component",
     "env",
     "instance",
     "job",
@@ -149,6 +150,7 @@ loki.process "events" {
 
   stage.logfmt {
     mapping = {
+      "component" = "sourcecomponent",
       "instance" = "sourcehost",
       // most events don't have a level but they do have a "type" i.e. Normal, Warning, Error, etc.
       "level" = "type",
@@ -158,6 +160,7 @@ loki.process "events" {
   // set the instance extracted value as a label
   stage.labels {
     values = {
+      component = "",
       instance = "",
       level = "",
     }
@@ -168,7 +171,7 @@ loki.process "events" {
   // info level messages is desired. As Normal will contain messages about pods starting, stopping, etc. which may be
   // something undesirable to keep.
   stage.match {
-    selector = "{level=~\"Normal\"}"
+    selector = "{level=\"Normal\"}"
 
     stage.static_labels {
       values = {
@@ -201,7 +204,7 @@ loki.process "events" {
   // if instance is still not set, drop the label because its value is something similar to "module.git.event_logs/loki.source.kubernetes_events.events"
   // which is not useful
   stage.match {
-    selector = "{instance=~\".*module.git|\"}"
+    selector = "{instance=~\".*module.git.*|\"}"
 
     stage.label_drop {
       values = ["instance"]
