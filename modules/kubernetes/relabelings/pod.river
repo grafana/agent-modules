@@ -51,13 +51,14 @@ discovery.relabel "pods" {
 
   // add a deployment label for ReplicaSets and drop the last 10 chars for the ReplicaSet and last 5 chars from the pod
   // example: grafana-58b546d457-dkq99 becomes ReplicaSet/grafana
+  // example: my-service-square-7dd7f4bd2pr8p becomes ReplicaSet/my-service-square
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
       "__meta_kubernetes_pod_name",
     ]
     action = "replace"
-    regex = "^(ReplicaSet);(.*)(-[a-f0-9]+)(-[a-z0-9]+)?$"
+    regex = "^(ReplicaSet);((?:[^-]+-?)+)(?:-[a-f0-9]{9,10}-[^-]{5}|-[a-z0-9]{6,15})$"
     replacement = "$1/$2"
     target_label = "deployment"
   }
