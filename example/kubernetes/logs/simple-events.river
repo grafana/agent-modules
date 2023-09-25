@@ -7,7 +7,7 @@ logging {
 }
 
 module.git "event_logs" {
-  repository = "https://github.com/bentonam/agent-modules.git"
+  repository = "https://github.com/grafana/agent-modules.git"
   revision   = "main"
   path       = "modules/kubernetes/logs/events.river"
 
