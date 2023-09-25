@@ -3,6 +3,9 @@ Module: probe-json-ingresses
 Description:
   Kubernetes Ingress Auto-Probing for JSON Exporter
   ------------------------------------------------------------------------------------------------------------------------------------
+  Docs: https://github.com/prometheus-community/json_exporter/tree/master
+  Helm Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-json-exporter
+
   Each port attached to an ingress is an eligible target, oftentimes ingress will have multiple ports.
   There may be instances when you want to probe all ports or some ports and not others. To support this
   the following annotations are available:
@@ -57,7 +60,7 @@ argument "forward_to" {
 }
 
 argument "json_exporter_url" {
-  // comment = "The address of the json exporter to use (without the protocol), only the hostname and port i.e. json-prometheus-json-exporter.default.svc.cluster.local:9115"
+  // comment = "The address of the json exporter to use (without the protocol), only the hostname and port i.e. json-exporter.agents.svc.cluster.local:7979"
   optional = false
 }
 
