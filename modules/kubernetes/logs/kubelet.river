@@ -112,13 +112,8 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
-argument "remote" {
-  comment = "The loki remote to use for the module, if not specified one is created"
-  optional = true
-}
-
 export "loki_remote" {
-  value = coalesce(argument.remote.value, loki.write.destination)
+  value = loki.write.destination
 }
 
 loki.relabel "journal" {
@@ -268,7 +263,7 @@ module.git "label_keep" {
   path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
-    forward_to = coalesce(argument.remote.value, loki.write.destination).receiver
+    forward_to = loki.write.destination.receiver
     keep_labels = argument.keep_labels.value
   }
 }
