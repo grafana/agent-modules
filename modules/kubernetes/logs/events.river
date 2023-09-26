@@ -96,6 +96,10 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
+export "loki_remote" {
+  value = loki.write.destination
+}
+
 loki.source.kubernetes_events "events" {
   job_name = argument.label_job.value
   namespaces = argument.namespaces.value

@@ -1,0 +1,53 @@
+/*
+The following example shows using the default all metrics processing module, for
+a single tenant and specifying the destination url/credentials via environment
+variables.
+*/
+logging {
+  level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+  format = "logfmt"
+}
+
+module.git "metrics_primary" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/metrics/all.river"
+
+  arguments {
+    mimir_url = env("DEFAULT_METRICS_URL")
+    mimir_username = env("DEFAULT_METRICS_TENANT")
+    mimir_password = env("DEFAULT_METRICS_TOKEN")
+    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+  }
+}
+
+/*
+The json exporter modules are not included in the default all.river, as it is not as common.  Include the json-services and/or json-ingress module,
+and set the forward_to to be the exporter writer from the all.river module or declare a new instance of the prometheus.remote_write component.
+Ensure JSON Exporter is installed in the cluster and the json_exporter_url is set to the service name and port of the json exporter.
+
+Docs: https://github.com/prometheus-community/json_exporter/tree/master
+Helm Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-json-exporter
+*/
+
+module.git "json_services" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path = "modules/kubernetes/metrics/scrapes/json-services.river"
+
+  arguments {
+    forward_to = [module.git.metrics_primary.exports.prometheus_remote.receiver]
+    json_exporter_url = "json-exporter.agents.svc.cluster.local:7979"
+  }
+}
+
+module.git "json_ingresses" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path = "modules/kubernetes/metrics/scrapes/json-ingresses.river"
+
+  arguments {
+    forward_to = [module.git.metrics_primary.exports.prometheus_remote.receiver]
+    json_exporter_url = "json-exporter.agents.svc.cluster.local:7979"
+  }
+}

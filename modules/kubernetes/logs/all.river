@@ -81,6 +81,10 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
+export "loki_remote" {
+  value = loki.write.destination
+}
+
 module.git "log_targets" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value

@@ -112,6 +112,10 @@ argument "git_pull_freq" {
   default = "5m"
 }
 
+export "loki_remote" {
+  value = loki.write.destination
+}
+
 loki.relabel "journal" {
   forward_to = []
 
