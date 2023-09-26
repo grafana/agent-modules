@@ -78,6 +78,14 @@ argument "clustering" {
   default = false
 }
 
+argument "drop_metrics" {
+  optional = true
+  // blackbox does not return that many metrics, however if certain metrics should be dropped they can be specified here
+  // the default is "none" which will not match any of the returned metric names
+  default = "probe_ip_addr_hash"
+  // comment = "Regex of metrics to drop"
+}
+
 argument "git_repo" {
   optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
@@ -126,5 +134,6 @@ module.git "relabelings_blackbox" {
 
   arguments {
     forward_to = argument.forward_to.value
+    drop_metrics = argument.drop_metrics.value
   }
 }
