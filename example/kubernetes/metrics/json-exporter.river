@@ -25,6 +25,9 @@ module.git "metrics_primary" {
 The json exporter modules are not included in the default all.river, as it is not as common.  Include the json-services and/or json-ingress module,
 and set the forward_to to be the exporter writer from the all.river module or declare a new instance of the prometheus.remote_write component.
 Ensure JSON Exporter is installed in the cluster and the json_exporter_url is set to the service name and port of the json exporter.
+
+Docs: https://github.com/prometheus-community/json_exporter/tree/master
+Helm Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-json-exporter
 */
 
 module.git "json_services" {
