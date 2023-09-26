@@ -1,6 +1,6 @@
 <p align="center"><img src="assets/logo_and_name.png" alt="Grafana Agent logo"></p>
 
-[Modules](https://grafana.com/docs/agent/latest/flow/concepts/modules/) are a 
+[Modules](https://grafana.com/docs/agent/latest/flow/concepts/modules/) are a
 way to create Grafana Agent [Flow](https://grafana.com/docs/agent/latest/flow/)
 configurations which can be loaded as a component. Modules are a great way to
 parameterize a configuration to create reusable pipelines.
@@ -12,8 +12,9 @@ parameterize a configuration to create reusable pipelines.
 
 ## Modules
 
-| Name |  Description | Agent Version | 
-| ---- |  ----------- | ------------- | 
+| Name |  Description | Agent Version |
+| ---- |  ----------- | ------------- |
+| [Metrics and Logs Annotation Ingestion](./modules/kubernetes/) | Module to ingest Metrics (scraping/probes) and Logs through annotations. | `>= v0.36.1`
 | [OTLP to LGTM](./modules/otlp/otlp-to-lgtm/) | Module to ingest OTLP data and then send it to Loki, Mimir and Tempo stacks locally or in GrafanaCloud. | `>= v0.33`
 | [Grafana Agent Telemetry to LGTM](./modules/grafana-agent/telemetry-to-lgtm/) | Module to forward the Grafana Agent's own telemetry data to Loki, Mimir and Tempo stacks locally or in Grafana Cloud. | `>= v0.33`
 | [Grafana Agent Dynamic Blackbox Exporter](./modules/grafana-agent/dynamic-blackbox/) | Module to use blackbox exporter with dynamic targets. | `>= v0.35`
@@ -34,4 +35,3 @@ Modules must contain the following elements:
 * Arguments
 * Exports
 * The body of the module
-
