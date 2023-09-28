@@ -13,6 +13,11 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "keep_metrics" {
+  // comment = "Regex of metrics to keep, see ../relabelings/kubelet-cadvisor.river for the default value"
+  optional = true
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -88,5 +93,6 @@ module.git "relabelings_kubelet_cadvisor" {
 
   arguments {
     forward_to = argument.forward_to.value
+    keep_metrics = argument.keep_metrics.value
   }
 }

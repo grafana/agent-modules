@@ -61,6 +61,11 @@ argument "scrape_port_named_metrics" {
   default = false
 }
 
+argument "keep_metrics" {
+  // comment = "Regex of metrics to keep, see ../relabelings/kube-state-metrics.river and ../relabelings/node-exporter.river for the default value"
+  optional = true
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -114,6 +119,7 @@ module.git "relabelings_kube_state_metrics" {
 
   arguments {
     forward_to = [module.git.relabelings_node_exporter.exports.metric_relabelings.receiver]
+    keep_metrics = argument.keep_metrics.value
   }
 }
 
@@ -125,6 +131,7 @@ module.git "relabelings_node_exporter" {
 
   arguments {
     forward_to = [module.git.relabelings_opencost.exports.metric_relabelings.receiver]
+    keep_metrics = argument.keep_metrics.value
   }
 }
 

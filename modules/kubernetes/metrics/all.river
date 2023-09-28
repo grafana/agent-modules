@@ -43,6 +43,26 @@ argument "scrape_port_named_metrics" {
   default = false
 }
 
+argument "keep_ksm_nex_metrics" {
+  // comment = "Regex of metrics to keep, see relabelings/kube-state-metrics.river, relabelings/node-exporter.river for the default value"
+  optional = true
+}
+
+argument "keep_kubelet_metrics" {
+  // comment = "Regex of metrics to keep, see relabelings/kubelet.river for the default value"
+  optional = true
+}
+
+argument "keep_cadvisor_metrics" {
+  // comment = "Regex of metrics to keep, see relabelings/kubelet-cadvisor.river for the default value"
+  optional = true
+}
+
+argument "drop_apiserver_metrics" {
+  // comment = "Regex of metrics to drop, see relabelings/kube-apiserver.river for the default value"
+  optional = true
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -97,6 +117,7 @@ module.git "scrape_kubelet_cadvisor" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    keep_metrics = argument.keep_cadvisor_metrics.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
@@ -113,6 +134,7 @@ module.git "scrape_kubelet" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    keep_metrics = argument.keep_kubelet_metrics.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
@@ -145,6 +167,7 @@ module.git "scrape_kube_apiserver" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    drop_metrics = argument.drop_apiserver_metrics.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
@@ -161,6 +184,7 @@ module.git "scrape_endpoints" {
   arguments {
     forward_to = [prometheus.remote_write.destination.receiver]
     tenant = argument.tenant.value
+    keep_metrics = argument.keep_ksm_nex_metrics.value
     clustering = argument.clustering.value
     scrape_port_named_metrics = argument.scrape_port_named_metrics.value
     git_repo = argument.git_repo.value

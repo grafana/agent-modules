@@ -13,6 +13,11 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "drop_metrics" {
+  // comment = "Regex of metrics to drop, see ../relabelings/kube-apiserver.river for the default value"
+  optional = true
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -95,5 +100,6 @@ module.git "relabelings_kube_apiserver" {
 
   arguments {
     forward_to = argument.forward_to.value
+    drop_metrics = argument.drop_metrics.value
   }
 }
