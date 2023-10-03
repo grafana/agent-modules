@@ -189,7 +189,7 @@ module.git "drop_levels" {
   path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
-    forward_to = module.git.label_keep.exports.process.receiver
+    forward_to = [module.git.label_keep.exports.process.receiver]
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
@@ -203,7 +203,7 @@ module.git "label_keep" {
   path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
-    forward_to = [argument.forward_to.value]
+    forward_to = argument.forward_to.value
     keep_labels = argument.keep_labels.value
   }
 }

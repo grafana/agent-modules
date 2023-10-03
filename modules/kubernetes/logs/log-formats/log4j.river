@@ -14,7 +14,7 @@ export "process" {
 }
 
 loki.process "log_format_log4j" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains log4j-json and the line matches the format, then process the line as log4j-json
   stage.match {

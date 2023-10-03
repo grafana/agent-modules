@@ -14,7 +14,7 @@ export "process" {
 }
 
 loki.process "scrub_json_empties" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/scrub-empties annotation, if true remove any json property whose value is set to
   // an empty string "", empty object {} or empty array [] is removed

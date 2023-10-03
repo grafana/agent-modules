@@ -34,7 +34,7 @@ module.git "scrub_json_empties" {
   path = "modules/kubernetes/logs/scrubs/json-empties.river"
 
   arguments {
-    forward_to = module.git.scrub_json_nulls.exports.process.receiver
+    forward_to = [module.git.scrub_json_nulls.exports.process.receiver]
   }
 }
 

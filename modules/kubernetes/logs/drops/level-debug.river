@@ -15,7 +15,7 @@ export "process" {
 }
 
 loki.process "drop_debug" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/drop-debug annotation, if not set or set to true then drop
   // any log message with level=debug

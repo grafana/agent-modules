@@ -14,7 +14,7 @@ export "process" {
 }
 
 loki.process "mask_phone" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/mask-phone annotation, if true the data will be masked as *phone*salt*
   stage.match {

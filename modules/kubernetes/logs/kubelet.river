@@ -205,7 +205,7 @@ module.git "log_format_klog" {
   path = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
-    forward_to = module.git.log_format_logfmt.exports.process.receiver
+    forward_to = [module.git.log_format_logfmt.exports.process.receiver]
   }
 }
 
@@ -216,7 +216,7 @@ module.git "log_format_logfmt" {
   path = "modules/kubernetes/logs/log-formats/logfmt.river"
 
   arguments {
-    forward_to = module.git.log_format_syslog.exports.process.receiver
+    forward_to = [module.git.log_format_syslog.exports.process.receiver]
   }
 }
 
@@ -227,7 +227,7 @@ module.git "log_format_syslog" {
   path = "modules/kubernetes/logs/log-formats/syslog.river"
 
   arguments {
-    forward_to = module.git.log_level_default.exports.process.receiver
+    forward_to = [module.git.log_level_default.exports.process.receiver]
   }
 }
 
@@ -238,7 +238,7 @@ module.git "log_level_default" {
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
-    forward_to = module.git.drop_levels.exports.process.receiver
+    forward_to = [module.git.drop_levels.exports.process.receiver]
   }
 }
 
@@ -249,7 +249,7 @@ module.git "drop_levels" {
   path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
-    forward_to = module.git.label_keep.exports.process.receiver
+    forward_to = [module.git.label_keep.exports.process.receiver]
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value

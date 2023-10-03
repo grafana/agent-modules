@@ -13,7 +13,7 @@ export "process" {
 }
 
 loki.process "embed_pod" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/embed-pod annotation, if true embed the name of the pod to the end of the log line
   // this can reduce the overall cardinality, by not using a label of "pod", individual pods can still be searched

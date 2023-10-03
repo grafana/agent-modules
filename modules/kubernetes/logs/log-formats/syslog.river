@@ -13,7 +13,7 @@ export "process" {
 }
 
 loki.process "log_format_syslog" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains postgres then process the line
   stage.match {

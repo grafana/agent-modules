@@ -14,7 +14,7 @@ export "process" {
 }
 
 loki.process "mask_credit_card" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/mask-credit-card annotation, if true the data will be masked as *credit-card*salt*
   // Formats:

@@ -14,7 +14,7 @@ export "process" {
 }
 
 loki.process "mask_ipv4" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/mask-ipv4 annotation, if true the data will be masked as *ipv4*salt*
   stage.match {

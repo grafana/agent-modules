@@ -13,7 +13,7 @@ export "process" {
 }
 
 loki.process "log_format_otel" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains otel and the line matches the format, then process the line as otel
   stage.match {

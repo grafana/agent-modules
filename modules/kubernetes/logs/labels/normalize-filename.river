@@ -22,7 +22,7 @@ Example:
   Becomes: /var/log/pods/agents/agent-logs-grafana-agent/config-reloader.log
 */
 loki.process "normalize_filename" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   stage.regex {
     // unescaped regex: ^(?P<path>\/([^\/_]+\/)+)[^\/]+\/(?P<container_folder>[^\/]+)\/[0-9]+\.log

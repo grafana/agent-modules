@@ -33,7 +33,7 @@ module.git "log_format_common_log" {
   path = "modules/kubernetes/logs/log-formats/common-log.river"
 
   arguments {
-    forward_to = module.git.log_format_dotnet.exports.process.receiver
+    forward_to = [module.git.log_format_dotnet.exports.process.receiver]
   }
 }
 
@@ -44,7 +44,7 @@ module.git "log_format_dotnet" {
   path = "modules/kubernetes/logs/log-formats/dotnet.river"
 
   arguments {
-    forward_to = module.git.log_format_istio.exports.process.receiver
+    forward_to = [module.git.log_format_istio.exports.process.receiver]
   }
 }
 
@@ -55,7 +55,7 @@ module.git "log_format_istio" {
   path = "modules/kubernetes/logs/log-formats/istio.river"
 
   arguments {
-    forward_to = module.git.log_format_json.exports.process.receiver
+    forward_to = [module.git.log_format_json.exports.process.receiver]
   }
 }
 
@@ -66,7 +66,7 @@ module.git "log_format_json" {
   path = "modules/kubernetes/logs/log-formats/json.river"
 
   arguments {
-    forward_to = module.git.log_format_klog.exports.process.receiver
+    forward_to = [module.git.log_format_klog.exports.process.receiver]
   }
 }
 
@@ -77,7 +77,7 @@ module.git "log_format_klog" {
   path = "modules/kubernetes/logs/log-formats/klog.river"
 
   arguments {
-    forward_to = module.git.log_format_log4j.exports.process.receiver
+    forward_to = [module.git.log_format_log4j.exports.process.receiver]
   }
 }
 
@@ -88,7 +88,7 @@ module.git "log_format_log4j" {
   path = "modules/kubernetes/logs/log-formats/log4j.river"
 
   arguments {
-    forward_to = module.git.log_format_logfmt.exports.process.receiver
+    forward_to = [module.git.log_format_logfmt.exports.process.receiver]
   }
 }
 
@@ -99,7 +99,7 @@ module.git "log_format_logfmt" {
   path = "modules/kubernetes/logs/log-formats/logfmt.river"
 
   arguments {
-    forward_to = module.git.log_format_otel.exports.process.receiver
+    forward_to = [module.git.log_format_otel.exports.process.receiver]
   }
 }
 
@@ -110,7 +110,7 @@ module.git "log_format_otel" {
   path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
-    forward_to = module.git.log_format_postgres.exports.process.receiver
+    forward_to = [module.git.log_format_postgres.exports.process.receiver]
   }
 }
 
@@ -121,7 +121,7 @@ module.git "log_format_postgres" {
   path = "modules/kubernetes/logs/log-formats/otel.river"
 
   arguments {
-    forward_to = module.git.log_format_python.exports.process.receiver
+    forward_to = [module.git.log_format_python.exports.process.receiver]
   }
 }
 
@@ -132,7 +132,7 @@ module.git "log_format_python" {
   path = "modules/kubernetes/logs/log-formats/python.river"
 
   arguments {
-    forward_to = module.git.log_format_spring_boot.exports.process.receiver
+    forward_to = [module.git.log_format_spring_boot.exports.process.receiver]
   }
 }
 
@@ -143,7 +143,7 @@ module.git "log_format_spring_boot" {
   path = "modules/kubernetes/logs/log-formats/spring-boot.river"
 
   arguments {
-    forward_to = module.git.log_format_syslog.exports.process.receiver
+    forward_to = [module.git.log_format_syslog.exports.process.receiver]
   }
 }
 
@@ -154,7 +154,7 @@ module.git "log_format_syslog" {
   path = "modules/kubernetes/logs/log-formats/syslog.river"
 
   arguments {
-    forward_to = module.git.log_format_zerolog.exports.process.receiver
+    forward_to = [module.git.log_format_zerolog.exports.process.receiver]
   }
 }
 

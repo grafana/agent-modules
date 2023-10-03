@@ -44,5 +44,5 @@ module.git "relabelings_log" {
 
 loki.source.kubernetes "pods" {
   targets    = module.git.relabelings_log.exports.relabelings.output
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 }
