@@ -2,45 +2,15 @@
 Module: log-all
 Description: Wrapper module to include all kubernetes logging modules and use cri parsing
 */
-
-argument "loki_url" {
-  // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
-  optional = false
-}
-
-argument "loki_username" {
-  // comment = "The Loki Username / Tenant ID"
-  optional = false
-}
-
-argument "loki_password" {
-  // comment = "The Loki Password / Token for the Tenant"
-  optional = true
-  default = ""
+argument "forward_to" {
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+	optional = false
 }
 
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = ".*"
-}
-
-argument "label_cluster" {
-  // comment = "Static cluster label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_env" {
-  // comment = "Static env label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_region" {
-  // comment = "Static region label to add to all collected metrics"
-  optional = true
-  default = ""
 }
 
 argument "keep_labels" {
@@ -77,12 +47,9 @@ argument "git_rev" {
 }
 
 argument "git_pull_freq" {
+  // comment = "How often to pull the git repo, the default is 0s which means never pull"
   optional = true
-  default = "5m"
-}
-
-export "loki_remote" {
-  value = loki.write.destination
+  default = "0s"
 }
 
 module.git "log_targets" {
@@ -196,24 +163,7 @@ module.git "label_keep" {
   path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
-    forward_to = loki.write.destination.receiver
+    forward_to = argument.forward_to.value
     keep_labels = argument.keep_labels.value
-  }
-}
-
-loki.write "destination" {
-  endpoint {
-    url = argument.loki_url.value
-
-    basic_auth {
-        username = argument.loki_username.value
-        password = argument.loki_password.value
-    }
-  }
-
-  external_labels = {
-    "cluster" = argument.label_cluster.value,
-    "env" = argument.label_env.value,
-    "region" = argument.label_region.value,
   }
 }
