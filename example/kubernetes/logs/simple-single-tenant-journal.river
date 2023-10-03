@@ -1,7 +1,6 @@
 /*
 The following example shows using the default all logs processing module, for
-a single tenant and specifying the destination url/credentials via environment
-variables.
+a single tenant and gathering kubelet logs
 */
 logging {
   level  = "info"
@@ -12,6 +11,18 @@ module.git "logs_primary" {
   repository = "https://github.com/grafana/agent-modules.git"
   revision = "main"
   path = "modules/kubernetes/logs/all.river"
+
+  arguments {
+    forward_to = [loki.write.default.receiver]
+    git_repo = coalesce(env("GIT_REPO"), env("AGENT_REPO"), "https://github.com/grafana/agent-modules.git")
+    git_rev = coalesce(env("GIT_REV"), env("AGENT_REV"), "main")
+  }
+}
+
+module.git "logs_kubelet_journal" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/logs/kubelet.river"
 
   arguments {
     forward_to = [loki.write.default.receiver]
