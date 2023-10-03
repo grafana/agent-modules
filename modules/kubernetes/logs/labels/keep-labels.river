@@ -9,7 +9,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 argument "keep_labels" {
   optional = true
   // comment = "List of labels to keep before the log message is written to Loki"
@@ -36,6 +35,7 @@ argument "keep_labels" {
 export "process" {
   value = loki.process.keep_labels
 }
+
 /*
 As all of the pod labels and annotations we transformed into labels in the previous relabelings to make
 them available to the pipeline processing we need to ensure they are not automatically created in Loki.

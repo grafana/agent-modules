@@ -7,10 +7,10 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.normalize_filename
 }
+
 /*
 Normalize the filename, the label "filename" is automatically created from
 discovered files in the matching path based on the __path__ label from the

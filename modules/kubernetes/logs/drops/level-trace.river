@@ -10,7 +10,6 @@ argument "forward_to" {
   optional = false
 }
 
-
 export "process" {
   value = loki.process.drop_trace
 }
