@@ -110,7 +110,7 @@ module.git "log_format_logfmt" {
   path = "modules/kubernetes/logs/log-formats/logfmt.river"
 
   arguments {
-    forward_to = loki.process.events.receiver
+    forward_to = [loki.process.events.receiver]
   }
 }
 
