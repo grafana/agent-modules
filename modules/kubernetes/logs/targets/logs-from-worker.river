@@ -81,7 +81,7 @@ loki.source.file "pods" {
 }
 
 loki.process "parse" {
-  forward_to  = [argument.forward_to.value]
+  forward_to  = argument.forward_to.value
 
   // if the label tmp_container_runtime from above is containerd parse using cri
   stage.match {
