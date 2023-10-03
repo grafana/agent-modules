@@ -4,7 +4,7 @@ Description: Handles formatting for log format of zerolog
 Docs: https://github.com/rs/zerolog
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
