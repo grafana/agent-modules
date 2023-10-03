@@ -2,21 +2,9 @@
 Module: log-kubelet
 Description: Retrieves and processes the systemd journal logs for the kubelet
 */
-
-argument "loki_url" {
-  // comment = "The full URL address of Loki including the protocol, host and path i.e. https://example.com/loki/api/v1/push"
+argument "forward_to" {
+  // comment = "The module to forward the output to"
   optional = false
-}
-
-argument "loki_username" {
-  // comment = "The Loki Username / Tenant ID"
-  optional = false
-}
-
-argument "loki_password" {
-  // comment = "The Loki Password / Token for the Tenant"
-  optional = true
-  default = ""
 }
 
 argument "journal_max_age" {
@@ -59,24 +47,6 @@ argument "label_job" {
   // comment = "The job label to set for all collected logs"
   optional = true
   default = "loki.source.journal.kubelet"
-}
-
-argument "label_cluster" {
-  // comment = "Static cluster label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_env" {
-  // comment = "Static env label to add to all collected metrics"
-  optional = true
-  default = ""
-}
-
-argument "label_region" {
-  // comment = "Static region label to add to all collected metrics"
-  optional = true
-  default = ""
 }
 
 argument "keep_labels" {
@@ -263,25 +233,7 @@ module.git "label_keep" {
   path = "modules/kubernetes/logs/labels/keep-labels.river"
 
   arguments {
-    forward_to = loki.write.destination.receiver
+    forward_to = argument.forward_to.value
     keep_labels = argument.keep_labels.value
-  }
-}
-
-loki.write "destination" {
-  endpoint {
-    url = argument.loki_url.value
-
-    basic_auth {
-        username = argument.loki_username.value
-        password = argument.loki_password.value
-    }
-  }
-
-  external_labels = {
-    "cluster" = argument.label_cluster.value,
-    "env" = argument.label_env.value,
-    "region" = argument.label_region.value,
-    "job" = argument.label_job.value,
   }
 }
