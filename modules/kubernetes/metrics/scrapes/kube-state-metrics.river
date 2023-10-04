@@ -43,7 +43,7 @@ argument "git_rev" {
 
 argument "git_pull_freq" {
   optional = true
-  default = "5m"
+  default = "0s"
 }
 
 // get the available endpoints

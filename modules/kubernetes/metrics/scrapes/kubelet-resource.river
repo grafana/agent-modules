@@ -31,7 +31,7 @@ argument "git_rev" {
 
 argument "git_pull_freq" {
   optional = true
-  default = "5m"
+  default = "0s"
 }
 
 module.git "node_targets" {
