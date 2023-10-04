@@ -1,5 +1,5 @@
 /*
-The following example shows using the default all metrics processing module, for
+The following example shows specific modules, kubernetes scrapes only, for
 a single tenant and specifying the destination url/credentials via environment
 variables.
 */
@@ -8,15 +8,27 @@ logging {
   format = "logfmt"
 }
 
-module.git "metrics_primary" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/metrics/all.river"
+module.git "scrape_endpoints" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/metrics/scrapes/auto-scrape-endpoints.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.local_primary.receiver]
-    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+    forward_to = [prometheus.relabel.custom.receiver]
   }
+}
+
+prometheus.relabel "custom" {
+  forward_to = [prometheus.remote_write.local_primary.receiver]
+
+  // example rule to drop any go_* metrics
+  rule {
+    action = "drop"
+    source_labels = ["__name__"]
+    regex = "go_.*"
+  }
+
 }
 
 prometheus.remote_write "local_primary" {
