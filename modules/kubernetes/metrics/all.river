@@ -61,7 +61,7 @@ module.git "scrape_kubelet_cadvisor" {
   path = "modules/kubernetes/metrics/scrapes/kubelet-cadvisor.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
@@ -77,7 +77,7 @@ module.git "scrape_kubelet" {
   path = "modules/kubernetes/metrics/scrapes/kubelet.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
@@ -93,7 +93,7 @@ module.git "scrape_kubelet_probes" {
   path = "modules/kubernetes/metrics/scrapes/kubelet-probes.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
@@ -109,7 +109,7 @@ module.git "scrape_kube_apiserver" {
   path = "modules/kubernetes/metrics/scrapes/kube-apiserver.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     git_repo = argument.git_repo.value
@@ -125,7 +125,7 @@ module.git "scrape_endpoints" {
   path = "modules/kubernetes/metrics/scrapes/auto-scrape-endpoints.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     scrape_port_named_metrics = argument.scrape_port_named_metrics.value
@@ -142,7 +142,7 @@ module.git "probe_services" {
   path = "modules/kubernetes/metrics/scrapes/auto-probe-services.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     blackbox_url = argument.blackbox_url.value
@@ -160,7 +160,7 @@ module.git "probe_ingresses" {
   path = "modules/kubernetes/metrics/scrapes/auto-probe-ingresses.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.destination.receiver]
+    forward_to = argument.forward_to.value
     tenant = argument.tenant.value
     clustering = argument.clustering.value
     blackbox_url = argument.blackbox_url.value
