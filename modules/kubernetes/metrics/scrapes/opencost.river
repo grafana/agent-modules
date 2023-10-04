@@ -5,7 +5,7 @@ Description: Scrapes opencost, this is a separate scrape job, if you are also us
              metrics.agent.grafana.cmo/scrape: "false"
 */
 argument "forward_to" {
-  // comment = "Where to send the results to"
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
