@@ -1,0 +1,74 @@
+/*
+The following example shows using the default all metrics processing module, for
+a single tenant and specifying the destination url/credentials via environment
+variables.
+*/
+logging {
+  level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+  format = "logfmt"
+}
+
+module.git "metrics_primary" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path       = "modules/kubernetes/metrics/all.river"
+
+  arguments {
+    forward_to = [
+      prometheus.remote_write.local_primary.receiver,
+      prometheus.remote_write.grafana_cloud.receiver,
+    ]
+    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+  }
+}
+
+prometheus.remote_write "local_primary" {
+  endpoint {
+    url = env("METRICS_PRIMARY_URL")
+
+    basic_auth {
+      username = env("METRICS_PRIMARY_TENANT")
+      password = env("METRICS_PRIMARY_TOKEN")
+    }
+
+    write_relabel_config {
+			replacement = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), "")
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("ENV"), "")
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("REGION"), "")
+			target_label  = "region"
+		}
+  }
+}
+
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = "https://prometheus-us-central1.grafana.net/api/prom/push"
+
+    basic_auth {
+      username = "XXXXXX"
+      password = "XXXXXX"
+    }
+
+    write_relabel_config {
+			replacement = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), "")
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("ENV"), "")
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("REGION"), "")
+			target_label  = "region"
+		}
+  }
