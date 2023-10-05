@@ -42,7 +42,7 @@ prometheus.remote_write "default" {
 module.git "metrics_prometheus_scrape_agent" {
 	repository = "https://github.com/grafana/agent-modules.git"
 	revision   = "main"
-	path       = "example/metrics/prometheus_scrape/module.river"
+	path       = "example/demo/metrics/prometheus_scrape/module.river"
 
 	arguments {
 		address  = "0.0.0.0:12345"

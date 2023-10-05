@@ -32,7 +32,7 @@ Agent to a loki endpoint.
 module.git "logs_forward_to_loki" {
 	repository = "https://github.com/grafana/agent-modules.git"
 	revision   = "main"
-	path       = "example/logs/forward_to_loki/module.river"
+	path       = "example/demo/logs/forward_to_loki/module.river"
 
 	arguments {
 		filepath = env("LOG_FILEPATH")

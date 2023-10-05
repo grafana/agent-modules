@@ -35,7 +35,7 @@ Agent to prometheus.
 module.git "metrics_prometheus_receiver" {
 	repository = "https://github.com/grafana/agent-modules.git"
 	revision   = "main"
-	path       = "example/metrics/prometheus_receiver/module.river"
+	path       = "example/demo/metrics/prometheus_receiver/module.river"
 
 	arguments {
 		username = env("METRIC_USERNAME")
