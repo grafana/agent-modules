@@ -4,17 +4,16 @@ Description: Checks the logs.agent.grafana.com/mask-credit-card annotation, if s
              card pattern will have the value of the credit card replaced with "*credit-card*hash*
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
-
 
 export "process" {
   value = loki.process.mask_credit_card
 }
 
 loki.process "mask_credit_card" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/mask-credit-card annotation, if true the data will be masked as *credit-card*salt*
   // Formats:

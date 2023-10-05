@@ -3,7 +3,7 @@ Module: mask-all
 Description: Wrapper module to include all masking modules
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
@@ -33,7 +33,7 @@ module.git "mask_ssn" {
   path = "modules/kubernetes/logs/masks/ssn.river"
 
   arguments {
-    forward_to = module.git.mask_credit_card.exports.process.receiver
+    forward_to = [module.git.mask_credit_card.exports.process.receiver]
   }
 }
 
@@ -44,7 +44,7 @@ module.git "mask_credit_card" {
   path = "modules/kubernetes/logs/masks/credit-card.river"
 
   arguments {
-    forward_to = module.git.mask_email.exports.process.receiver
+    forward_to = [module.git.mask_email.exports.process.receiver]
   }
 }
 
@@ -55,7 +55,7 @@ module.git "mask_email" {
   path = "modules/kubernetes/logs/masks/email.river"
 
   arguments {
-    forward_to = module.git.mask_phone.exports.process.receiver
+    forward_to = [module.git.mask_phone.exports.process.receiver]
   }
 }
 
@@ -66,7 +66,7 @@ module.git "mask_phone" {
   path = "modules/kubernetes/logs/masks/phone.river"
 
   arguments {
-    forward_to = module.git.mask_ipv4.exports.process.receiver
+    forward_to = [module.git.mask_ipv4.exports.process.receiver]
   }
 }
 
@@ -77,7 +77,7 @@ module.git "mask_ipv4" {
   path = "modules/kubernetes/logs/masks/ipv4.river"
 
   arguments {
-    forward_to = module.git.mask_ipv6.exports.process.receiver
+    forward_to = [module.git.mask_ipv6.exports.process.receiver]
   }
 }
 

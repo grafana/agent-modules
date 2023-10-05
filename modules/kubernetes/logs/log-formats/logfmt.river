@@ -3,7 +3,7 @@ Module: log-format-logfmt
 Description: Handles formatting for log format of logfmt which is the default Golang format
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
@@ -12,7 +12,7 @@ export "process" {
 }
 
 loki.process "log_format_logfmt" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   // check logs.agent.grafana.com/log-format annotation, if the log_type is empty the line hasn't been processed, if it contains logfmt and the line matches the format, then process the line as
   // a logfmt (https://github.com/go-logfmt/logfmt)

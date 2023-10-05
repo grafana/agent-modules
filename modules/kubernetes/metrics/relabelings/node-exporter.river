@@ -5,7 +5,7 @@ Docs: https://github.com/prometheus/node_exporter
 */
 argument "forward_to" {
   optional = false
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
 }
 
 argument "job_label" {

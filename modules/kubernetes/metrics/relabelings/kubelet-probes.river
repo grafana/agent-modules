@@ -4,7 +4,7 @@ Description: Handles metric relabelings for collected metrics from kubelet-probe
 */
 argument "forward_to" {
   optional = false
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
 }
 
 argument "job_label" {

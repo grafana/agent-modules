@@ -14,9 +14,7 @@ module.git "metrics_primary" {
   path       = "modules/kubernetes/metrics/all.river"
 
   arguments {
-    mimir_url = env("METRICS_PRIMARY_URL")
-    mimir_username = env("METRICS_PRIMARY_TENANT")
-    mimir_password = env("METRICS_PRIMARY_TOKEN")
+    forward_to = [prometheus.remote_write.local_primary.receiver]
     // match aything with the annotation:
     // metrics.agent.grafana.com/tenant: primary or the annotation is not set
     tenant = "primary|"
@@ -30,11 +28,61 @@ module.git "metrics_ops" {
   path       = "modules/kubernetes/metrics/all.river"
 
   arguments {
-    mimir_url = env("METRICS_OPS_URL")
-    mimir_username = env("METRICS_OPS_TENANT")
-    mimir_password = env("METRICS_OPS_TOKEN")
+    forward_to = [prometheus.remote_write.local_ops.receiver]
     // metrics.agent.grafana.com/tenant: ops
     tenant = "ops"
     blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
+  }
+}
+
+prometheus.remote_write "local_primary" {
+  endpoint {
+    url = env("METRICS_PRIMARY_URL")
+
+    basic_auth {
+      username = env("METRICS_PRIMARY_TENANT")
+      password = env("METRICS_PRIMARY_TOKEN")
+    }
+
+    write_relabel_config {
+			replacement = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), "")
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("ENV"), "")
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("REGION"), "")
+			target_label  = "region"
+		}
+  }
+}
+
+prometheus.remote_write "local_ops" {
+  endpoint {
+    url = env("METRICS_OPS_URL")
+
+    basic_auth {
+      username = env("METRICS_OPS_TENANT")
+      password = env("METRICS_OPS_TOKEN")
+    }
+
+    write_relabel_config {
+			replacement = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), "")
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("ENV"), "")
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("REGION"), "")
+			target_label  = "region"
+		}
   }
 }

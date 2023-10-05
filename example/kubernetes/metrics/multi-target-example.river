@@ -14,7 +14,10 @@ module.git "metrics_primary" {
   path       = "modules/kubernetes/metrics/all.river"
 
   arguments {
-    forward_to = [prometheus.remote_write.local_primary.receiver]
+    forward_to = [
+      prometheus.remote_write.local_primary.receiver,
+      prometheus.remote_write.grafana_cloud.receiver,
+    ]
     blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
   }
 }
@@ -44,3 +47,28 @@ prometheus.remote_write "local_primary" {
 		}
   }
 }
+
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = "https://prometheus-us-central1.grafana.net/api/prom/push"
+
+    basic_auth {
+      username = "XXXXXX"
+      password = "XXXXXX"
+    }
+
+    write_relabel_config {
+			replacement = coalesce(env("CLUSTER_NAME"), env("CLUSTER"), "")
+			target_label  = "cluster"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("ENV"), "")
+			target_label  = "env"
+		}
+
+    write_relabel_config {
+			replacement = coalesce(env("REGION"), "")
+			target_label  = "region"
+		}
+  }

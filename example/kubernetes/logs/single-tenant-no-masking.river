@@ -17,7 +17,7 @@ module.git "log_targets" {
   path = "modules/kubernetes/logs/targets/logs-from-worker.river"
 
   arguments {
-    forward_to = module.git.log_formats_all.exports.process.receiver
+    forward_to = [module.git.log_formats_all.exports.process.receiver]
     tenant = coalesce(env("DEFAULT_TENANT_NAME"), "primary|")
   }
 }
@@ -28,7 +28,7 @@ module.git "log_formats_all" {
   path = "modules/kubernetes/logs/log-formats/all.river"
 
   arguments {
-    forward_to = module.git.log_level_default.exports.process.receiver
+    forward_to = [module.git.log_level_default.exports.process.receiver]
   }
 }
 
@@ -38,7 +38,7 @@ module.git "log_level_default" {
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
-    forward_to = module.git.scrub_all.exports.process.receiver
+    forward_to = [module.git.scrub_all.exports.process.receiver]
   }
 }
 
@@ -48,7 +48,7 @@ module.git "drop_levels" {
   path = "modules/kubernetes/logs/drops/levels.river"
 
   arguments {
-    forward_to = module.git.scrub_all.exports.process.receiver
+    forward_to = [module.git.scrub_all.exports.process.receiver]
   }
 }
 
@@ -58,7 +58,7 @@ module.git "scrub_all" {
   path = "modules/kubernetes/logs/scrubs/all.river"
 
   arguments {
-    forward_to = module.git.embed_pod.exports.process.receiver
+    forward_to = [module.git.embed_pod.exports.process.receiver]
   }
 }
 
@@ -68,7 +68,7 @@ module.git "embed_pod" {
   path = "modules/kubernetes/logs/embed/pod.river"
 
   arguments {
-    forward_to = module.git.label_keep.exports.process.receiver
+    forward_to = [module.git.label_keep.exports.process.receiver]
   }
 }
 

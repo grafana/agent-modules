@@ -1,5 +1,5 @@
 /*
-The following example shows using the default all metrics processing module, for
+The following example shows specific modules, kubernetes scrapes only, for
 a single tenant and specifying the destination url/credentials via environment
 variables.
 */
@@ -8,45 +8,43 @@ logging {
   format = "logfmt"
 }
 
-module.git "metrics_primary" {
+module.git "scrape_kubelet_cadvisor" {
   repository = "https://github.com/grafana/agent-modules.git"
   revision   = "main"
-  path       = "modules/kubernetes/metrics/all.river"
+  path = "modules/kubernetes/metrics/scrapes/kubelet-cadvisor.river"
 
   arguments {
     forward_to = [prometheus.remote_write.local_primary.receiver]
-    blackbox_url = "blackbox-prometheus-blackbox-exporter.agents.svc.cluster.local:9115"
   }
 }
 
-/*
-The json exporter modules are not included in the default all.river, as it is not as common.  Include the json-services and/or json-ingress module,
-and set the forward_to to be the exporter writer from the all.river module or declare a new instance of the prometheus.remote_write component.
-Ensure JSON Exporter is installed in the cluster and the json_exporter_url is set to the service name and port of the json exporter.
-
-Docs: https://github.com/prometheus-community/json_exporter/tree/master
-Helm Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-json-exporter
-*/
-
-module.git "json_services" {
+module.git "scrape_kubelet" {
   repository = "https://github.com/grafana/agent-modules.git"
   revision   = "main"
-  path = "modules/kubernetes/metrics/scrapes/json-services.river"
+  path = "modules/kubernetes/metrics/scrapes/kubelet.river"
 
   arguments {
     forward_to = [prometheus.remote_write.local_primary.receiver]
-    json_exporter_url = "json-exporter.agents.svc.cluster.local:7979"
   }
 }
 
-module.git "json_ingresses" {
+module.git "scrape_kubelet_probes" {
   repository = "https://github.com/grafana/agent-modules.git"
   revision   = "main"
-  path = "modules/kubernetes/metrics/scrapes/json-ingresses.river"
+  path = "modules/kubernetes/metrics/scrapes/kubelet-probes.river"
 
   arguments {
     forward_to = [prometheus.remote_write.local_primary.receiver]
-    json_exporter_url = "json-exporter.agents.svc.cluster.local:7979"
+  }
+}
+
+module.git "scrape_kube_apiserver" {
+  repository = "https://github.com/grafana/agent-modules.git"
+  revision   = "main"
+  path = "modules/kubernetes/metrics/scrapes/kube-apiserver.river"
+
+  arguments {
+    forward_to = [prometheus.remote_write.local_primary.receiver]
   }
 }
 

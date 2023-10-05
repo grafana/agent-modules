@@ -3,14 +3,14 @@ Module: normalize-filename
 Description: Normalizes the kubernetes filename name, and reduces cardinality of the filename
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
-
 
 export "process" {
   value = loki.process.normalize_filename
 }
+
 /*
 Normalize the filename, the label "filename" is automatically created from
 discovered files in the matching path based on the __path__ label from the
@@ -22,7 +22,7 @@ Example:
   Becomes: /var/log/pods/agents/agent-logs-grafana-agent/config-reloader.log
 */
 loki.process "normalize_filename" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   stage.regex {
     // unescaped regex: ^(?P<path>\/([^\/_]+\/)+)[^\/]+\/(?P<container_folder>[^\/]+)\/[0-9]+\.log

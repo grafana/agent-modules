@@ -5,10 +5,9 @@ Description: Pre-defined set of labels to keep, this stage should always be in-p
               in Loki as that would have extremely high-cardinality.
 */
 argument "forward_to" {
-  // comment = "The module to forward the output to"
+  // comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
   optional = false
 }
-
 
 argument "keep_labels" {
   optional = true
@@ -36,6 +35,7 @@ argument "keep_labels" {
 export "process" {
   value = loki.process.keep_labels
 }
+
 /*
 As all of the pod labels and annotations we transformed into labels in the previous relabelings to make
 them available to the pipeline processing we need to ensure they are not automatically created in Loki.
@@ -44,7 +44,7 @@ Not every log has to contain these labels, but this list should reflect the set 
 to explicitly allow.
 */
 loki.process "keep_labels" {
-  forward_to = [argument.forward_to.value]
+  forward_to = argument.forward_to.value
 
   stage.label_keep {
     values = argument.keep_labels.value
