@@ -42,7 +42,7 @@ tracing {
 module.git "traces_otel_input" {
 	repository = "https://github.com/grafana/agent-modules.git"
 	revision   = "main"
-	path       = "example/traces/otel_input/module.river"
+	path       = "example/demo/traces/otel_input/module.river"
 
 	arguments {
 		username = env("TRACE_USERNAME")
