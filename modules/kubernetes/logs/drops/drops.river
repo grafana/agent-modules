@@ -1,0 +1,101 @@
+// drop_levels is a wrapper component to include all drop level modules.
+declare "drop_levels" {
+	argument "forward_to" {
+		// comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+		optional = false
+	}
+
+	export "process" {
+		value = drop_trace.default.process
+	}
+
+	drop_trace "default" {
+		forward_to = [drop_debug.default.process.receiver]
+	}
+
+	drop_debug "default" {
+		forward_to = [drop_info.default.process.receiver]
+	}
+
+	drop_info "default" {
+		forward_to = argument.forward_to.value
+	}
+}
+
+// drop_trace drops trace-level logs, unless the target has the annotation
+// "logs.agent.grafana.com/drop-trace: false".
+declare "drop_trace" {
+	argument "forward_to" {
+		// comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+		optional = false
+	}
+
+	export "process" {
+		value = loki.process.drop_trace
+	}
+
+	loki.process "drop_trace" {
+		forward_to = argument.forward_to.value
+
+		// check logs.agent.grafana.com/drop-trace annotation, if not set or set to true then drop
+		// any log message with level=trace
+		stage.match {
+			pipeline_name       = "pipeline for annotation || logs.agent.grafana.com/drop-trace: true"
+			selector            = "{level=~\"(?i)trace?\",logs_agent_grafana_com_drop_trace!=\"false\"}"
+			action              = "drop"
+			drop_counter_reason = "trace"
+		}
+	}
+}
+
+// drop_debug drops debug-level logs, unless the target has the annotation
+// "logs.agent.grafana.com/drop-debug: false".
+declare "drop_debug" {
+	argument "forward_to" {
+		// comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+		optional = false
+	}
+
+	export "process" {
+		value = loki.process.drop_debug
+	}
+
+	loki.process "drop_debug" {
+		forward_to = argument.forward_to.value
+
+		// check logs.agent.grafana.com/drop-debug annotation, if not set or set to true then drop
+		// any log message with level=debug
+		stage.match {
+			pipeline_name       = "pipeline for annotation || logs.agent.grafana.com/drop-debug: true"
+			selector            = "{level=~\"(?i)debug?\",logs_agent_grafana_com_drop_debug!=\"false\"}"
+			action              = "drop"
+			drop_counter_reason = "debug"
+		}
+	}
+}
+
+// drop_info keeps info-level logs, unless logs have the annotation
+// "logs.agent.grafana.com/drop-info: true".
+declare "drop_info" {
+	argument "forward_to" {
+		// comment = "Must be a list(LogsReceiver) where collected logs should be forwarded to"
+		optional = false
+	}
+
+	export "process" {
+		value = loki.process.drop_info
+	}
+
+	loki.process "drop_info" {
+		forward_to = argument.forward_to.value
+
+		// check logs.agent.grafana.com/drop-info annotation, if not set or set to true then drop
+		// any log message with level=info
+		stage.match {
+			pipeline_name       = "pipeline for annotation || logs.agent.grafana.com/drop-info: true"
+			selector            = "{level=~\"(?i)info?\",logs_agent_grafana_com_drop_info=\"true\"}"
+			action              = "drop"
+			drop_counter_reason = "info"
+		}
+	}
+}

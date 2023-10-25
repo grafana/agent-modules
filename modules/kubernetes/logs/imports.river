@@ -1,0 +1,31 @@
+import.file "targets" {
+	path = "./targets"
+}
+
+import.file "formats" {
+	path = "./log-formats"
+}
+
+import.file "labels" {
+	path = "./labels"
+}
+
+import.file "drops" {
+	path = "./drops"
+}
+
+import.file "scrubs" {
+	path = "./scrubs"
+}
+
+import.file "embed" {
+	path = "./embed"
+}
+
+import.file "masks" {
+	path = "./masks"
+}
+
+import.file "relabelings" {
+	path = "../relabelings"
+}
