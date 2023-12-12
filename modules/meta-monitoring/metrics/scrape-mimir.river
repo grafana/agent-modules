@@ -83,7 +83,7 @@ module.git "endpoints_targets" {
 prometheus.scrape "mimir" {
   targets = module.git.endpoints_targets.exports.relabelings.output
   scrape_interval = argument.scrape_interval.value
-  forward_to = [prometheus.relabel.endpoints.receiver]
+  forward_to = [prometheus.relabel.mimir.receiver]
 
   clustering {
     enabled = argument.clustering.value
@@ -91,7 +91,7 @@ prometheus.scrape "mimir" {
 }
 
 // metric relabelings
-prometheus.relabel "endpoints" {
+prometheus.relabel "mimir" {
   forward_to = argument.forward_to.value
 
   rule {
