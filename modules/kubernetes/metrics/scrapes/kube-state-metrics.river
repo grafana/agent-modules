@@ -81,7 +81,7 @@ discovery.relabel "kube_state_metrics" {
 
 prometheus.scrape "kube_state_metrics" {
   targets = discovery.relabel.kube_state_metrics.output
-  forward_to = [module.git.kube_state_metrics.exports.metric_relabelings.receiver]
+  forward_to = [module.git.relabelings_kube_state_metrics.exports.metric_relabelings.receiver]
 
   clustering {
     enabled = argument.clustering.value
