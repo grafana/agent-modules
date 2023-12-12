@@ -51,6 +51,7 @@ discovery.kubernetes "endpoints" {
   selectors {
     role = "endpoints"
     label = "app.kubernetes.io/name=" + argument.app_name.value + ""
+  }
 }
 
 discovery.relabel "endpoints" {
