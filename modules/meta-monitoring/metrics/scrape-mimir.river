@@ -100,9 +100,4 @@ prometheus.relabel "mimir" {
     regex = argument.keep_metrics.value
   }
 
-  rule {
-    action = "replace"
-    replacement = argument.job_label.value
-    target_label = "job"
-  }
 }
