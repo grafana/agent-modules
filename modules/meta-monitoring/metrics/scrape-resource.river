@@ -82,7 +82,7 @@ module.git "lgtm_targets" {
 prometheus.scrape "lgtm_resource" {
   targets = module.git.lgtm_targets.exports.relabelings.output
   scrape_interval = argument.scrape_interval.value
-  forward_to = [prometheus.relabel.grafana.receiver]
+  forward_to = [prometheus.relabel.lgtm_resource.receiver]
 
   clustering {
     enabled = argument.clustering.value
