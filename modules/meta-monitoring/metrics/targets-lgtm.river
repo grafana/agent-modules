@@ -3,7 +3,7 @@ Module: lgtm-targets
 Description: Performs Kubernetes service discovery for endpoints, applies relabelings
 */
 argument "app_name" {
-  // comment = "The name of the kube-state-metrics app"
+  // comment = "The name of the lgtm app"
   optional = true
   default = "loki"
 }
