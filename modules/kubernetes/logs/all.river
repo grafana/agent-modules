@@ -88,7 +88,13 @@ module.git "log_level_default" {
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
-    forward_to = [module.git.pre_process_metrics.exports.process.receiver]
+    // here we fork, one branch goes to the log level module, the other goes to the metrics module
+    // this is because we need to reduce the labels on the pre-metrics but they are still necessary in
+    // downstream modules
+    forward_to = [
+      module.git.pre_process_metrics.exports.process.receiver,
+      module.git.drop_levels.exports.process.receiver,
+    ]
   }
 }
 
@@ -100,6 +106,7 @@ module.git "pre_process_metrics" {
 
   arguments {
     forward_to = [module.git.drop_levels.exports.process.receiver]
+    keep_labels = argument.keep_labels.value
   }
 }
 
