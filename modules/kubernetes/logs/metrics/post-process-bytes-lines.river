@@ -16,9 +16,9 @@ loki.process "pre_process_lines_bytes_metrics" {
 
   stage.metrics {
     metric.counter {
-      name = "log_lines_total"
+      name = "lines_total"
       description = "total number of log lines ingested, processed and forwarded for storage"
-      prefix = ""
+      prefix = "log_"
       match_all = true
       action = "inc"
       max_idle_duration = "24h"
@@ -27,9 +27,9 @@ loki.process "pre_process_lines_bytes_metrics" {
 
   stage.metrics {
       metric.counter {
-        name = "log_bytes_total"
+        name = "bytes_total"
       description = "total log bytes ingested, processed and forwarded for storage"
-        prefix = ""
+        prefix = "log_"
         match_all = true
         count_entry_bytes = true
         action = "add"
