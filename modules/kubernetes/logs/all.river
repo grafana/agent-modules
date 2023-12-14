@@ -100,9 +100,6 @@ module.git "pre_process_metrics" {
 
   arguments {
     forward_to = [module.git.drop_levels.exports.process.receiver]
-    git_repo = argument.git_repo.value
-    git_rev = argument.git_rev.value
-    git_pull_freq = argument.git_pull_freq.value
   }
 }
 
@@ -190,6 +187,5 @@ module.git "post_process_metrics" {
 
   arguments {
     forward_to = argument.forward_to.value
-    keep_labels = argument.keep_labels.value
   }
 }
