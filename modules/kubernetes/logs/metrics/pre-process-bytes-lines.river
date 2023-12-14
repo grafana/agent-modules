@@ -8,7 +8,7 @@ argument "forward_to" {
 }
 
 export "process" {
-  value = loki.process.scrub_json_empties
+  value = loki.process.pre_process_lines_bytes_metrics
 }
 
 loki.process "pre_process_lines_bytes_metrics" {
