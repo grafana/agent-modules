@@ -63,39 +63,22 @@ argument "git_pull_freq" {
   default = "0s"
 }
 
-module.git "endpoints_targets" {
+module.git "scrape_resource" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
   pull_frequency = argument.git_pull_freq.value
-  path = "modules/meta-monitoring/metrics/targets-lgtm.river"
+  path = "modules/meta-monitoring/metrics/scrape-resource.river"
 
   arguments {
+    forward_to = argument.forward_to.value
+    app_name = argument.app_name.value
+    port_name = argument.port_name.value
+    namespaces = argument.namespaces.value
+    scrape_interval = argument.scrape_interval.value
+    keep_metrics = argument.keep_metrics.value
+    clustering = argument.clustering.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
-    app_name = argument.app_name.value
-    namespaces = argument.namespaces.value
-    port_name = argument.port_name.value
-  }
-}
-
-prometheus.scrape "loki" {
-  targets = module.git.endpoints_targets.exports.relabelings.output
-  scrape_interval = argument.scrape_interval.value
-  forward_to = [prometheus.relabel.loki.receiver]
-
-  clustering {
-    enabled = argument.clustering.value
-  }
-}
-
-// metric relabelings
-prometheus.relabel "loki" {
-  forward_to = argument.forward_to.value
-
-  rule {
-    action = "keep"
-    source_labels = ["__name__"]
-    regex = argument.keep_metrics.value
   }
 }
