@@ -26,15 +26,15 @@ loki.process "pre_process_lines_bytes_metrics" {
   }
 
   stage.metrics {
-      metric.counter {
-        name = "bytes_total"
+    metric.counter {
+      name = "bytes_total"
       description = "total log bytes ingested, processed and forwarded for storage"
-        prefix = "log_"
-        match_all = true
-        count_entry_bytes = true
-        action = "add"
-        max_idle_duration = "24h"
-      }
+      prefix = "log_"
+      match_all = true
+      count_entry_bytes = true
+      action = "add"
+      max_idle_duration = "24h"
+    }
   }
 
 }
