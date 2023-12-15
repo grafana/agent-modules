@@ -1,6 +1,6 @@
 /*
-Module: scrape-grafana-agent-metrics
-Description: Scrapes Grafana Agent Metrics
+Module: scrape-tempo-metrics
+Description: Scrapes Tempo Metrics
 */
 argument "forward_to" {
   // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
@@ -10,7 +10,7 @@ argument "forward_to" {
 argument "app_name" {
   // comment = "The name of the kube-state-metrics app"
   optional = true
-  default = "grafana-agent"
+  default = "tempo"
 }
 
 argument "port_name" {
@@ -20,15 +20,21 @@ argument "port_name" {
 }
 
 argument "namespaces" {
-  // comment = "List of namespaces to search for grafana metrics in"
+  // comment = "List of namespaces to search for tempo metrics in"
   optional = true
-  default = ["agents"]
+  default = ["tempo"]
 }
 
 argument "scrape_interval" {
   // comment = "How often to scrape targets"
   optional = true
   default = "60s"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all tempo metrics"
+  optional = true
+  default = ""
 }
 
 argument "keep_metrics" {
