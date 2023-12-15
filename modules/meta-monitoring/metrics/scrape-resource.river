@@ -1,0 +1,101 @@
+/*
+Module: scrape-grafana-metrics
+Description: Scrapes LGTM Resource Metrics
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "app_name" {
+  // comment = "The name of the kube-state-metrics app"
+  optional = true
+  default = "grafana-agent"
+}
+
+argument "port_name" {
+  // comment = "The name of the port to keep metrics for"
+  optional = true
+  default = "http-metrics"
+}
+
+argument "namespaces" {
+  // comment = "List of namespaces to search for grafana metrics in"
+  optional = true
+  default = ["agents"]
+}
+
+argument "scrape_interval" {
+  // comment = "How often to scrape targets"
+  optional = true
+  default = "60s"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all grafana metrics"
+  optional = true
+}
+
+argument "keep_metrics" {
+  // comment = "Regex of metrics to keep, see ../relabelings/kube-state-metrics.river for the default value"
+  optional = true
+  default = "^.+$"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+argument "git_repo" {
+  optional = true
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
+argument "git_pull_freq" {
+  optional = true
+  default = "0s"
+}
+
+module.git "lgtm_targets" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/meta-monitoring/metrics/targets-lgtm.river"
+
+  arguments {
+    git_repo = argument.git_repo.value
+    git_rev = argument.git_rev.value
+    git_pull_freq = argument.git_pull_freq.value
+    app_name = argument.app_name.value
+    namespaces = argument.namespaces.value
+    port_name = argument.port_name.value
+  }
+}
+
+prometheus.scrape "lgtm_resource" {
+  targets = module.git.lgtm_targets.exports.relabelings.output
+  scrape_interval = argument.scrape_interval.value
+  forward_to = [prometheus.relabel.lgtm_resource.receiver]
+
+  clustering {
+    enabled = argument.clustering.value
+  }
+}
+
+// metric relabelings
+prometheus.relabel "lgtm_resource" {
+  forward_to = argument.forward_to.value
+
+  rule {
+    action = "keep"
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+  }
+}

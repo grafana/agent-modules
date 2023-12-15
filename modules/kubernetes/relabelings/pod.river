@@ -41,10 +41,10 @@ discovery.relabel "pods" {
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
-      "__meta_kubernetes_pod_name",
+      "__meta_kubernetes_pod_controller_name",
     ]
     action = "replace"
-    regex = "^(DaemonSet);(.*)(-[^-]{5})$"
+    regex = "^(DaemonSet);(.+)$"
     replacement = "$1/$2"
     target_label = "deployment"
   }
@@ -55,7 +55,7 @@ discovery.relabel "pods" {
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
-      "__meta_kubernetes_pod_name",
+      "__meta_kubernetes_pod_controller_name",
     ]
     action = "replace"
     regex = "^(ReplicaSet);((?:[^-]+-?)+)(?:-[a-f0-9]{9,10}-[^-]{5}|-[a-z0-9]{6,15})$"
@@ -68,10 +68,10 @@ discovery.relabel "pods" {
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
-      "__meta_kubernetes_pod_name",
+      "__meta_kubernetes_pod_controller_name",
     ]
     action = "replace"
-    regex = "^(StatefulSet|CronJob);(.*)(-\\d+)$"
+    regex = "^(StatefulSet|CronJob);(.+)$"
     replacement = "$1/$2"
     target_label = "deployment"
   }

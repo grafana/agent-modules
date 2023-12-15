@@ -1,0 +1,124 @@
+/*
+Module: lgtm-targets
+Description: Performs Kubernetes service discovery for endpoints, applies relabelings
+*/
+argument "app_name" {
+  // comment = "The name of the lgtm app"
+  optional = true
+  default = "loki"
+}
+
+argument "port_name" {
+  // comment = "The name of the port to keep metrics for"
+  optional = true
+  default = "http-metrics"
+}
+
+argument "namespaces" {
+  // comment = "List of namespaces to search for loki metrics in"
+  optional = true
+  default = ["loki"]
+}
+
+argument "git_repo" {
+  optional = true
+  default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
+}
+
+argument "git_rev" {
+  optional = true
+  default = coalesce(env("GIT_REV"), env("GIT_REVISION"), env("GIT_BRANCH"), "main")
+}
+
+argument "git_pull_freq" {
+  optional = true
+  default = "0s"
+}
+
+export "relabelings" {
+  value = discovery.relabel.endpoints
+}
+
+// get the available endpoints
+discovery.kubernetes "endpoints" {
+  role = "endpoints"
+
+  namespaces {
+    own_namespace = false
+    names = argument.namespaces.value
+  }
+
+  selectors {
+    role = "endpoints"
+    label = "app.kubernetes.io/name=" + argument.app_name.value
+  }
+}
+
+discovery.relabel "endpoints" {
+  targets = discovery.kubernetes.endpoints.targets
+
+  // drop any endpoints which have prometheus.io/service-monitor: "false" or has the label variant: headless
+  // set, as these are often attached to a headless service, which we do not want to scrape, loki will have both types of services
+  // and we don't want duplicate metrics
+  rule {
+    action = "drop"
+    source_labels = [
+      "__meta_kubernetes_service_label_prometheus_io_service_monitor",
+      "__meta_kubernetes_endpoints_label_prometheus_io_service_monitor",
+      "__meta_kubernetes_service_label_variant",
+      "__meta_kubernetes_endpoints_label_variant",
+    ]
+    regex = "^(?:;*)?(false).*$"
+  }
+  // or check for service.kubernetes.io/headless: "" label, when a label does not exist, it is treated as an empty string, so we need to drop any endpoints that have the headless annotation set
+  // so we look to see if it is present and not if it is equal to ""
+  rule {
+    action = "drop"
+    source_labels = [
+      "__meta_kubernetes_service_labelpresent_service_kubernetes_io_headless",
+      "__meta_kubernetes_endpoints_labelpresent_service_kubernetes_io_headless",
+    ]
+    regex = "^(?:;*)?(true).*$"
+  }
+
+  // there will be a target for each endpoint container AND port, drop any endpoints that do not have the http-metrics port name set
+  rule {
+    action = "keep"
+    source_labels = ["__meta_kubernetes_endpoint_port_name"]
+    regex = argument.port_name.value
+  }
+
+  // set the namespace
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
+  // set the service_name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_service_name"]
+    target_label = "service"
+  }
+
+  // set the pod name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_pod_name"]
+    target_label = "pod"
+  }
+
+  // set the job label
+  rule {
+    source_labels = [
+      "__meta_kubernetes_namespace",
+      "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+    ]
+    separator = "/"
+    regex = "(.*)/(.*)"
+    replacement = "${1}/${2}"
+    target_label = "job"
+  }
+
+}
