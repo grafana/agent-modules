@@ -20,6 +20,12 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "job_label" {
+  optional = true
+  default = "integrations/kubernetes/coredns"
+  // comment = "The job label to add for all coredns"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -101,5 +107,6 @@ module.git "relabelings_kube_dns" {
 
   arguments {
     forward_to = argument.forward_to.value
+    job_label = argument.job_label.value
   }
 }

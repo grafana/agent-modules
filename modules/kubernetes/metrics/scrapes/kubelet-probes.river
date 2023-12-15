@@ -13,6 +13,13 @@ argument "tenant" {
   default = ".*"
 }
 
+argument "job_label" {
+  optional = true
+  // from Grafana Cloud Integration:
+  default = "integrations/kubernetes/probes"
+  // comment = "The job label to add for all cadvisor metrics"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -88,5 +95,6 @@ module.git "relabelings_kubelet_probes" {
 
   arguments {
     forward_to = argument.forward_to.value
+    job_label = argument.job_label.value
   }
 }
