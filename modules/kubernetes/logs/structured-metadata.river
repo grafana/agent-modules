@@ -13,7 +13,13 @@ argument "forward_to" {
   optional = false
 }
 
-argument "metadata" {
+argument "enable_structured_metadata" {
+  // comment = "Whether or not to enable structured metadata, this must be enabled and configured in your Loki cluster for this to work, otherwise will result in an error."
+  optional = true
+  default = false
+}
+
+argument "structured_metadata" {
   optional = true
   // comment = "Map of labels/fields to keep before the log message is written to Loki"
   // Docs: https://grafana.com/docs/agent/next/flow/reference/components/loki.process/#stagestructured_metadata-block
@@ -36,8 +42,24 @@ export "process" {
 loki.process "metadata" {
   forward_to = argument.forward_to.value
 
-  stage.structured_metadata {
-    values = argument.metadata.value
+  // set a tmp variable on whether to enable structured metadata or not
+  stage.labels {
+    values = {
+      __enable_structured_metadata = format("%s", argument.enable_structured_metadata.value)
+    }
+  }
+  // check to see if structured metadata is enabled, if so set it
+  stage.match {
+    selector = "{__enable_structured_metadata=\"true\"}"
+
+    stage.structured_metadata {
+      values = argument.metadata.value
+    }
+  }
+
+  // drop the tmp label
+  stage.label_drop {
+    values = ["__enable_structured_metadata"]
   }
 
 }

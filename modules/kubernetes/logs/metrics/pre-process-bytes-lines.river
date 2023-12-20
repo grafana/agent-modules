@@ -68,6 +68,10 @@ module.git "label_keep" {
 loki.process "pre_process_lines_bytes_metrics" {
   forward_to = [] // does not forward anywhere, just generates metrics
 
+  stage.label_drop {
+    values = ["log_type"]
+  }
+
   stage.metrics {
     metric.counter {
       name = "lines_pre_total"

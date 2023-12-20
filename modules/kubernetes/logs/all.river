@@ -36,7 +36,13 @@ argument "keep_labels" {
   ]
 }
 
-argument "metadata" {
+argument "enable_structured_metadata" {
+  // comment = "Whether or not to enable structured metadata, this must be enabled and configured in your Loki cluster for this to work, otherwise will result in an error."
+  optional = true
+  default = false
+}
+
+argument "structured_metadata" {
   optional = true
   // comment = "Map of labels/fields to keep before the log message is written to Loki"
   // Docs: https://grafana.com/docs/agent/next/flow/reference/components/loki.process/#stagestructured_metadata-block
@@ -66,11 +72,40 @@ module.git "log_targets" {
   path = "modules/kubernetes/logs/targets/logs-from-worker.river"
 
   arguments {
-    forward_to = [module.git.log_formats_all.exports.process.receiver]
+    forward_to = [module.git.label_normalize_filename.exports.process.receiver]
     tenant = argument.tenant.value
     git_repo = argument.git_repo.value
     git_rev = argument.git_rev.value
     git_pull_freq = argument.git_pull_freq.value
+  }
+}
+
+module.git "label_normalize_filename" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/labels/normalize-filename.river"
+
+  arguments {
+    // here we fork, one branch goes to the log level module, the other goes to the metrics module
+    // this is because we need to reduce the labels on the pre-metrics but they are still necessary in
+    // downstream modules
+    forward_to = [
+      module.git.pre_process_metrics.exports.process.receiver,
+      module.git.log_formats_all.exports.process.receiver,
+    ]
+  }
+}
+
+module.git "pre_process_metrics" {
+  repository = argument.git_repo.value
+  revision = argument.git_rev.value
+  pull_frequency = argument.git_pull_freq.value
+  path = "modules/kubernetes/logs/metrics/pre-process-bytes-lines.river"
+
+  arguments {
+    forward_to = [] // send nowhere
+    keep_labels = argument.keep_labels.value
   }
 }
 
@@ -95,36 +130,7 @@ module.git "log_level_default" {
   path = "modules/kubernetes/logs/labels/log-level.river"
 
   arguments {
-    forward_to = [module.git.label_normalize_filename.exports.process.receiver]
-  }
-}
-
-module.git "label_normalize_filename" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/labels/normalize-filename.river"
-
-  arguments {
-    // here we fork, one branch goes to the log level module, the other goes to the metrics module
-    // this is because we need to reduce the labels on the pre-metrics but they are still necessary in
-    // downstream modules
-    forward_to = [
-      module.git.pre_process_metrics.exports.process.receiver,
-      module.git.drop_levels.exports.process.receiver,
-    ]
-  }
-}
-
-module.git "pre_process_metrics" {
-  repository = argument.git_repo.value
-  revision = argument.git_rev.value
-  pull_frequency = argument.git_pull_freq.value
-  path = "modules/kubernetes/logs/metrics/pre-process-bytes-lines.river"
-
-  arguments {
     forward_to = [module.git.drop_levels.exports.process.receiver]
-    keep_labels = argument.keep_labels.value
   }
 }
 
@@ -189,7 +195,8 @@ module.git "structured_metadata" {
 
   arguments {
     forward_to = [module.git.label_keep.exports.process.receiver]
-    metadata = argument.metadata.value
+    enable_structured_metadata = argument.enable_structured_metadata.value
+    structured_metadata = argument.structured_metadata.value
   }
 }
 
