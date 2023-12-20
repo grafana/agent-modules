@@ -45,7 +45,7 @@ loki.process "structured_metadata" {
   // set a tmp variable on whether to enable structured metadata or not
   stage.labels {
     values = {
-      __enable_structured_metadata = format("%s", argument.enable_structured_metadata.value)
+      __enable_structured_metadata = format("%s", argument.enable_structured_metadata.value),
     }
   }
   // check to see if structured metadata is enabled, if so set it
