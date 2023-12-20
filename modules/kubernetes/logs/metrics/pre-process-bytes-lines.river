@@ -47,7 +47,7 @@ argument "git_pull_freq" {
 }
 
 export "process" {
-  value = module.git.label_keep.exports.process
+  value = module.git.label_keep.exports
 }
 
 // drop any labels that are not in the keep_labels list

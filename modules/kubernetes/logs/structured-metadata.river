@@ -27,7 +27,7 @@ argument "structured_metadata" {
 }
 
 export "process" {
-  value = loki.process.metadata
+  value = loki.process.structured_metadata
 }
 
 /*
@@ -39,7 +39,7 @@ export "process" {
     "user" = "username",
   }
 */
-loki.process "metadata" {
+loki.process "structured_metadata" {
   forward_to = argument.forward_to.value
 
   // set a tmp variable on whether to enable structured metadata or not
