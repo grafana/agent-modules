@@ -53,7 +53,7 @@ loki.process "structured_metadata" {
     selector = "{__enable_structured_metadata=\"true\"}"
 
     stage.structured_metadata {
-      values = argument.metadata.value
+      values = argument.structured_metadata.value
     }
   }
 
