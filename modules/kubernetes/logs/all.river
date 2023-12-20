@@ -187,6 +187,8 @@ module.git "mask_all" {
   }
 }
 
+// structured metadata must be expliclity enabled in the Loki cluster for this to work
+// Docs: https://grafana.com/docs/loki/latest/get-started/labels/structured-metadata/
 module.git "structured_metadata" {
   repository = argument.git_repo.value
   revision = argument.git_rev.value
