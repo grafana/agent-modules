@@ -39,15 +39,6 @@ otelcol.receiver.otlp "default" {
 	}
 
 	output {
-		metrics = [otelcol.processor.batch.default.input]
-		logs    = [otelcol.processor.batch.default.input]
-		traces  = [otelcol.processor.batch.default.input]
-	}
-}
-
-otelcol.processor.batch "default" {
-	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.processor.batch/
-	output {
 		metrics = [otelcol.processor.memory_limiter.default.input]
 		logs    = [otelcol.processor.memory_limiter.default.input]
 		traces  = [otelcol.processor.memory_limiter.default.input]
@@ -60,6 +51,17 @@ otelcol.processor.memory_limiter "default" {
 
 	limit = "150MiB" // alternatively, set `limit_percentage` and `spike_limit_percentage`
 
+	output {
+		metrics = [otelcol.processor.batch.default.input]
+		logs    = [otelcol.processor.batch.default.input]
+		traces  = [otelcol.processor.batch.default.input]
+	}
+}
+
+// otelcol.processor.batch must run after components which can drop telemetry (e.g. otelcol.processor.memory_limiter).
+// Otherwise, if telemetry is dropped, the effect of batching will be lost.
+otelcol.processor.batch "default" {
+	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.processor.batch/
 	output {
 		metrics = [otelcol.exporter.prometheus.default.input]
 		logs    = [otelcol.exporter.loki.default.input]
