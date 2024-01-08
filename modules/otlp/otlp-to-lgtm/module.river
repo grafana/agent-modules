@@ -58,6 +58,8 @@ otelcol.processor.memory_limiter "default" {
 	}
 }
 
+// otelcol.processor.batch must run after components which can drop telemetry (e.g. otelcol.processor.memory_limiter).
+// Otherwise, if telemetry is dropped, the effect of batching will be lost.
 otelcol.processor.batch "default" {
 	// https://grafana.com/docs/agent/latest/flow/reference/components/otelcol.processor.batch/
 	output {
