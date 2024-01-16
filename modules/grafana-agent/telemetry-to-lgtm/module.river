@@ -28,7 +28,7 @@ argument "grafana_agent_port" {
  * EXPORTS
  ********************************************/
 export "log_receiver" {
-	value = loki.write.default.log_receiver
+	value = loki.write.default.receiver
 }
 
 export "trace_input" {
