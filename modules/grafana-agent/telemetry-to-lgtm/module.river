@@ -7,8 +7,6 @@ argument "prometheus_user" { }
 
 argument "prometheus_password" { }
 
-argument "loki_filepath" { }
-
 argument "loki_endpoint" { }
 
 argument "loki_user" { }
@@ -29,6 +27,10 @@ argument "grafana_agent_port" {
 /********************************************
  * EXPORTS
  ********************************************/
+export "log_receiver" {
+	value = loki.write.default.log_receiver
+}
+
 export "trace_input" {
 	value = otelcol.processor.batch.default.input
 }
@@ -56,13 +58,6 @@ prometheus.scrape "default" {
 /********************************************
  * AGENT LOGGING
  ********************************************/
-loki.source.file "default" {
-	targets = [
-		{__path__ = argument.loki_filepath.value},
-	]
-	forward_to = [loki.write.default.receiver]
-}
-
 loki.write "default" {
 	endpoint {
 		url = argument.loki_endpoint.value

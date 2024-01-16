@@ -24,8 +24,9 @@ export AGENT_LOG_LEVEL="debug"
 export METRIC_URL="https://prometheus-us-central1.grafana.net/api/prom/push"
 export METRIC_USERNAME="REDACTED"
 export METRIC_PASSWORD="REDACTED"
-export LOG_URL="https://REDACTED:REDACTED@logs-prod3.grafana.net/loki/api/v1/push"
-export LOG_FILEPATH="/home/REDACTED/logs/flow.log"
+export LOG_URL="https://logs-prod3.grafana.net/loki/api/v1/push"
+export LOG_USERNAME="REDACTED"
+export LOG_PASSWORD="REDACTED"
 export TRACE_URL="https://tempo-us-central1.grafana.net:443"
 export TRACE_USERNAME="REDACTED"
 export TRACE_PASSWORD="REDACTED"
@@ -41,7 +42,7 @@ Clone this repo and set the AGENT_CONFIG_FOLDER environment variable to the path
 The command to run the agent from the root of the project looks like this:
 
 ```bash
-go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/string.river 2>${LOG_FILEPATH}
+go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/string.river
 ```
 
 or if running an installed agent, something like this should work:
@@ -59,7 +60,7 @@ Clone this repo and set the AGENT_CONFIG_FOLDER environment variable to the path
 The command to run the agent from the root of the agent project looks like this:
 
 ```bash
-go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/file.river 2>${LOG_FILEPATH}
+go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/file.river
 ```
 
 or if running an installed agent, something like this should work:
@@ -77,7 +78,7 @@ Copy this entrypoint parent config and set the AGENT_CONFIG_FOLDER environment v
 The command to run the agent from the root of the agent project looks like this:
 
 ```bash
-go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/git.river 2>${LOG_FILEPATH}
+go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/git.river
 ```
 
 or if running an installed agent, something like this should work:
@@ -96,7 +97,7 @@ Clone this repo and set the AGENT_CONFIG_FOLDER environment variable to the path
 The command to run the agent from the root of the agent project looks like this:
 
 ```bash
-go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/single.river 2>${LOG_FILEPATH}
+go run ./cmd/grafana-agent run ${AGENT_CONFIG_FOLDER}/single.river
 ```
 
 or if running an installed agent, something like this should work:
