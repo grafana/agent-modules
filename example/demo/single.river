@@ -23,22 +23,20 @@ prometheus.scrape "default" {
  * AGENT LOGGING
  ********************************************/
 logging {
-	level  = env("AGENT_LOG_LEVEL")
-	format = "logfmt"
-}
-
-// SOURCES
-loki.source.file "default" {
-	targets = [
-		{__path__ = env("LOG_FILEPATH")},
-	]
-	forward_to = [loki.write.default.receiver]
+	level    = env("AGENT_LOG_LEVEL")
+	format   = "logfmt"
+    write_to = [loki.write.default.receiver]
 }
 
 // LOG EXPORTER
 loki.write "default" {
 	endpoint {
 		url = env("LOG_URL")
+
+        basic_auth {
+			username = env("LOG_USERNAME")
+			password = env("LOG_PASSWORD")
+		}
 	}
 }
 

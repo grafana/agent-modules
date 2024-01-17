@@ -1,7 +1,11 @@
 /********************************************
  * ARGUMENTS
  ********************************************/
-argument "filepath" {
+argument "username" {
+	optional = false
+}
+
+argument "password" {
 	optional = false
 }
 
@@ -12,15 +16,8 @@ argument "url" {
 /********************************************
  * EXPORTS
  ********************************************/
-
-/********************************************
- * SOURCES
- ********************************************/
-loki.source.file "default" {
-	targets = [
-		{__path__ = argument.filepath.value},
-	]
-	forward_to = [loki.write.default.receiver]
+export "receiver" {
+	value = loki.write.default.receiver
 }
 
 /********************************************
@@ -29,5 +26,10 @@ loki.source.file "default" {
 loki.write "default" {
 	endpoint {
 		url = argument.url.value
+
+		basic_auth {
+			username = argument.username.value
+			password = argument.password.value
+		}
 	}
 }

@@ -4,7 +4,7 @@ Module to forward the Grafana Agent's own telemetry data to Loki, Mimir and Temp
 
 ## Agent Version
 
-`>= v0.33`
+`>= v0.36`
 
 ## Module arguments
 
@@ -17,7 +17,6 @@ loader:
 | `prometheus_endpoint` | `receiver` | The Prometheus remote write endpoint. | | yes
 | `prometheus_user`     | `string`   | The Prometheus remote write basic auth username. | | yes
 | `prometheus_password` | `secret`   | The Prometheus remote write basic auth password. | | yes
-| `loki_filepath`       | `string`   | The filepath to Grafana Agent logs | | yes
 | `loki_endpoint`       | `string`   | Loki endpoint | | yes
 | `loki_user`           | `string`   | Loki basic auth username. | | yes
 | `loki_password`       | `secret`   | Loki basic auth password. | | yes
@@ -25,23 +24,24 @@ loader:
 | `tempo_user`          | `string`   | Tempo basic auth username. | | yes
 | `tempo_password`      | `secret`   | Tempo basic auth password. | | yes
 
-Grafana Agent logs must be forwarded to the file at `loki_filepath`. For example:
-
-```bash
-grafana-agent run parent.river 2>${GRAFANA_AGENT_LOGPATH}
-```
-
 ## Module exports
 
 The following fields are exported by the module:
 
 | Name | Type | Description
 | ---- | ---- | -----------
-| `trace_input` | `otelcol.Consumer` | A value that other components can use to send telemetry data to.
+| `log_receiver` | `LogsReceiver`     | A logs receiver that other components can use to send telemetry data to.
+| `trace_input`  | `otelcol.Consumer` | A value that other components can use to send telemetry data to.
 
 ## Example
 
 ```
+logging {
+	level    = "info"
+	format   = "logfmt"
+	write_to = [module.git.agent_telemetry.exports.log_receiver]
+}
+
 tracing {
 	sampling_fraction = 1
 	write_to          = [module.git.agent_telemetry.exports.trace_input]
@@ -57,7 +57,6 @@ module.git "agent_telemetry" {
         prometheus_user     = "123456"
         prometheus_password = env("GRAFANA_CLOUD_KEY")
 
-        loki_filepath = "/path/to/logs.log"
         loki_endpoint = "https://logs-prod-us-central1.grafana.net/loki/api/v1/push"
         loki_user     = "1234567"
         loki_password = env("GRAFANA_CLOUD_KEY")

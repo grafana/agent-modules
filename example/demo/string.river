@@ -32,8 +32,9 @@ module.string "metrics_prometheus_scrape_agent" {
  * AGENT LOGGING
  ********************************************/
 logging {
-	level  = env("AGENT_LOG_LEVEL")
-	format = "logfmt"
+	level    = env("AGENT_LOG_LEVEL")
+	format   = "logfmt"
+	write_to = [module.string.logs_forward_to_loki.exports.receiver]
 }
 
 local.file "logs_forward_to_loki" {
@@ -44,7 +45,8 @@ module.string "logs_forward_to_loki" {
 	content = local.file.logs_forward_to_loki.content
 
 	arguments {
-		filepath = env("LOG_FILEPATH")
+		username = env("LOG_USERNAME")
+		password = env("LOG_PASSWORD")
 		url      = env("LOG_URL")
 	}
 }
