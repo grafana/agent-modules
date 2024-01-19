@@ -8,10 +8,10 @@ argument "forward_to" {
 }
 
 export "process" {
-  value = loki.process.pre_process_lines_bytes_metrics
+  value = loki.process.post_process_lines_bytes_metrics
 }
 
-loki.process "pre_process_lines_bytes_metrics" {
+loki.process "post_process_lines_bytes_metrics" {
   forward_to = argument.forward_to.value
 
   stage.label_drop {
