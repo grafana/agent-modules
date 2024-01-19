@@ -48,9 +48,9 @@ loki.process "log_format_json" {
       pipeline_name = "pipeline for annotation || logs.agent.grafana.com/scrub-timestamp: true"
 
       // remove timestamp from the log line
-      // unescaped regex: (?i)("(timestamp|ts|logdate|time)"\s*:\s*"[^"]+",?)
+      // unescaped regex: (?i)("(@?timestamp|ts|logdate|time)"\s*:\s*"?[^",]+"?,)
       stage.replace {
-        expression = "(?i)(\"(timestamp|ts|logdate|time)\"\\s*:\\s*\"[^\"]+\",?)"
+        expression = "(?i)(\"(@?timestamp|ts|logdate|time)\"\\s*:\\s*\"?[^\",]+\"?,)"
         replace = ""
       }
     }
