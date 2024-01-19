@@ -1,0 +1,118 @@
+/*
+Module: job-kube-state-metrics
+Description: Scrapes Kube-State-Metrics, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
+             disable kube-state-metrics from being scraped by this module and annotations by setting the following annotation on the kube-state-metrics
+             metrics.agent.grafana.com/scrape: "false"
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "app_name" {
+  // comment = "The name of the kube-state-metrics app"
+  optional = true
+  default = "kube-state-metrics"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all kube-state-metrics, see ../relabelings/kube-state-metrics.river for the default value""
+  optional = true
+  default = "integrations/kubernetes/kube-state-metrics"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*)"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+argument "targets" {
+  // comment = "Service Targets to scrape kube-state-metrics from"
+  optional = true
+  default = discover.kubernetes.service.targets
+}
+
+// this is only called if no targets are passed in
+discovery.kubernetes "service" {
+  role = "service"
+}
+
+discovery.relabel "kube_state_metrics" {
+  targets = argument.targets.value
+
+  // endpoints get all of the service labels they are attached to, filter to just the kube-state-metrics service
+  rule {
+    action = "keep"
+    source_labels = [
+      "__meta_kubernetes_service_label_app_kubernetes_io_name",
+    ]
+    regex = argument.app_name.value
+  }
+
+}
+
+prometheus.scrape "kube_state_metrics" {
+  targets = discovery.relabel.kube_state_metrics.output
+  forward_to = [module.git.relabelings_kube_state_metrics.exports.metric_relabelings.receiver]
+  job_name = argument.job_label.value
+  clustering {
+    enabled = argument.clustering.value
+  }
+}
+
+prometheus.relabel "kube_state_metrics" {
+  forward_to = argument.forward_to.value
+
+  // Normalize labels to the same value for the given metric and label pairs
+  // Normalizing unimportant labels (not deleting to continue satisfying <label>!="" checks)
+  rule {
+    source_labels = ["__name__"]
+    target_label = "image"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    target_label = "image_id"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    target_label = "image_spec"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    regex = "kube_pod_info|kube_pod_owner"
+    target_label = "created_by_name"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    regex = "kube_pod_container_info"
+    target_label = "container_id"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    regex = "kube_pod_info"
+    target_label = "host_ip"
+    replacement = "NA"
+  }
+  rule {
+    source_labels = ["__name__"]
+    regex = "kube_pod_info"
+    target_label = "pod_ip"
+    replacement = "NA"
+  }
+
+  rule {
+    action = "keep"
+    regex = argument.keep_metrics.value
+  }
+}
