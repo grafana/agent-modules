@@ -35,7 +35,7 @@ argument "clustering" {
 argument "targets" {
   // comment = "Service Targets to scrape kube-state-metrics from"
   optional = true
-  default = discover.kubernetes.service.targets
+  default = discovery.kubernetes.service.targets
 }
 
 // this is only called if no targets are passed in
