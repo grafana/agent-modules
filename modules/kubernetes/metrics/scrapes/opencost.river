@@ -2,7 +2,7 @@
 Module: scrape-opencost
 Description: Scrapes opencost, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
              disable opencost from being scraped by this module and annotations by setting the following annotation on the opencost
-             metrics.agent.grafana.cmo/scrape: "false"
+             metrics.agent.grafana.com/scrape: "false"
 */
 argument "forward_to" {
   // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"

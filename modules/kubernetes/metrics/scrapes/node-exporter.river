@@ -2,7 +2,7 @@
 Module: scrape-node-exporter
 Description: Scrapes Node Exporter, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
              disable node-exporter from being scraped by this module and annotations by setting the following annotation on the node-exporter
-             metrics.agent.grafana.cmo/scrape: "false".
+             metrics.agent.grafana.com/scrape: "false".
 
              Node exporter should be deployed as a DaemonSet, each pod on each worker will be scraped by the agent using endpoint service discovery
 */
