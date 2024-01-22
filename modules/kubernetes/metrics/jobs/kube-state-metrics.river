@@ -44,59 +44,7 @@ discovery.kubernetes "kube_state_metrics" {
 prometheus.scrape "kube_state_metrics" {
   targets = discovery.kubernetes.kube_state_metrics.targets
   forward_to = argument.forward_to.value
-  job_name = argument.job_label.value
   clustering {
     enabled = argument.clustering.value
-  }
-}
-
-prometheus.relabel "kube_state_metrics" {
-  forward_to = argument.forward_to.value
-
-  // Normalize labels to the same value for the given metric and label pairs
-  // Normalizing unimportant labels (not deleting to continue satisfying <label>!="" checks)
-  rule {
-    source_labels = ["__name__"]
-    target_label = "image"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    target_label = "image_id"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    target_label = "image_spec"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    regex = "kube_pod_info|kube_pod_owner"
-    target_label = "created_by_name"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    regex = "kube_pod_container_info"
-    target_label = "container_id"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    regex = "kube_pod_info"
-    target_label = "host_ip"
-    replacement = "NA"
-  }
-  rule {
-    source_labels = ["__name__"]
-    regex = "kube_pod_info"
-    target_label = "pod_ip"
-    replacement = "NA"
-  }
-
-  rule {
-    action = "keep"
-    regex = argument.keep_metrics.value
   }
 }
