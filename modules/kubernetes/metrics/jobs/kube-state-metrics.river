@@ -32,33 +32,17 @@ argument "clustering" {
   default = false
 }
 
-argument "targets" {
-  // comment = "Service Targets to scrape kube-state-metrics from"
-  optional = true
-  default = discovery.kubernetes.service.targets
-}
-
-// this is only called if no targets are passed in
-discovery.kubernetes "service" {
+discovery.kubernetes "kube_state_metrics" {
   role = "service"
-}
 
-discovery.relabel "kube_state_metrics" {
-  targets = discovery.kubernetes.service.targets
-
-  // endpoints get all of the service labels they are attached to, filter to just the kube-state-metrics service
-  rule {
-    action = "keep"
-    source_labels = [
-      "__meta_kubernetes_service_label_app_kubernetes_io_name",
-    ]
-    regex = argument.app_name.value
+  selectors {
+    role = "service"
+    label = "app.kubernetes.io/name=" & argument.app_name.value
   }
-
 }
 
 prometheus.scrape "kube_state_metrics" {
-  targets = discovery.relabel.kube_state_metrics.output
+  targets = discovery.kubernetes.kube_state_metrics.output
   forward_to = [prometheus.relabel.kube_state_metrics.receiver]
   job_name = argument.job_label.value
   clustering {
