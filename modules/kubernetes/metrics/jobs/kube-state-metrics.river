@@ -37,7 +37,7 @@ discovery.kubernetes "kube_state_metrics" {
 
   selectors {
     role = "service"
-    label = "app.kubernetes.io/name=" & argument.app_name.value
+    label = "app.kubernetes.io/name=" + argument.app_name.value
   }
 }
 
