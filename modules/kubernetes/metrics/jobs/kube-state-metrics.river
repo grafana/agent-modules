@@ -44,7 +44,7 @@ discovery.kubernetes "service" {
 }
 
 discovery.relabel "kube_state_metrics" {
-  targets = argument.targets.value
+  targets = discovery.kubernetes.service.targets
 
   // endpoints get all of the service labels they are attached to, filter to just the kube-state-metrics service
   rule {
