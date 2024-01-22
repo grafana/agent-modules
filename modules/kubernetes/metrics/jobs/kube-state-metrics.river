@@ -42,7 +42,7 @@ discovery.kubernetes "kube_state_metrics" {
 }
 
 prometheus.scrape "kube_state_metrics" {
-  targets = discovery.kubernetes.kube_state_metrics.output
+  targets = discovery.kubernetes.kube_state_metrics.targets
   forward_to = [prometheus.relabel.kube_state_metrics.receiver]
   job_name = argument.job_label.value
   clustering {
