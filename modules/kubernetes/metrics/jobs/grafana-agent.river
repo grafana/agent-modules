@@ -105,4 +105,59 @@ prometheus.relabel "agent" {
     replacement = ""
     target_label = "component_id"
   }
+
+  // set the namespace label to that of the exported_namespace
+  rule {
+    action = "replace"
+    source_labels = ["__name__", "exported_namespace"]
+    separator = "@"
+    regex = "^log_(bytes|lines).+@(.+)"
+    replacement = "$2"
+    target_label = "namespace"
+  }
+
+  // set the pod label to that of the exported_pod
+  rule {
+    action = "replace"
+    source_labels = ["__name__", "exported_pod"]
+    separator = "@"
+    regex = "^log_(bytes|lines).+@(.+)"
+    replacement = "$2"
+    target_label = "pod"
+  }
+
+  // set the container label to that of the exported_container
+  rule {
+    action = "replace"
+    source_labels = ["__name__", "exported_container"]
+    separator = "@"
+    regex = "^log_(bytes|lines).+@(.+)"
+    replacement = "$2"
+    target_label = "container"
+  }
+
+  // set the job label to that of the exported_job
+  rule {
+    action = "replace"
+    source_labels = ["__name__", "exported_job"]
+    separator = "@"
+    regex = "^log_(bytes|lines).+@(.+)"
+    replacement = "$2"
+    target_label = "job"
+  }
+
+  // set the instance label to that of the exported_instance
+  rule {
+    action = "replace"
+    source_labels = ["__name__", "exported_instance"]
+    separator = "@"
+    regex = "^log_(bytes|lines).+@(.+)"
+    replacement = "$2"
+    target_label = "instance"
+  }
+
+  rule {
+    action = "labeldrop"
+    regex = "exported_(namespace|pod|container|job|instance)"
+  }
 }
