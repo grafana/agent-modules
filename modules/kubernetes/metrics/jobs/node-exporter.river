@@ -34,6 +34,7 @@ argument "clustering" {
   default = false
 }
 
+// node exporter service discovery for all of the pods in the node exporter daemonset
 discovery.kubernetes "node_exporter" {
   role = "pod"
 
@@ -42,7 +43,8 @@ discovery.kubernetes "node_exporter" {
     label = "app.kubernetes.io/name=" + argument.app_name.value
   }
 }
-// Node Exporter
+
+// copy the pod name to the instance label
 discovery.relabel "node_exporter" {
   targets = discovery.kubernetes.pods.targets
   rule {
@@ -52,6 +54,7 @@ discovery.relabel "node_exporter" {
   }
 }
 
+// scrape the node exporter pods
 prometheus.scrape "node_exporter" {
   job_name   = argument.job_label.value
   targets    = discovery.relabel.node_exporter.output
@@ -62,8 +65,9 @@ prometheus.scrape "node_exporter" {
   forward_to = [prometheus.relabel.node_exporter.receiver]
 }
 
+// perform metric relabelings on the returned node exporter metrics
 prometheus.relabel "node_exporter" {
-  forward_to = [prometheus.relabel.metrics_service.receiver]
+  forward_to = argument.forward_to.value
 
   // keep only certain metrics
   rule {
