@@ -1,0 +1,108 @@
+/*
+Module: job-grafana-agent
+Description: Scrapes grafana agent, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
+             disable grafana-agent from being scraped by this module and annotations by setting the following annotation on the grafana-agent
+             metrics.agent.grafana.com/scrape: "false".
+
+             grafana agent should be deployed as a DaemonSet, each pod on each worker will be scraped by the agent using endpoint service discovery
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "app_name" {
+  // comment = "The name of the grafana agent app"
+  optional = true
+  default = "grafana-agent"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all grafana-agent metrics
+  optional = true
+  default = "integrations/agent"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "up|agent_build_info|log_.+"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+// grafana agent service discovery for all of the pods in the grafana agent daemonset
+discovery.kubernetes "agent" {
+  role = "pod"
+
+  selectors {
+    role = "pod"
+    label = "app.kubernetes.io/name=" + argument.app_name.value
+  }
+}
+
+// grafana agent relabelings (pre-scrape)
+discovery.relabel "agent" {
+  targets = discovery.kubernetes.agent.targets
+
+  // keep only the metrics port
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_port_name"]
+    regex = "http-metrics"
+    action = "keep"
+  }
+
+  // set the namespace label
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label  = "namespace"
+  }
+
+  // set the pod label
+  rule {
+    source_labels = ["__meta_kubernetes_pod_name"]
+    target_label  = "pod"
+  }
+
+  // set the container label
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_name"]
+    target_label  = "container"
+  }
+}
+
+// grafana agent scrape job
+prometheus.scrape "agent" {
+  job_name   = argument.job_label.value
+  targets    = discovery.relabel.agent.output
+  scrape_interval = "60s"
+  clustering {
+    enabled = argument.clustering.value
+  }
+  forward_to = [prometheus.relabel.agent.receiver]
+}
+
+// grafana-agent metric relabelings (post-scrape)
+prometheus.relabel "agent" {
+  forward_to = argument.forward_to.value
+
+  // keep only certain metrics
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+    action = "keep"
+  }
+
+  // remove the component_id label from any metric that starts with log_bytes or log_lines, these are custom metrics that are generated
+  // as part of the log annotation modules in this repo
+  rule {
+    action = "replace"
+    source_labels = ["__name__"]
+    regex = "^log_(bytes|lines).+"
+    replacement = ""
+    target_label = "component_id"
+  }
+}
