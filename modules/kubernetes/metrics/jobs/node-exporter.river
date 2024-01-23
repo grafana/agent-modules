@@ -46,7 +46,7 @@ discovery.kubernetes "node_exporter" {
 
 // copy the pod name to the instance label
 discovery.relabel "node_exporter" {
-  targets = discovery.kubernetes.pods.targets
+  targets = discovery.kubernetes.node_exporter.targets
   rule {
     source_labels = ["__meta_kubernetes_pod_node_name"]
     action = "replace"
