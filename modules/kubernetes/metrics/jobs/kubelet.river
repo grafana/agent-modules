@@ -1,0 +1,72 @@
+/*
+Module: job-kubelet
+Description: Scrapes Kublet Metrics
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all kubelet metrics
+  optional = true
+  default = "integrations/kubernetes/kubelet"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "up|container_cpu_usage_seconds_total|kubelet_certificate_manager_client_expiration_renew_errors|kubelet_certificate_manager_client_ttl_seconds|kubelet_certificate_manager_server_ttl_seconds|kubelet_cgroup_manager_duration_seconds_bucket|kubelet_cgroup_manager_duration_seconds_count|kubelet_node_config_error|kubelet_node_name|kubelet_pleg_relist_duration_seconds_bucket|kubelet_pleg_relist_duration_seconds_count|kubelet_pleg_relist_interval_seconds_bucket|kubelet_pod_start_duration_seconds_bucket|kubelet_pod_start_duration_seconds_count|kubelet_pod_worker_duration_seconds_bucket|kubelet_pod_worker_duration_seconds_count|kubelet_running_container_count|kubelet_running_containers|kubelet_running_pod_count|kubelet_running_pods|kubelet_runtime_operations_errors_total|kubelet_runtime_operations_total|kubelet_server_expiration_renew_errors|kubelet_volume_stats_available_bytes|kubelet_volume_stats_capacity_bytes|kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubernetes_build_info|namespace_workload_pod|rest_client_requests_total|storage_operation_duration_seconds_count|storage_operation_errors_total|volume_manager_total_volumes"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+// kubelet service discovery
+discovery.kubernetes "kubelet" {
+  role = "node"
+}
+
+// kubelet relabelings (pre-scrape)
+discovery.relabel "kubelet" {
+  targets = discovery.kubernetes.nodes.targets
+
+  rule {
+    target_label = "__address__"
+    replacement  = "kubernetes.default.svc.cluster.local:443"
+  }
+  rule {
+    source_labels = ["__meta_kubernetes_node_name"]
+    regex         = "(.+)"
+    replacement   = "/api/v1/nodes/${1}/proxy/metrics"
+    target_label  = "__metrics_path__"
+  }
+}
+
+// kubelet scrape job
+prometheus.scrape "kubelet" {
+  job_name   = "integrations/kubernetes/kubelet"
+  targets  = discovery.relabel.kubelet.output
+  scheme   = "https"
+  scrape_interval = "60s"
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  tls_config {
+    insecure_skip_verify = true
+  }
+  clustering {
+    enabled = true
+  }
+  forward_to = [prometheus.relabel.kubelet.receiver]
+}
+
+// kubelet metric relabelings (post-scrape)
+prometheus.relabel "kubelet" {
+  rule {
+    source_labels = ["__name__"]
+    regex = ""
+    action = "keep"
+  }
+  forward_to = [prometheus.relabel.metrics_service.receiver]
+}

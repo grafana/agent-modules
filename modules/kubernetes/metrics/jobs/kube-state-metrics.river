@@ -16,14 +16,14 @@ argument "app_name" {
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all kube-state-metrics, see ../relabelings/kube-state-metrics.river for the default value""
+  // comment = "The job label to add for all kube-state-metrics metrics
   optional = true
   default = "integrations/kubernetes/kube-state-metrics"
 }
 
 argument "keep_metrics" {
   optional = true
-  default = "kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*)"
+  default = "up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*)"
 }
 
 argument "clustering" {
@@ -32,6 +32,7 @@ argument "clustering" {
   default = false
 }
 
+// kube-state-metrics service discovery
 discovery.kubernetes "kube_state_metrics" {
   role = "service"
 
@@ -41,7 +42,7 @@ discovery.kubernetes "kube_state_metrics" {
   }
 }
 
-// Kube State Metrics
+// kube-state-metrics relabelings (pre-scrape)
 discovery.relabel "kube_state_metrics" {
   targets = discovery.kubernetes.kube_state_metrics.targets
   rule {
@@ -51,6 +52,7 @@ discovery.relabel "kube_state_metrics" {
   }
 }
 
+// kube-state-metrics scrape job
 prometheus.scrape "kube_state_metrics" {
   job_name   = argument.job_label.value
   targets    = discovery.relabel.kube_state_metrics.output
@@ -61,6 +63,7 @@ prometheus.scrape "kube_state_metrics" {
   forward_to = [prometheus.relabel.kube_state_metrics.receiver]
 }
 
+// kube-state-metrics metric relabelings (post-scrape)
 prometheus.relabel "kube_state_metrics" {
   rule {
     source_labels = ["__name__"]
