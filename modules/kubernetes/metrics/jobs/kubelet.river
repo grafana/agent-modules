@@ -63,10 +63,11 @@ prometheus.scrape "kubelet" {
 
 // kubelet metric relabelings (post-scrape)
 prometheus.relabel "kubelet" {
+  forward_to = argument.forward_to.value
+
   rule {
     source_labels = ["__name__"]
     regex = ""
     action = "keep"
   }
-  forward_to = [prometheus.relabel.metrics_service.receiver]
 }
