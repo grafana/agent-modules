@@ -41,10 +41,31 @@ discovery.kubernetes "kube_state_metrics" {
   }
 }
 
-prometheus.scrape "kube_state_metrics" {
+// Kube State Metrics
+discovery.relabel "kube_state_metrics" {
   targets = discovery.kubernetes.kube_state_metrics.targets
-  forward_to = argument.forward_to.value
+  rule {
+    source_labels = ["__meta_kubernetes_service_port_name"]
+    regex = "http"
+    action = "keep"
+  }
+}
+
+prometheus.scrape "kube_state_metrics" {
+  job_name   = argument.job_label.value
+  targets    = discovery.relabel.kube_state_metrics.output
+  scrape_interval = "60s"
   clustering {
     enabled = argument.clustering.value
   }
+  forward_to = [prometheus.relabel.kube_state_metrics.receiver]
+}
+
+prometheus.relabel "kube_state_metrics" {
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+    action = "keep"
+  }
+  forward_to = argument.forward_to.value
 }
