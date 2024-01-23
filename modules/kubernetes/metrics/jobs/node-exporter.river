@@ -1,0 +1,82 @@
+/*
+Module: job-node-exporter
+Description: Scrapes Node Exporter, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
+             disable node-exporter from being scraped by this module and annotations by setting the following annotation on the node-exporter
+             metrics.agent.grafana.com/scrape: "false".
+
+             Node exporter should be deployed as a DaemonSet, each pod on each worker will be scraped by the agent using endpoint service discovery
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "app_name" {
+  // comment = "The name of the node exporter app"
+  optional = true
+  default = "prometheus-node-exporter"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all node-exporter, see ../relabelings/node-exporter.river for the default value""
+  optional = true
+  default = "integrations/node_exporter"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|process_cpu_seconds_total|process_resident_memory_bytes"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+discovery.kubernetes "node_exporter" {
+  role = "pod"
+
+  selectors {
+    role = "pod"
+    label = "app.kubernetes.io/name=" + argument.app_name.value
+  }
+}
+// Node Exporter
+discovery.relabel "node_exporter" {
+  targets = discovery.kubernetes.pods.targets
+  rule {
+    source_labels = ["__meta_kubernetes_pod_node_name"]
+    action = "replace"
+    target_label = "instance"
+  }
+}
+
+prometheus.scrape "node_exporter" {
+  job_name   = argument.job_label.value
+  targets    = discovery.relabel.node_exporter.output
+  scrape_interval = "60s"
+  clustering {
+    enabled = argument.clustering.value
+  }
+  forward_to = [prometheus.relabel.node_exporter.receiver]
+}
+
+prometheus.relabel "node_exporter" {
+  forward_to = [prometheus.relabel.metrics_service.receiver]
+
+  // keep only certain metrics
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+    action = "keep"
+  }
+
+  // Drop metrics for certain file systems
+  rule {
+    source_labels = ["__name__", "fstype"]
+    separator = "@"
+    regex = "node_filesystem.*@(tempfs)"
+    action = "drop"
+  }
+}
