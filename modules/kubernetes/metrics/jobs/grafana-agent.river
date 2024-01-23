@@ -25,7 +25,7 @@ argument "job_label" {
 
 argument "keep_metrics" {
   optional = true
-  default = "up|agent_build_info|log_.+"
+  default = "(up|agent_build_info|log_.+)"
 }
 
 argument "clustering" {
