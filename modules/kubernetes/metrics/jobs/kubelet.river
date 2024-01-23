@@ -47,18 +47,23 @@ discovery.relabel "kubelet" {
 
 // kubelet scrape job
 prometheus.scrape "kubelet" {
+  forward_to = [prometheus.relabel.kubelet.receiver]
   job_name   = "integrations/kubernetes/kubelet"
   targets  = discovery.relabel.kubelet.output
   scheme   = "https"
   scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
   tls_config {
-    insecure_skip_verify = true
+    ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    insecure_skip_verify = false
+    server_name = "kubernetes"
   }
+
   clustering {
-    enabled = true
+    enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.kubelet.receiver]
+
 }
 
 // kubelet metric relabelings (post-scrape)
