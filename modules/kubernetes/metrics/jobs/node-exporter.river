@@ -50,7 +50,7 @@ discovery.relabel "node_exporter" {
 
   // keep only the metrics port
   rule {
-    source_labels = ["__meta_kubernetes_service_port_name"]
+    source_labels = ["__meta_kubernetes_pod_container_port_name"]
     regex = "metrics"
     action = "keep"
   }
