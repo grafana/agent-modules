@@ -31,7 +31,7 @@ discovery.kubernetes "kubelet" {
 
 // kubelet relabelings (pre-scrape)
 discovery.relabel "kubelet" {
-  targets = discovery.kubernetes.nodes.targets
+  targets = discovery.kubernetes.kubelet.targets
 
   rule {
     target_label = "__address__"
