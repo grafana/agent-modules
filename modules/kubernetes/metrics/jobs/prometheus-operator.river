@@ -7,6 +7,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
 argument "namespaces" {
   // comment = "List of namespaces to search for prometheus operator resources in"
   optional = true
