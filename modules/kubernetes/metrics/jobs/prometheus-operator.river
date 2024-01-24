@@ -7,6 +7,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -47,7 +53,7 @@ prometheus.operator.servicemonitors "service_monitors" {
   }
 
   scrape {
-    default_scrape_interval = "60s"
+    default_scrape_interval = argument.scrape_interval.value
   }
 }
 
@@ -61,7 +67,7 @@ prometheus.operator.podmonitors "pod_monitors" {
   }
 
   scrape {
-    default_scrape_interval = "60s"
+    default_scrape_interval = argument.scrape_interval.value
   }
 }
 
@@ -75,6 +81,6 @@ prometheus.operator.probes "probes" {
   }
 
   scrape {
-    default_scrape_interval = "60s"
+    default_scrape_interval = argument.scrape_interval.value
   }
 }

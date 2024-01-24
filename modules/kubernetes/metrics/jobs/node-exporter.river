@@ -28,6 +28,12 @@ argument "keep_metrics" {
   default = "(up|node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|process_cpu_seconds_total|process_resident_memory_bytes)"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -65,13 +71,14 @@ discovery.relabel "node_exporter" {
 
 // node exporter scrape job
 prometheus.scrape "node_exporter" {
-  job_name   = argument.job_label.value
-  targets    = discovery.relabel.node_exporter.output
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  forward_to = [prometheus.relabel.node_exporter.receiver]
+  targets = discovery.relabel.node_exporter.output
+  scrape_interval = argument.scrape_interval.value
+
   clustering {
     enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.node_exporter.receiver]
 }
 
 // node-exporter metric relabelings (post-scrape)

@@ -42,6 +42,12 @@ argument "keep_metrics" {
   default = "(.+)"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -75,13 +81,14 @@ discovery.relabel "kube_proxy" {
 
 // kube_proxy scrape job
 prometheus.scrape "kube_proxy" {
-  job_name   = argument.job_label.value
-  targets    = discovery.relabel.kube_proxy.output
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  forward_to = [prometheus.relabel.kube_proxy.receiver]
+  targets = discovery.relabel.kube_proxy.output
+  scrape_interval = argument.scrape_interval.value
+
   clustering {
     enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.kube_proxy.receiver]
 }
 
 // kube-proxy metric relabelings (post-scrape)

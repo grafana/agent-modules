@@ -45,6 +45,12 @@ argument "drop_les" {
   // comment = "Regex of metric les to drop"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -98,7 +104,7 @@ prometheus.scrape "kube_apiserver" {
   targets = discovery.relabel.kube_apiserver.output
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-  scrape_interval = "60s"
+  scrape_interval = argument.scrape_interval.value
 
   tls_config {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"

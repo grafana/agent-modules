@@ -26,6 +26,12 @@ argument "keep_metrics" {
   default = "(up|container_(cpu|gpu|memory)_allocation(_bytes)?|deployment_match_labels|kubecost_(cluster_(info|management_cost|memory_working_set_bytes)|http_requests_total|http_response_(size_bytes|time_seconds)|load_balancer_cost|network_(internet|region|zone)_egress_cost|node_is_spot)|node_(cpu_hourly_cost|gpu_(count|hourly_cost)|ram_hourly_cost|total_hourly_cost)|opencost_build_info|pod_pvc_allocation|pv_hourly_cost|service_selector_labels|statefulSet_match_labels)"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -54,9 +60,9 @@ discovery.relabel "opencost" {
 
 // opencost scrape job
 prometheus.scrape "opencost" {
-  job_name   = argument.job_label.value
-  targets    = discovery.relabel.opencost.output
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  targets = discovery.relabel.opencost.output
+  scrape_interval = argument.scrape_interval.value
   clustering {
     enabled = argument.clustering.value
   }

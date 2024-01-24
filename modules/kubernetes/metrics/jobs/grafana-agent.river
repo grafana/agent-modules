@@ -28,6 +28,12 @@ argument "keep_metrics" {
   default = "(up|agent_build_info|log_.+)"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -76,13 +82,14 @@ discovery.relabel "agent" {
 
 // grafana agent scrape job
 prometheus.scrape "agent" {
-  job_name   = argument.job_label.value
-  targets    = discovery.relabel.agent.output
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  forward_to = [prometheus.relabel.agent.receiver]
+  targets = discovery.relabel.agent.output
+  scrape_interval = argument.scrape_interval.value
+
   clustering {
     enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.agent.receiver]
 }
 
 // grafana-agent metric relabelings (post-scrape)

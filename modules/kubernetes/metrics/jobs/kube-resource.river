@@ -18,6 +18,12 @@ argument "keep_metrics" {
   default = "(.+)"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -51,10 +57,10 @@ discovery.relabel "kube_resource" {
 // kube resource scrape job
 prometheus.scrape "kube_resource" {
   forward_to = [prometheus.relabel.kube_resource.receiver]
-  job_name   = argument.job_label.value
-  targets  = discovery.relabel.kube_resource.output
-  scheme   = "https"
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  targets = discovery.relabel.kube_resource.output
+  scheme = "https"
+  scrape_interval = argument.scrape_interval.value
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
   tls_config {

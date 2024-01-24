@@ -26,6 +26,12 @@ argument "keep_metrics" {
   default = "(up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*))"
 }
 
+argument "scrape_interval" {
+  // comment = "How often to scrape metrics from the targets"
+  optional = true
+  default = "60s"
+}
+
 argument "clustering" {
   // comment = "Whether or not clustering should be enabled"
   optional = true
@@ -54,13 +60,14 @@ discovery.relabel "kube_state_metrics" {
 
 // kube-state-metrics scrape job
 prometheus.scrape "kube_state_metrics" {
-  job_name   = argument.job_label.value
-  targets    = discovery.relabel.kube_state_metrics.output
-  scrape_interval = "60s"
+  job_name = argument.job_label.value
+  forward_to = [prometheus.relabel.kube_state_metrics.receiver]
+  targets = discovery.relabel.kube_state_metrics.output
+  scrape_interval = argument.scrape_interval.value
+
   clustering {
     enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.kube_state_metrics.receiver]
 }
 
 // kube-state-metrics metric relabelings (post-scrape)
