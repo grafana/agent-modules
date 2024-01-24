@@ -67,7 +67,7 @@ prometheus.operator.podmonitors "pod_monitors" {
 
 // Prometheus Operator Probe objects
 prometheus.operator.probes "probes" {
-  namespaces = concat(argument.namespaces.value, argument.probes.value)
+  namespaces = concat(argument.namespaces.value, argument.probe_namespaces.value)
   forward_to = argument.forward_to.value
 
   clustering {
