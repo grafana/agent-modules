@@ -60,7 +60,7 @@ discovery.kubernetes "kube_apiserver" {
     field = "metadata.name=" + argument.service.value
   }
 
-  namespace {
+  namespaces {
     names = [argument.namespace.value]
   }
 }
