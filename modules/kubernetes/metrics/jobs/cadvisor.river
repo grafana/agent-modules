@@ -15,7 +15,7 @@ argument "job_label" {
 
 argument "keep_metrics" {
   optional = true
-  default = "up|container_cpu_cfs_periods_total|container_cpu_cfs_throttled_periods_total|container_cpu_usage_seconds_total|container_fs_reads_bytes_total|container_fs_reads_total|container_fs_writes_bytes_total|container_fs_writes_total|container_memory_cache|container_memory_rss|container_memory_swap|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_receive_packets_dropped_total|container_network_receive_packets_total|container_network_transmit_bytes_total|container_network_transmit_packets_dropped_total|container_network_transmit_packets_total|machine_memory_bytes"
+  default = "(up|container_(cpu_(cfs_(periods|throttled_periods)_total|usage_seconds_total)|fs_(reads|writes)(_bytes)?_total|memory_(cache|rss|swap|working_set_bytes)|network_(receive|transmit)_(bytes|packets(_dropped)?_total))|machine_memory_bytes)"
 }
 
 argument "clustering" {
