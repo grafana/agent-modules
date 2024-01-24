@@ -1,0 +1,132 @@
+/*
+Module: job-kube-apiserver
+Description: Scrapes Kube API Server
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "namespace" {
+  // comment = "The namespace to look for targets in"
+  optional = true
+  default = "default"
+}
+
+argument "service" {
+  // comment = "The label to use for the selector"
+  optional = true
+  default = "kubernetes"
+}
+
+argument "port_name" {
+  // comment = "The value of the label for the selector"
+  optional = true
+  default = "https"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all kube-apiserver metrics
+  optional = true
+  default = "integrations/kubernetes/kube-apiserver"
+}
+
+// drop metrics and les from kube-prometheus
+// https://github.com/prometheus-operator/kube-prometheus/blob/main/manifests/kubernetesControlPlane-serviceMonitorApiserver.yaml
+argument "drop_metrics" {
+  optional = true
+  default = "(kubelet_(pod_(worker|start)_latency_microseconds|cgroup_manager_latency_microseconds|pleg_relist_(latency|interval)_microseconds|runtime_operations(_latency_microseconds|_errors)?|eviction_stats_age_microseconds|device_plugin_(registration_count|alloc_latency_microseconds)|network_plugin_operations_latency_microseconds)|scheduler_(e2e_scheduling_latency_microseconds|scheduling_algorithm_(predicate|priority|preemption)_evaluation|scheduling_algorithm_latency_microseconds|binding_latency_microseconds|scheduling_latency_seconds)|apiserver_(request_(count|latencies(_summary)?)|dropped_requests|storage_(data_key_generation|transformation_(failures_total|))_latencies_microseconds|proxy_tunnel_sync_latency_secs|longrunning_gauge|registered_watchers)|kubelet_docker_(operations(_latency_microseconds|_errors|_timeout)?)|reflector_(items_per_(list|watch)|list_duration_seconds|lists_total|short_watches_total|watch_duration_seconds|watches_total)|etcd_(helper_(cache_(hit|miss)_count|cache_entry_count|object_counts)|request_(cache_(get|add)_latencies_summary|latencies_summary)|(debugging|disk|server).*|transformation_(latencies_microseconds|failures_total)|(admission_quota_controller|APIServiceOpenAPIAggregationControllerQueue1|APIServiceRegistrationController|autoregister|AvailableConditionController|crd_(autoregistration_controller|Establishing|finalizer|naming_condition_controller|openapi_controller)|DiscoveryController|non_structural_schema_condition_controller)_(adds|depth|longest_running_processor_microseconds|queue_latency|retries|unfinished_work_seconds|work_duration)|kubeproxy_sync_proxy_rules_latency_microseconds|rest_client_request_latency_seconds|storage_operation_(errors_total|status_count)|apiserver_admission_controller_admission_latencies_seconds_.*|apiserver_admission_step_admission_latencies_seconds_.*)"
+  // comment = "Regex of metrics to drop"
+}
+
+argument "drop_les" {
+  optional = true
+  default = "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)"
+  // comment = "Regex of metric les to drop"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+// kube-apiserver service discovery
+discovery.kubernetes "kube_apiserver" {
+  role = "service"
+
+  selectors {
+    role = "service"
+    field = "metadata.name=" + argument.service.value
+  }
+
+  namespace {
+    names = [argument.namespace.value]
+  }
+}
+
+// kube-apiserver relabelings (pre-scrape)
+discovery.relabel "kube_apiserver" {
+  targets = discovery.kubernetes.kube_apiserver.targets
+
+  // only keep targets with a matching port name
+  rule {
+    source_labels = ["__meta_kubernetes_service_port_name"]
+    regex = argument.port_name.value
+    action = "keep"
+  }
+
+  // set the namespace
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
+  // set the service_name
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_service_name"]
+    target_label = "service"
+  }
+}
+
+// kube-apiserver scrape job
+prometheus.scrape "kube_apiserver" {
+  job_name = argument.job_label.value
+  forward_to = [module.git.relabelings_kube_apiserver.exports.metric_relabelings.receiver]
+  targets = discovery.relabel.kube_apiserver.output
+  scheme = "https"
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  scrape_interval = "60s"
+
+  tls_config {
+    ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    insecure_skip_verify = false
+    server_name = "kubernetes"
+  }
+
+  clustering {
+    enabled = argument.clustering.value
+  }
+}
+
+// kube-apiserver metric relabelings (post-scrape)
+prometheus.relabel "kube_apiserver" {
+  forward_to = argument.forward_to.value
+
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.drop_metrics.value
+    action = "drop"
+  }
+
+  rule {
+    source_labels = [
+      "__name__",
+      "le",
+    ]
+    regex = argument.drop_les.value
+    action = "drop"
+  }
+}
