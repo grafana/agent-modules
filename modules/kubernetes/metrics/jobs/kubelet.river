@@ -48,7 +48,7 @@ discovery.relabel "kubelet" {
 // kubelet scrape job
 prometheus.scrape "kubelet" {
   forward_to = [prometheus.relabel.kubelet.receiver]
-  job_name   = "integrations/kubernetes/kubelet"
+  job_name   = argument.job_label.value
   targets  = discovery.relabel.kubelet.output
   scheme   = "https"
   scrape_interval = "60s"
@@ -72,7 +72,7 @@ prometheus.relabel "kubelet" {
 
   rule {
     source_labels = ["__name__"]
-    regex = ""
+    regex = argument.keep_metrics.value
     action = "keep"
   }
 }

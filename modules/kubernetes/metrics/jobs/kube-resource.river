@@ -1,0 +1,81 @@
+/*
+Module: job-kubelet-resources
+Description: Scrapes Kublet Resources Metrics
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all kubelet metrics
+  optional = true
+  default = "integrations/kubernetes/kubelet-resources"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "(.+)"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+// kubelet resource service discovery
+discovery.kubernetes "kubelet_resource" {
+  role = "node"
+}
+
+// kubelet resource relabelings (pre-scrape)
+discovery.relabel "kubelet_resource" {
+  targets = discovery.kubernetes.kubelet_resource.targets
+
+  rule {
+    target_label = "__address__"
+    replacement  = "kubernetes.default.svc.cluster.local:443"
+  }
+
+  // set the path to use for kubelet-resource
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_node_name"]
+    regex = "(.+)"
+    replacement = "/api/v1/nodes/${1}/proxy/metrics/resource"
+    target_label = "__metrics_path__"
+  }
+}
+
+// kubelet resource scrape job
+prometheus.scrape "kubelet_resource" {
+  forward_to = [prometheus.relabel.kubelet_resource.receiver]
+  job_name   = argument.job_label.value
+  targets  = discovery.relabel.kubelet_resource.output
+  scheme   = "https"
+  scrape_interval = "60s"
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+  tls_config {
+    ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    insecure_skip_verify = false
+    server_name = "kubernetes"
+  }
+
+  clustering {
+    enabled = argument.clustering.value
+  }
+
+}
+
+// kubelet resource metric relabelings (post-scrape)
+prometheus.relabel "kubelet_resource" {
+  forward_to = argument.forward_to.value
+
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+    action = "keep"
+  }
+}
