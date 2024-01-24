@@ -1,6 +1,6 @@
 /*
-Module: job-kubelet-resources
-Description: Scrapes Kublet Resources Metrics
+Module: job-kube-resources
+Description: Scrapes Kube Resources Metrics
 */
 argument "forward_to" {
   // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
@@ -8,9 +8,9 @@ argument "forward_to" {
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all kubelet metrics
+  // comment = "The job label to add for all kube metrics
   optional = true
-  default = "integrations/kubernetes/kubelet-resources"
+  default = "integrations/kubernetes/kube-resources"
 }
 
 argument "keep_metrics" {
@@ -24,21 +24,21 @@ argument "clustering" {
   default = false
 }
 
-// kubelet resource service discovery
-discovery.kubernetes "kubelet_resource" {
+// kube resource service discovery
+discovery.kubernetes "kube_resource" {
   role = "node"
 }
 
-// kubelet resource relabelings (pre-scrape)
-discovery.relabel "kubelet_resource" {
-  targets = discovery.kubernetes.kubelet_resource.targets
+// kube resource relabelings (pre-scrape)
+discovery.relabel "kube_resource" {
+  targets = discovery.kubernetes.kube_resource.targets
 
   rule {
     target_label = "__address__"
     replacement  = "kubernetes.default.svc.cluster.local:443"
   }
 
-  // set the path to use for kubelet-resource
+  // set the path to use for kube-resource
   rule {
     action = "replace"
     source_labels = ["__meta_kubernetes_node_name"]
@@ -48,11 +48,11 @@ discovery.relabel "kubelet_resource" {
   }
 }
 
-// kubelet resource scrape job
-prometheus.scrape "kubelet_resource" {
-  forward_to = [prometheus.relabel.kubelet_resource.receiver]
+// kube resource scrape job
+prometheus.scrape "kube_resource" {
+  forward_to = [prometheus.relabel.kube_resource.receiver]
   job_name   = argument.job_label.value
-  targets  = discovery.relabel.kubelet_resource.output
+  targets  = discovery.relabel.kube_resource.output
   scheme   = "https"
   scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
@@ -69,8 +69,8 @@ prometheus.scrape "kubelet_resource" {
 
 }
 
-// kubelet resource metric relabelings (post-scrape)
-prometheus.relabel "kubelet_resource" {
+// kube resource metric relabelings (post-scrape)
+prometheus.relabel "kube_resource" {
   forward_to = argument.forward_to.value
 
   rule {
