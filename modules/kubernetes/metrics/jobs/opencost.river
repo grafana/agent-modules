@@ -1,0 +1,74 @@
+/*
+Module: job-opencost
+Description: Scrapes opencost, this is a separate scrape job, if you are also using annotation based scraping, you will want to explicitly
+             disable opencost from being scraped by this module and annotations by setting the following annotation on the opencost
+             metrics.agent.grafana.com/scrape: "false"
+*/
+argument "forward_to" {
+  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  optional = false
+}
+
+argument "app_name" {
+  // comment = "The name of the opencost app"
+  optional = true
+  default = "opencost"
+}
+
+argument "job_label" {
+  // comment = "The job label to add for all opencost metrics
+  optional = true
+  default = "integrations/kubernetes/opencost"
+}
+
+argument "keep_metrics" {
+  optional = true
+  default = "(up|container_(cpu|gpu|memory)_allocation(_bytes)?|deployment_match_labels|kubecost_(cluster_(info|management_cost|memory_working_set_bytes)|http_requests_total|http_response_(size_bytes|time_seconds)|load_balancer_cost|network_(internet|region|zone)_egress_cost|node_is_spot)|node_(cpu_hourly_cost|gpu_(count|hourly_cost)|ram_hourly_cost|total_hourly_cost)|opencost_build_info|pod_pvc_allocation|pv_hourly_cost|service_selector_labels|statefulSet_match_labels)"
+}
+
+argument "clustering" {
+  // comment = "Whether or not clustering should be enabled"
+  optional = true
+  default = false
+}
+
+// opencost service discovery
+discovery.kubernetes "opencost" {
+  role = "service"
+
+  selectors {
+    role = "service"
+    label = "app.kubernetes.io/name=" + argument.app_name.value
+  }
+}
+
+// opencost relabelings (pre-scrape)
+discovery.relabel "opencost" {
+  targets = discovery.kubernetes.opencost.targets
+  rule {
+    source_labels = ["__meta_kubernetes_service_port_name"]
+    regex = "http"
+    action = "keep"
+  }
+}
+
+// opencost scrape job
+prometheus.scrape "opencost" {
+  job_name   = argument.job_label.value
+  targets    = discovery.relabel.opencost.output
+  scrape_interval = "60s"
+  clustering {
+    enabled = argument.clustering.value
+  }
+  forward_to = [prometheus.relabel.opencost.receiver]
+}
+
+// opencost metric relabelings (post-scrape)
+prometheus.relabel "opencost" {
+  rule {
+    source_labels = ["__name__"]
+    regex = argument.keep_metrics.value
+    action = "keep"
+  }
+  forward_to = argument.forward_to.value
+}
