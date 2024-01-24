@@ -94,7 +94,7 @@ discovery.relabel "kube_apiserver" {
 // kube-apiserver scrape job
 prometheus.scrape "kube_apiserver" {
   job_name = argument.job_label.value
-  forward_to = prometheus.relabel.kube_apiserver.receiver
+  forward_to = [prometheus.relabel.kube_apiserver.receiver]
   targets = discovery.relabel.kube_apiserver.output
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
