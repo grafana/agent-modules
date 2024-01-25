@@ -144,6 +144,7 @@ prometheus.scrape "agent" {
 // grafana-agent metric relabelings (post-scrape)
 prometheus.relabel "agent" {
   forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
 
   // keep only certain metrics
   rule {
