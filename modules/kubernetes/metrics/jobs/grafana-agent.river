@@ -11,10 +11,25 @@ argument "forward_to" {
   optional = false
 }
 
-argument "app_name" {
-  // comment = "The name of the grafana agent app"
+argument "namespaces" {
+  comment = "The namespaces to look for targets in"
   optional = true
-  default = "grafana-agent"
+  default = [] // [] is all namespaces
+}
+
+argument "selectors" {
+  // see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  comment = "The label selectors to use to find matching targets"
+  optional = true
+  default = [
+    "app.kubernetes.io/name=grafana-agent",
+  ]
+}
+
+argument "port_name" {
+  comment = "The of the port to scrape metrics from"
+  optional = true
+  default = "http-metrics"
 }
 
 argument "job_label" {
@@ -46,7 +61,11 @@ discovery.kubernetes "agent" {
 
   selectors {
     role = "pod"
-    label = "app.kubernetes.io/name=" + argument.app_name.value
+    label = join(argument.selectors.value, ",")
+  }
+
+  namespaces {
+    names = argument.namespaces.value
   }
 }
 
@@ -54,10 +73,15 @@ discovery.kubernetes "agent" {
 discovery.relabel "agent" {
   targets = discovery.kubernetes.agent.targets
 
-  // keep only the metrics port
+  // keep only the specified metrics port name, and pods that are Running and ready
   rule {
-    source_labels = ["__meta_kubernetes_pod_container_port_name"]
-    regex = "http-metrics"
+    source_labels = [
+      "__meta_kubernetes_pod_container_port_name",
+      "__meta_kubernetes_pod_phase",
+      "__meta_kubernetes_pod_ready",
+    ]
+    separator = "@"
+    regex = argument.port_name.value + "@Running@true"
     action = "keep"
   }
 
@@ -77,6 +101,29 @@ discovery.relabel "agent" {
   rule {
     source_labels = ["__meta_kubernetes_pod_container_name"]
     target_label  = "container"
+  }
+
+  // set a controller label
+  rule {
+    source_labels = [
+      "__meta_kubernetes_pod_controller_kind",
+      "__meta_kubernetes_pod_controller_name",
+    ]
+    separator = "/"
+    target_label  = "controller"
+  }
+
+  // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+      "__meta_kubernetes_pod_label_k8s_app",
+      "__meta_kubernetes_pod_label_app",
+    ]
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "app"
   }
 }
 
