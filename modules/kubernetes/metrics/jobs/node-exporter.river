@@ -26,6 +26,12 @@ argument "selectors" {
   ]
 }
 
+argument "port_name" {
+  comment = "The of the port to scrape metrics from"
+  optional = true
+  default = "metrics"
+}
+
 argument "job_label" {
   comment = "The job label to add for all node-exporter metrics"
   optional = true
@@ -68,10 +74,15 @@ discovery.kubernetes "node_exporter" {
 discovery.relabel "node_exporter" {
   targets = discovery.kubernetes.node_exporter.targets
 
-  // keep only the metrics port
+  // keep only the specified metrics port name, and pods that are Running and ready
   rule {
-    source_labels = ["__meta_kubernetes_pod_container_port_name"]
-    regex = "metrics"
+    source_labels = [
+      "__meta_kubernetes_pod_container_port_name",
+      "__meta_kubernetes_pod_phase",
+      "__meta_kubernetes_pod_ready",
+    ]
+    separator = "@"
+    regex = argument.port_name.value + "@Running@true"
     action = "keep"
   }
 
