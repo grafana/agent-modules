@@ -11,6 +11,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "namespaces" {
+  // comment = "The namespaces to look for targets in"
+  optional = true
+  default = []
+}
+
 argument "app_name" {
   // comment = "The name of the node exporter app"
   optional = true
@@ -47,6 +53,10 @@ discovery.kubernetes "node_exporter" {
   selectors {
     role = "pod"
     label = "app.kubernetes.io/name=" + argument.app_name.value
+  }
+
+  namespaces {
+    names = argument.namespaces.value
   }
 }
 
