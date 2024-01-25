@@ -7,41 +7,45 @@ Description: Scrapes Node Exporter, this is a separate scrape job, if you are al
              Node exporter should be deployed as a DaemonSet, each pod on each worker will be scraped by the agent using endpoint service discovery
 */
 argument "forward_to" {
-  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
 argument "namespaces" {
-  // comment = "The namespaces to look for targets in"
+  comment = "The namespaces to look for targets in"
   optional = true
-  default = []
+  default = [] // [] is all namespaces
 }
 
-argument "app_name" {
-  // comment = "The name of the node exporter app"
+argument "selectors" {
+  // see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  comment = "The label selectors to use to find matching targets"
   optional = true
-  default = "prometheus-node-exporter"
+  default = [
+    "app.kubernetes.io/name=prometheus-node-exporter"
+  ]
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all node-exporter metrics
+  comment = "The job label to add for all node-exporter metrics"
   optional = true
   default = "integrations/node_exporter"
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep"
   optional = true
   default = "(up|node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|process_cpu_seconds_total|process_resident_memory_bytes)"
 }
 
 argument "scrape_interval" {
-  // comment = "How often to scrape metrics from the targets"
+  comment = "How often to scrape metrics from the targets"
   optional = true
   default = "60s"
 }
 
 argument "clustering" {
-  // comment = "Whether or not clustering should be enabled"
+  comment = "Whether or not clustering should be enabled"
   optional = true
   default = false
 }
@@ -52,7 +56,7 @@ discovery.kubernetes "node_exporter" {
 
   selectors {
     role = "pod"
-    label = "app.kubernetes.io/name=" + argument.app_name.value
+    label = join(argument.selectors.value, ",")
   }
 
   namespaces {
