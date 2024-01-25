@@ -48,6 +48,13 @@ argument "scrape_interval" {
   default = "60s"
 }
 
+argument "max_cache_size" {
+  comment = "The maximum number of elements to hold in the relabeling cache.  This should only be increased if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  optional = true
+  default = 100000
+}
+
+
 argument "clustering" {
   comment = "Whether or not clustering should be enabled"
   optional = true
@@ -71,6 +78,7 @@ discovery.kubernetes "opencost" {
 // opencost relabelings (pre-scrape)
 discovery.relabel "opencost" {
   targets = discovery.kubernetes.opencost.targets
+
   rule {
     source_labels = ["__meta_kubernetes_service_port_name"]
     regex = argument.port_name.value
@@ -81,20 +89,23 @@ discovery.relabel "opencost" {
 // opencost scrape job
 prometheus.scrape "opencost" {
   job_name = argument.job_label.value
+  forward_to = [prometheus.relabel.opencost.receiver]
   targets = discovery.relabel.opencost.output
   scrape_interval = argument.scrape_interval.value
+
   clustering {
     enabled = argument.clustering.value
   }
-  forward_to = [prometheus.relabel.opencost.receiver]
 }
 
 // opencost metric relabelings (post-scrape)
 prometheus.relabel "opencost" {
+  forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
+
   rule {
     source_labels = ["__name__"]
     regex = argument.keep_metrics.value
     action = "keep"
   }
-  forward_to = argument.forward_to.value
 }
