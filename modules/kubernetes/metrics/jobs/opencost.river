@@ -5,35 +5,51 @@ Description: Scrapes opencost, this is a separate scrape job, if you are also us
              metrics.agent.grafana.com/scrape: "false"
 */
 argument "forward_to" {
-  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
-argument "app_name" {
-  // comment = "The name of the opencost app"
+argument "namespaces" {
+  comment = "The namespaces to look for targets in"
   optional = true
-  default = "opencost"
+  default = [] // [] is all namespaces
+}
+
+argument "selectors" {
+  // see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  comment = "The label selectors to use to find matching targets"
+  optional = true
+  default = [
+    "app.kubernetes.io/name=opencost",
+  ]
+}
+
+argument "port_name" {
+  comment = "The of the port to scrape metrics from"
+  optional = true
+  default = "http"
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all opencost metrics
+  comment = "The job label to add for all opencost metrics"
   optional = true
   default = "integrations/kubernetes/opencost"
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep"
   optional = true
   default = "(up|container_(cpu|gpu|memory)_allocation(_bytes)?|deployment_match_labels|kubecost_(cluster_(info|management_cost|memory_working_set_bytes)|http_requests_total|http_response_(size_bytes|time_seconds)|load_balancer_cost|network_(internet|region|zone)_egress_cost|node_is_spot)|node_(cpu_hourly_cost|gpu_(count|hourly_cost)|ram_hourly_cost|total_hourly_cost)|opencost_build_info|pod_pvc_allocation|pv_hourly_cost|service_selector_labels|statefulSet_match_labels)"
 }
 
 argument "scrape_interval" {
-  // comment = "How often to scrape metrics from the targets"
+  comment = "How often to scrape metrics from the targets"
   optional = true
   default = "60s"
 }
 
 argument "clustering" {
-  // comment = "Whether or not clustering should be enabled"
+  comment = "Whether or not clustering should be enabled"
   optional = true
   default = false
 }
@@ -44,7 +60,11 @@ discovery.kubernetes "opencost" {
 
   selectors {
     role = "service"
-    label = "app.kubernetes.io/name=" + argument.app_name.value
+    label = join(argument.selectors.value, ",")
+  }
+
+  namespaces {
+    names = argument.namespaces.value
   }
 }
 
@@ -53,7 +73,7 @@ discovery.relabel "opencost" {
   targets = discovery.kubernetes.opencost.targets
   rule {
     source_labels = ["__meta_kubernetes_service_port_name"]
-    regex = "http"
+    regex = argument.port_name.value
     action = "keep"
   }
 }
