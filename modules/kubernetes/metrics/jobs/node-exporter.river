@@ -22,7 +22,7 @@ argument "selectors" {
   comment = "The label selectors to use to find matching targets"
   optional = true
   default = [
-    "app.kubernetes.io/name=prometheus-node-exporter"
+    "app.kubernetes.io/name=prometheus-node-exporter",
   ]
 }
 
