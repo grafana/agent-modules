@@ -1,5 +1,5 @@
 /*
-Module: job-grafana-agent
+Module: job-agent
 Description: Scrapes grafana agent
 
 Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
