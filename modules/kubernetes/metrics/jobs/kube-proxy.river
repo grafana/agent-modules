@@ -8,38 +8,45 @@ argument "forward_to" {
 }
 
 argument "namespace" {
-  // comment = "The namespace to look for targets in"
+  comment = "The namespace to look for targets in"
   optional = true
   default = "kube-system"
 }
 
 argument "app_label" {
-  // comment = "The label to use for the selector"
+  comment = "The label to use for the selector"
   optional = true
   default = "component"
 }
 
 argument "app_value" {
-  // comment = "The value of the label for the selector"
+  comment = "The value of the label for the selector"
   optional = true
   default = "kube-proxy"
 }
 
 argument "port" {
-  // comment = "The port to scrape kube-proxy metrics on"
+  comment = "The port to scrape kube-proxy metrics on"
   optional = true
   default = "10249"
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all kube-proxy metrics
+  comment = "The job label to add for all kube-proxy metrics"
   optional = true
   default = "integrations/kubernetes/kube-proxy"
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep"
   optional = true
   default = "(.+)"
+}
+
+argument "max_cache_size" {
+  comment = "The maximum number of elements to hold in the relabeling cache.  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  optional = true
+  default = 100000
 }
 
 argument "scrape_interval" {
@@ -94,8 +101,9 @@ prometheus.scrape "kube_proxy" {
 // kube-proxy metric relabelings (post-scrape)
 prometheus.relabel "kube_proxy" {
   forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
 
-  // keep only certain metrics
+  // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
     regex = argument.keep_metrics.value

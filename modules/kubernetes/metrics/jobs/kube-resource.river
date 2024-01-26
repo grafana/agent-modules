@@ -8,24 +8,31 @@ argument "forward_to" {
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all kube metrics
+  comment = "The job label to add for all kube metrics"
   optional = true
   default = "integrations/kubernetes/kube-resources"
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep"
   optional = true
   default = "(.+)"
 }
 
 argument "scrape_interval" {
-  // comment = "How often to scrape metrics from the targets"
+  comment = "How often to scrape metrics from the targets"
   optional = true
   default = "60s"
 }
 
+argument "max_cache_size" {
+  comment = "The maximum number of elements to hold in the relabeling cache.  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  optional = true
+  default = 100000
+}
+
 argument "clustering" {
-  // comment = "Whether or not clustering should be enabled"
+  comment = "Whether or not clustering should be enabled"
   optional = true
   default = false
 }
@@ -78,7 +85,9 @@ prometheus.scrape "kube_resource" {
 // kube resource metric relabelings (post-scrape)
 prometheus.relabel "kube_resource" {
   forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
 
+  // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
     regex = argument.keep_metrics.value

@@ -50,6 +50,12 @@ argument "scrape_interval" {
   default = "60s"
 }
 
+argument "max_cache_size" {
+  comment = "The maximum number of elements to hold in the relabeling cache.  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  optional = true
+  default = 100000
+}
+
 argument "clustering" {
   comment = "Whether or not clustering should be enabled"
   optional = true
@@ -109,8 +115,9 @@ prometheus.scrape "node_exporter" {
 // node-exporter metric relabelings (post-scrape)
 prometheus.relabel "node_exporter" {
   forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
 
-  // keep only certain metrics
+  // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
     regex = argument.keep_metrics.value

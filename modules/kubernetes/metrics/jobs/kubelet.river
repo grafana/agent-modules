@@ -3,29 +3,36 @@ Module: job-kubelet
 Description: Scrapes Kublet Metrics
 */
 argument "forward_to" {
-  // comment = "Must be a list(MetricssReceiver) where collected logs should be forwarded to"
+  comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   optional = false
 }
 
 argument "job_label" {
-  // comment = "The job label to add for all kubelet metrics
+  comment = "The job label to add for all kubelet metrics"
   optional = true
   default = "integrations/kubernetes/kubelet"
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep"
   optional = true
   default = "(up|container_cpu_usage_seconds_total|kubelet_(certificate_manager_(client|server)_ttl_seconds|cgroup_manager_duration_seconds_(bucket|count)|node_(config_error|name)|pleg_relist_duration_seconds_(bucket|count)|pleg_relist_interval_seconds_bucket|pod_(start|worker)_duration_seconds_(bucket|count)|running_(container|pod)_(count|s)|runtime_operations_(errors_)?total|server_expiration_renew_errors|volume_stats_(available|capacity)_bytes|volume_stats_inodes(_used)?)|kubernetes_build_info|namespace_workload_pod|rest_client_requests_total|storage_operation_(duration_seconds_count|errors_total)|volume_manager_total_volumes)"
 }
 
 argument "scrape_interval" {
-  // comment = "How often to scrape metrics from the targets"
+  comment = "How often to scrape metrics from the targets"
   optional = true
   default = "60s"
 }
 
+argument "max_cache_size" {
+  comment = "The maximum number of elements to hold in the relabeling cache.  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  optional = true
+  default = 100000
+}
+
 argument "clustering" {
-  // comment = "Whether or not clustering should be enabled"
+  comment = "Whether or not clustering should be enabled"
   optional = true
   default = false
 }
@@ -75,7 +82,9 @@ prometheus.scrape "kubelet" {
 // kubelet metric relabelings (post-scrape)
 prometheus.relabel "kubelet" {
   forward_to = argument.forward_to.value
+  max_cache_size = argument.max_cache_size.value
 
+  // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
     regex = argument.keep_metrics.value
