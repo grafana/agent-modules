@@ -25,7 +25,6 @@ argument "job_label" {
 argument "keep_metrics" {
   comment = "A regex of metrics to keep"
   optional = true
-  default =
 }
 
 argument "scrape_interval" {
