@@ -43,11 +43,11 @@ module.git "job_cadvisor" {
 
   arguments {
     forward_to = argument.forward_to.value
-    enabled = split(join(concat(json_path(format("%q", argument.cadvisor.value), ".enabled"), ["true"]), "____"), "____")[0]
-    job_label = split(join(concat(json_path(format("%q", argument.cadvisor.value), ".job_label"), ["true"]), "____"), "____")[0]
-    keep_metrics = split(join(concat(json_path(format("%q", argument.cadvisor.value), ".keep_metrics"), ["true"]), "____"), "____")[0]
-    scrape_interval = split(join(concat(json_path(format("%q", argument.cadvisor.value), ".scrape_interval"), ["true"]), "____"), "____")[0]
-    max_cache_size = split(join(concat(json_path(format("%q", argument.cadvisor.value), ".max_cache_size"), ["true"]), "____"), "____")[0]
+    enabled = coalesce(argument.cadvisor.value["enabled"], null)
+    job_label = coalesce(argument.cadvisor.value["job_label"], null)
+    keep_metrics = coalesce(argument.cadvisor.value["keep_metrics"], null)
+    scrape_interval = coalesce(argument.cadvisor.value["scrape_interval"], null)
+    max_cache_size = coalesce(argument.cadvisor.value["max_cache_size"], null)
     clustering = argument.clustering.value
   }
 }
