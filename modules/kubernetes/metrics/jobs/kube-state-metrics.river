@@ -26,11 +26,8 @@ argument "namespaces" {
 
 argument "selectors" {
   // see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-  comment = "The label selectors to use to find matching targets"
+  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=kube-state-metrics\"])"
   optional = true
-  default = [
-    "app.kubernetes.io/name=kube-state-metrics",
-  ]
 }
 
 argument "port_name" {
