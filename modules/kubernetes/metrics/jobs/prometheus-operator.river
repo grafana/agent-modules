@@ -45,8 +45,11 @@ argument "probe_namespaces" {
 
 // Prometheus Operator ServiceMonitor objects
 prometheus.operator.servicemonitors "service_monitors" {
-  namespaces = concat(argument.namespaces.value, argument.servicemonitor_namespaces.value)
   forward_to = argument.forward_to.value
+  namespaces = concat(
+    coalesce(argument.namespaces.value, []),
+    coalesce(argument.servicemonitor_namespaces.value, []),
+  )
 
   clustering {
     enabled = coalesce(argument.clustering.value, false)
@@ -59,8 +62,11 @@ prometheus.operator.servicemonitors "service_monitors" {
 
 // Prometheus Operator PodMonitor objects
 prometheus.operator.podmonitors "pod_monitors" {
-  namespaces = concat(argument.namespaces.value, argument.podmonitor_namespaces.value)
   forward_to = argument.forward_to.value
+  namespaces = concat(
+    coalesce(argument.namespaces.value, []),
+    coalesce(argument.podmonitor_namespaces.value, []),
+  )
 
   clustering {
     enabled = coalesce(argument.clustering.value, false)
@@ -73,8 +79,11 @@ prometheus.operator.podmonitors "pod_monitors" {
 
 // Prometheus Operator Probe objects
 prometheus.operator.probes "probes" {
-  namespaces = concat(argument.namespaces.value, argument.probe_namespaces.value)
   forward_to = argument.forward_to.value
+  namespaces = concat(
+    coalesce(argument.namespaces.value, []),
+    coalesce(argument.probe_namespaces.value, []),
+  )
 
   clustering {
     enabled = coalesce(argument.clustering.value, false)
