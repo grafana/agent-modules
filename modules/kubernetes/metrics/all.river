@@ -43,11 +43,11 @@ module.git "job_cadvisor" {
 
   arguments {
     forward_to = argument.forward_to.value
-    enabled = coalesce(argument.cadvisor.value["enabled"], null)
-    job_label = coalesce(argument.cadvisor.value["job_label"], null)
-    keep_metrics = coalesce(argument.cadvisor.value["keep_metrics"], null)
-    scrape_interval = coalesce(argument.cadvisor.value["scrape_interval"], null)
-    max_cache_size = coalesce(argument.cadvisor.value["max_cache_size"], null)
+    enabled = coalesce(argument.cadvisor.value["enabled"], "true")
+    job_label = coalesce(argument.cadvisor.value["job_label"], "integrations/kubernetes/cadvisor")
+    keep_metrics = coalesce(argument.cadvisor.value["keep_metrics"], "(up|container_(cpu_(cfs_(periods|throttled_periods)_total|usage_seconds_total)|fs_(reads|writes)(_bytes)?_total|memory_(cache|rss|swap|working_set_bytes)|network_(receive|transmit)_(bytes|packets(_dropped)?_total))|machine_memory_bytes)")
+    scrape_interval = coalesce(argument.cadvisor.value["scrape_interval"], "60s")
+    max_cache_size = coalesce(argument.cadvisor.value["max_cache_size"], 100000)
     clustering = argument.clustering.value
   }
 }
