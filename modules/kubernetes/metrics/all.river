@@ -62,11 +62,11 @@ module.git "job_cadvisor" {
 
   arguments {
     forward_to = argument.forward_to.value
-    enabled = argument.cadvisor_enabled.value
-    job_label = argument.cadvisor_job_label.value
-    keep_metrics = argument.cadvisor_keep_metrics.value
-    scrape_interval = argument.scrape_interval.value
-    max_cache_size = argument.max_cache_size.value
+    enabled = coalesce(argument.cadvisor.enabled.value, null)
+    job_label = coalesce(argument.cadvisor.job_label.value, null)
+    keep_metrics = coalesce(argument.cadvisor.keep_metrics.value, null)
+    scrape_interval = coalesce(argument.cadvisor.scrape_interval.value, null)
+    max_cache_size = coalesce(argument.cadvisor.max_cache_size.value, null)
     clustering = argument.clustering.value
   }
 }
