@@ -37,6 +37,7 @@ argument "max_cache_size" {
 }
 
 argument "clustering" {
+  // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
   comment = "Whether or not clustering should be enabled (default: false)"
   optional = true
 }
