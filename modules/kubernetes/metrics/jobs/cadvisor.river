@@ -55,7 +55,7 @@ discovery.relabel "cadvisor" {
   // drop all targets if enabled is false
   rule {
     target_label = "__enabled"
-    replacement = argument.enabled.value
+    replacement = format("%s", argument.enabled.value)
   }
   rule {
     source_labels = ["__enabled"]
