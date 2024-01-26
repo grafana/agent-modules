@@ -1,46 +1,44 @@
 /*
 Module: job-cadvisor
 Description: Scrapes cAdvisor (Container Advisor Metrics)
+
+Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
+      arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
+      This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
+      does not override the value passed in, where coalesce() will return the first non-null value.
 */
 argument "forward_to" {
   comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
-  optional = false
 }
 
 argument "enabled" {
   comment = "Whether or not the cadvisor job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment"
   optional = true
-  default = true
 }
 
 argument "job_label" {
-  comment = "The job label to add for all cadvisor metrics"
+  comment = "The job label to add for all cadvisor metrics (default: integrations/kubernetes/cadvisor)"
   optional = true
-  default = "integrations/kubernetes/cadvisor"
 }
 
 argument "keep_metrics" {
-  comment = "A regex of metrics to keep"
+  comment = "A regex of metrics to keep (default: see below)"
   optional = true
-  default = "(up|container_(cpu_(cfs_(periods|throttled_periods)_total|usage_seconds_total)|fs_(reads|writes)(_bytes)?_total|memory_(cache|rss|swap|working_set_bytes)|network_(receive|transmit)_(bytes|packets(_dropped)?_total))|machine_memory_bytes)"
 }
 
 argument "scrape_interval" {
-  comment = "How often to scrape metrics from the targets"
+  comment = "How often to scrape metrics from the targets (default: 60s)"
   optional = true
-  default = "60s"
 }
 
 argument "max_cache_size" {
-  comment = "The maximum number of elements to hold in the relabeling cache.  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
+  comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient."
   optional = true
-  default = 100000
 }
 
 argument "clustering" {
-  comment = "Whether or not clustering should be enabled"
+  comment = "Whether or not clustering should be enabled (default: false)."
   optional = true
-  default = false
 }
 
 // cadvisor service discovery
