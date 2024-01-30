@@ -21,6 +21,12 @@ argument "namespaces" {
   optional = true
 }
 
+argument "selectors" {
+  // see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  comment = "The label selectors to use to find matching annotation targets (default: [] is all targets)"
+  optional = true
+}
+
 argument "annotation" {
   // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
@@ -82,7 +88,7 @@ discovery.kubernetes "agent" {
 
   selectors {
     role = coalesce(argument.role.value, "pod")
-    label = join(coalesce([argument.annotation.value], ["metrics.agent.grafana.com/scrape=true"]), ",")
+    label = join(coalesce(argument.selectors.value, []), ",")
   }
 
   namespaces {
