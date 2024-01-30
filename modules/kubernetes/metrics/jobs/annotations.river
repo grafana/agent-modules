@@ -110,7 +110,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_scrape",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_scrape",
       "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
     ]
     separator = ";"
@@ -131,7 +131,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_scheme",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -145,7 +145,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_port",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_port",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+).*$"
@@ -164,7 +164,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_path",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_path",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -186,7 +186,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_tenant",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_tenant",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -206,7 +206,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_interval",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_interval",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -226,7 +226,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_timeout",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_timeout",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -240,7 +240,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) "_job",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))) + "_job",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
