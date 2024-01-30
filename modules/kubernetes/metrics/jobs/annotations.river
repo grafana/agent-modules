@@ -357,7 +357,7 @@ discovery.relabel "http_annotations" {
 // scrape http only targtets
 prometheus.scrape "http_annotations" {
   job_name = "annotation-autodiscovery-http"
-  forward_to = [discovery.relabel.annotations.receiver]
+  forward_to = [prometheus.relabel.annotations.receiver]
   targets = discovery.relabel.http_annotations.output
   scheme = "http"
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
@@ -381,7 +381,7 @@ discovery.relabel "https_annotations" {
 // scrape https only targtets
 prometheus.scrape "https_annotations" {
   job_name = "annotation-autodiscovery-https"
-  forward_to = [discovery.relabel.annotations.receiver]
+  forward_to = [prometheus.relabel.annotations.receiver]
   targets = discovery.relabel.https_annotations.output
   scheme = "https"
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
