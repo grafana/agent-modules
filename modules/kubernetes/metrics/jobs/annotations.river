@@ -36,6 +36,11 @@ argument "annotation" {
   optional = true
 }
 
+argument "sd_annotation" {
+  optional = true
+  default = replace(replace(replace(coalesce(argument.annotation.value, "metrics.agent.grafana.com"),".", "_"),"/", "_"),"-", "_")
+}
+
 argument "tenant" {
   comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
@@ -108,7 +113,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_scrape",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_scrape",
       "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
     ]
     separator = ";"
@@ -129,7 +134,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_scheme",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -143,7 +148,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_port",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_port",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+).*$"
@@ -162,7 +167,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_path",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_path",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -184,7 +189,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_tenant",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_tenant",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -204,7 +209,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_interval",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_interval",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -224,7 +229,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_timeout",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_timeout",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -238,7 +243,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + coalesce(argument.annotation.value, "prometheus.io") +  "_job",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_job",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
