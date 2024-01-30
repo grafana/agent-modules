@@ -77,11 +77,11 @@ argument "clustering" {
 
 // annotations service discovery
 discovery.kubernetes "agent" {
-  role = coalesce(argument.role.value, "endpoints")
+  role = coalesce(argument.role.value, "pod")
 
   selectors {
-    role = coalesce(argument.role.value, "endpoints")
-    label = join(coalesce(argument.annotation.value, ["metrics.agent.grafana.com/scrape=true"]), ",")
+    role = coalesce(argument.role.value, "pod")
+    label = join(coalesce([argument.annotation.value], ["metrics.agent.grafana.com/scrape=true"]), ",")
   }
 
   namespaces {
