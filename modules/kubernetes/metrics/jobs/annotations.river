@@ -26,13 +26,14 @@ argument "annotation" {
   // k8s selectors d not support a logical OR, if multiple types of annotations are needed, this module should be invoked multiple times
   // i.e. metrics.agent.grafana.com, then again for prometheus.io
   comment = "The annotation namespace to use (default: metrics.agent.grafana.com)"
+  default = "metrics.agent.grafana.com"
   optional = true
 }
 
 argument "sd_annotation" {
   // While service discovery can use special characters i.e. a ".", "-", or "/" in the annotation name, relabeling cannot.  these characters
   // i.e. metrics.agent.grafana.com becomes metrics_agent_grafana_com
-  comment = "The annotation namespace to use (default: metrics.agent.grafana.com)"
+  comment = "The annotation namespace to use (default: metrics_agent_grafana_com)"
   default = to_lower(replace("/", "_", replace("-", "_", replace(".", "_", coalesce(argument.annotation.value, "metrics.agent.grafana.com")))))
   optional = true
 }
