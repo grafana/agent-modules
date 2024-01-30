@@ -75,7 +75,7 @@ discovery.kubernetes "agent" {
 
   selectors {
     role = coalesce(argument.role.value, "endpoints")
-    label = join(coalesce(argument.selectors.value, ["metrics.agent.grafana.com/scrape=true"]), ",")
+    label = join(coalesce(argument.annotation.value, ["metrics.agent.grafana.com/scrape=true"]), ",")
   }
 
   namespaces {
