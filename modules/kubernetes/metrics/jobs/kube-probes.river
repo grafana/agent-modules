@@ -32,6 +32,11 @@ argument "scrape_interval" {
   optional = true
 }
 
+argument "scrape_timeout" {
+  comment = "How long before a scrape times out (default: 10s)"
+  optional = true
+}
+
 argument "max_cache_size" {
   comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient"
   optional = true
@@ -86,6 +91,7 @@ prometheus.scrape "kube_probes" {
   targets = discovery.relabel.kube_probes.output
   scheme = "https"
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
+  scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
   tls_config {
