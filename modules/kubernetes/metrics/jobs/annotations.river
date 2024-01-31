@@ -308,6 +308,32 @@ discovery.relabel "annotations" {
     target_label = "namespace"
   }
 
+  // set the target name label i.e. service name, pod name, etc.
+  // if the role is endpoints, the first valued field is used which would be __meta_kubernetes_pod_name, if the pod name is empty
+  // then the endpoint name would be used
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.__pod_role.value + "_name",
+      "__meta_kubernetes_" + argument.role.value + "_name",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = argument.__pod_role.value
+  }
+
+  // set a default job label
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_namespace",
+      argument.__pod_role.value,
+    ]
+    separator = "/"
+    target_label = "job"
+  }
+
   // allow resources to declare their the job label value to use when collecting their metrics, the default value is "",
   // Example Annotation:
   //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
@@ -323,20 +349,6 @@ discovery.relabel "annotations" {
     target_label = "job"
   }
 
-  // set the target name label i.e. service name, pod name, etc.
-  // if the role is endpoints, the first valued field is used which would be __meta_kubernetes_pod_name, if the pod name is empty
-  // then the endpoint name would be used
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.__pod_role.value + "_name",
-      "__meta_kubernetes_" + argument.role.value + "_name",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?([^;]+).*$"
-    replacement = "$1"
-    target_label = argument.__pod_role.value
-  }
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
   rule {
