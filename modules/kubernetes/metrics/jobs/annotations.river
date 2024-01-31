@@ -160,7 +160,7 @@ discovery.relabel "annotations" {
       "__tmp_scrape",
       "__tmp_scrape_port_named_metrics",
       // endpoints is the role and most meta labels started with "endpoints", however the port name is an exception and starts with "endpoint"
-      "__meta_kubernetes_" + replace("endpoints", "endpoint", coalesce(argument.role.value, "pod")) + "_port_name",
+      "__meta_kubernetes_" + replace(coalesce(argument.role.value, "pod"), "endpoints", "endpoint") + "_port_name",
     ]
     separator = ";"
     regex = "^(true;.*|(|true);true;(.*metrics.*))$"
@@ -184,7 +184,7 @@ discovery.relabel "annotations" {
   rule {
     action = "drop"
     source_labels = ["__meta_kubernetes_pod_container_init"]
-    regex = "^(true|)$"
+    regex = "^(true)$"
   }
 
   // allow resources to declare their metrics the tenant their metrics should be sent to,
