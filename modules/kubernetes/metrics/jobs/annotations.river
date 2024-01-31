@@ -2,7 +2,7 @@
 Module: job-agent
 Description: Scrapes grafana agent
 
-Note: Every argument except for "forward_to" is optional, and does have a defined default value.  However, the values for these
+Note: Every argument except for "forward_to" and "role" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
@@ -13,7 +13,6 @@ argument "forward_to" {
 
 argument "role" {
   comment = "The role to use when looking for targets to scrape via annotations, can be: endpoints, service, pod (default: pod)"
-  optional = true
 }
 
 argument "namespaces" {
@@ -34,11 +33,6 @@ argument "annotation" {
   comment = "The annotation namespace to use (default: metrics.agent.grafana.com)"
   default = "metrics.agent.grafana.com"
   optional = true
-}
-
-argument "sd_annotation" {
-  optional = true
-  default = replace(replace(replace(coalesce(argument.annotation.value, "metrics.agent.grafana.com"),".", "_"),"/", "_"),"-", "_")
 }
 
 argument "tenant" {
@@ -68,6 +62,11 @@ argument "scrape_interval" {
   optional = true
 }
 
+argument "scrape_timeout" {
+  comment = "How long before a scrape times out (default: 10s)"
+  optional = true
+}
+
 argument "max_cache_size" {
   comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient"
   optional = true
@@ -77,6 +76,22 @@ argument "clustering" {
   // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
   comment = "Whether or not clustering should be enabled (default: false)"
   optional = true
+}
+
+/*
+  Hidden Arguments
+  These arguments are used to set reusable variables to avoid repeating logic
+*/
+argument "__pod_role" {
+  comment = "This is a hidden argument, it is the only way to set a reusable variable to not repeat logic.  Most annotation targets service or pod that is all you want, however if the role is endpoints you want the pod"
+  optional = true
+  default = replace("endpoints", "pod", coalesce(argument.role.value, "pod"))
+}
+
+argument "__sd_annotation" {
+  optional = true
+  comment = "This is a hidden argument, it is the only way to set a reusable variable to not repeat logic.  The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
+  default = replace(replace(replace(coalesce(argument.annotation.value, "metrics.agent.grafana.com"),".", "_"),"/", "_"),"-", "_")
 }
 
 // annotations service discovery
@@ -96,6 +111,9 @@ discovery.kubernetes "agent" {
 discovery.relabel "annotations" {
   targets = discovery.kubernetes.agent.targets
 
+  /****************************************************************************************************************
+   * Handle Targets to Keep or Drop
+   ****************************************************************************************************************/
   // allow resources to declare their metrics scraped or not
   // Example Annotation:
   //   metrics.agent.grafana.com/scrape: false
@@ -103,7 +121,6 @@ discovery.relabel "annotations" {
   // the label prometheus.io/service-monitor: "false" is a common label for headless services, when performing endpoint
   // service discovery, if there is both a load-balanced service and headless service, this can result in duplicate
   // scrapes if the name of the service is attached as a label.  any targets with this label or annotation set should be dropped
-
   rule {
     action = "replace"
     replacement = "false"
@@ -113,7 +130,7 @@ discovery.relabel "annotations" {
   rule {
     action = "replace"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_scrape",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scrape",
       "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
     ]
     separator = ";"
@@ -123,132 +140,23 @@ discovery.relabel "annotations" {
     target_label = "__tmp_scrape"
   }
 
-  // allow resources to declare the protocol to use when collecting metrics, the default value is "http",
-  // Example Annotation:
-  //   metrics.agent.grafana.com/scheme: http
+  // add a __tmp_scrape_port_named_metrics from the argument.scrape_port_named_metrics
   rule {
-    action = "replace"
-    replacement = "http"
-    target_label = "__scheme__"
-  }
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_scheme",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?(https?).*$"
-    replacement = "$1"
-    target_label = "__scheme__"
+    replacement = format("%t", argument.scrape_port_named_metrics.value)
+    target_label = "__tmp_scrape_port_named_metrics"
   }
 
-  // allow resources to declare the port to use when collecting metrics, the default value is the discovered port from
-  // Example Annotation:
-  //   metrics.agent.grafana.com/port: 9090
+  // only keep targets that have scrape: true or "metrics" in the port name if the argument scrape_port_named_metrics
   rule {
-    action = "replace"
+    action = "keep"
     source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_port",
+      "__tmp_scrape",
+      "__tmp_scrape_port_named_metrics",
+      // endpoints is the role and most meta labels started with "endpoints", however the port name is an exception and starts with "endpoint"
+      "__meta_kubernetes_" + replace("endpoints", "endpoint", coalesce(argument.role.value, "pod")) + "_port_name",
     ]
     separator = ";"
-    regex = "^(?:;*)?(\\d+).*$"
-    replacement = "$1"
-    target_label = "__tmp_port"
-  }
-
-  // allow resources to declare their the path to use when collecting their metrics, the default value is "/metrics",
-  // Example Annotation:
-  //   metrics.agent.grafana.com/path: /metrics/foo
-  rule {
-    action = "replace"
-    replacement = "/metrics"
-    target_label = "__metrics_path__"
-  }
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_path",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?([^;]+).*$"
-    replacement = "$1"
-    target_label = "__metrics_path__"
-  }
-
-  // allow resources to declare their metrics the tenant their metrics should be sent to,
-  // Example Annotation:
-  //   metrics.agent.grafana.com/tenant: primary
-  //
-  // Note: This does not necessarily have to be the actual tenantId, it can be a friendly name as well that is simply used
-  //       to determine if the metrics should be gathered for the current tenant
-  rule {
-    action = "replace"
-    replacement = ""
-    target_label = "__tmp_tenant"
-  }
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_tenant",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?([^;]+).*$"
-    replacement = "$1"
-    target_label = "__tmp_tenant"
-  }
-
-  // allow resources to declare how often their metrics should be collected, the default value is 1m,
-  // the following duration formats are supported (s|m|ms|h|d):
-  // Example Annotation:
-  //   metrics.agent.grafana.com/interval: 5m
-  rule {
-    action = "replace"
-    replacement = "1m"
-    target_label = "__scrape_interval__"
-  }
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_interval",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
-    replacement = "$1"
-    target_label = "__scrape_interval__"
-  }
-
-  // allow resources to declare the timeout of the scrape request, the default value is 10s,
-  // the following duration formats are supported (s|m|ms|h|d):
-  // Example Annotation:
-  //   metrics.agent.grafana.com/timeout: 30s
-  rule {
-    action = "replace"
-    replacement = "10s"
-    target_label = "__scrape_timeout__"
-  }
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_timeout",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
-    replacement = "$1"
-    target_label = "__scrape_timeout__"
-  }
-
-  // allow resources to declare their the job label value to use when collecting their metrics, the default value is "",
-  // Example Annotation:
-  //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
-  rule {
-    action = "replace"
-    source_labels = [
-      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.sd_annotation.value + "_job",
-    ]
-    separator = ";"
-    regex = "^(?:;*)?([^;]+).*$"
-    replacement = "$1"
-    target_label = "job"
+    regex = "^(true;.*|(|true);true;(.*metrics.*))$"
   }
 
   // only keep targets where the pod is running or the pod_phase is empty and is not an init container.  This will only exist for role="pod" or
@@ -272,39 +180,141 @@ discovery.relabel "annotations" {
     regex = "^(true|)$"
   }
 
-  // add a __tmp_scrape_port_named_metrics
-  rule {
-    replacement = format("%t", argument.scrape_port_named_metrics.value)
-    target_label = "__tmp_scrape_port_named_metrics"
-  }
-
-
-  // set the target name label name label
-  rule {
-    action = "replace"
-    source_labels = ["__meta_kubernetes_" + argument.role.value + "_name"]
-    target_label = argument.role.value
-  }
-
-  // only keep targets that have scrape: true or "metrics" in the port name if the argument scrape_port_named_metrics
+  // allow resources to declare their metrics the tenant their metrics should be sent to,
+  // Example Annotation:
+  //   metrics.agent.grafana.com/tenant: primary
+  //
+  // Note: This does not necessarily have to be the actual tenantId, it can be a friendly name as well that is simply used
+  //       to determine if the metrics should be gathered for the current tenant
   rule {
     action = "keep"
     source_labels = [
-      "__tmp_scrape",
-      "__tmp_scrape_port_named_metrics",
-      "__meta_kubernetes_endpoint_port_name",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_tenant",
     ]
-    separator = ";"
-    regex = "^(true;.*|(|true);true;(.*metrics.*))$"
+    regex = "^(" + argument.tenant.value + ")$"
   }
 
-  // allow endpoints to declare what tenant their metrics should be written to,
+  /****************************************************************************************************************
+   * Handle Setting Scrape Metadata i.e. path, port, interval etc.
+   ****************************************************************************************************************/
+  // allow resources to declare the protocol to use when collecting metrics, the default value is "http",
   // Example Annotation:
-  //   metrics.agent.grafana.com/tenant: "primary"
+  //   metrics.agent.grafana.com/scheme: http
   rule {
-    action = "keep"
-    source_labels = ["__tmp_tenant"]
-    regex = "^(" + argument.tenant.value + ")$"
+    action = "replace"
+    replacement = "http"
+    target_label = "__scheme__"
+  }
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?(https?).*$"
+    replacement = "$1"
+    target_label = "__scheme__"
+  }
+
+  // allow resources to declare the port to use when collecting metrics, the default value is the discovered port from
+  // Example Annotation:
+  //   metrics.agent.grafana.com/port: 9090
+  rule {
+    action = "replace"
+    source_labels = [
+      "__address__",
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
+    ]
+    separator = ";"
+    regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
+    replacement = "$1:$2"
+    target_label = "__address__"
+  }
+
+  // allow resources to declare their the path to use when collecting their metrics, the default value is "/metrics",
+  // Example Annotation:
+  //   metrics.agent.grafana.com/path: /metrics/foo
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "__metrics_path__"
+  }
+
+  // allow resources to declare how often their metrics should be collected, the default value is 1m,
+  // the following duration formats are supported (s|m|ms|h|d):
+  // Example Annotation:
+  //   metrics.agent.grafana.com/interval: 5m
+  rule {
+    action = "replace"
+    replacement = coalesce(argument.scrape_interval.value, "60s")
+    target_label = "__scrape_interval__"
+  }
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_interval",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
+    replacement = "$1"
+    target_label = "__scrape_interval__"
+  }
+
+  // allow resources to declare the timeout of the scrape request, the default value is 10s,
+  // the following duration formats are supported (s|m|ms|h|d):
+  // Example Annotation:
+  //   metrics.agent.grafana.com/timeout: 30s
+  rule {
+    action = "replace"
+    replacement = coalesce(argument.scrape_timeout.value, "10s")
+    target_label = "__scrape_timeout__"
+  }
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_timeout",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
+    replacement = "$1"
+    target_label = "__scrape_timeout__"
+  }
+
+  /****************************************************************************************************************
+   * Handle Setting Common Labels
+   ****************************************************************************************************************/
+  // allow resources to declare their the job label value to use when collecting their metrics, the default value is "",
+  // Example Annotation:
+  //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_job",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = "job"
+  }
+
+  // set the target name label i.e. service name, pod name, etc.
+  // if the role is endpoints, the first valued field is used which would be __meta_kubernetes_pod_name, if the pod name is empty
+  // then the endpoint name would be used
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_" + argument.__pod_role.value + "_name",
+      "__meta_kubernetes_" + argument.role.value + "_name",
+    ]
+    separator = ";"
+    regex = "^(?:;*)?([^;]+).*$"
+    replacement = "$1"
+    target_label = argument.__pod_role.value
   }
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
@@ -365,6 +375,7 @@ prometheus.scrape "http_annotations" {
   targets = discovery.relabel.http_annotations.output
   scheme = "http"
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
+  scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
 
   clustering {
     enabled = coalesce(argument.clustering.value, false)
@@ -389,6 +400,7 @@ prometheus.scrape "https_annotations" {
   targets = discovery.relabel.https_annotations.output
   scheme = "https"
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
+  scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
   tls_config {
@@ -409,15 +421,15 @@ prometheus.relabel "annotations" {
 
   // keep only metrics that match the keep_metrics regex
   rule {
+    action = "keep"
     source_labels = ["__name__"]
     regex = coalesce(argument.keep_metrics.value, "(.+)")
-    action = "keep"
   }
 
   // drop metrics that match the drop_metrics regex
   rule {
+    action = "drop"
     source_labels = ["__name__"]
     regex = coalesce(argument.drop_metrics.value, "")
-    action = "drop"
   }
 }
