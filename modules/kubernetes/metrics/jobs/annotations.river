@@ -85,13 +85,13 @@ argument "clustering" {
 argument "__pod_role" {
   comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you want the pod"
   optional = true
-  default = replace("endpoints", "pod", coalesce(argument.role.value, "pod"))
+  default = replace(coalesce(argument.role.value, "pod"), "endpoints", "pod")
 }
 
 argument "__service_role" {
   comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you we also want to consider service annotations"
   optional = true
-  default = replace("endpoints", "service", coalesce(argument.role.value, "pod"))
+  default = replace(coalesce(argument.role.value, "pod"), "endpoints", "service")
 }
 
 argument "__sd_annotation" {
@@ -301,6 +301,13 @@ discovery.relabel "annotations" {
   /****************************************************************************************************************
    * Handle Setting Common Labels
    ****************************************************************************************************************/
+  // set the namespace label
+  rule {
+    action = "replace"
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
   // allow resources to declare their the job label value to use when collecting their metrics, the default value is "",
   // Example Annotation:
   //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
@@ -338,6 +345,12 @@ discovery.relabel "annotations" {
       "__meta_kubernetes_" + argument.role.value + "label_app_kubernetes_io_name",
       "__meta_kubernetes_" + argument.role.value + "label_k8s_app",
       "__meta_kubernetes_" + argument.role.value + "label_app",
+      "__meta_kubernetes_" + argument.__pod_role.value + "label_app_kubernetes_io_name",
+      "__meta_kubernetes_" + argument.__pod_role.value + "label_k8s_app",
+      "__meta_kubernetes_" + argument.__pod_role.value + "label_app",
+      "__meta_kubernetes_" + argument.__service_role.value + "label_app_kubernetes_io_name",
+      "__meta_kubernetes_" + argument.__service_role.value + "label_k8s_app",
+      "__meta_kubernetes_" + argument.__service_role.value + "label_app",
     ]
     regex = "^(?:;*)?([^;]+).*$"
     replacement = "$1"
@@ -350,6 +363,10 @@ discovery.relabel "annotations" {
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "label_app_kubernetes_io_component",
       "__meta_kubernetes_" + argument.role.value + "label_component",
+      "__meta_kubernetes_" + argument.__pod_role.value + "label_app_kubernetes_io_component",
+      "__meta_kubernetes_" + argument.__pod_role.value + "label_component",
+      "__meta_kubernetes_" + argument.__service_role.value + "label_app_kubernetes_io_component",
+      "__meta_kubernetes_" + argument.__service_role.value + "label_component",
     ]
     regex = "^(?:;*)?([^;]+).*$"
     replacement = "$1"
