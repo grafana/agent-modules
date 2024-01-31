@@ -83,19 +83,25 @@ argument "clustering" {
   These arguments are used to set reusable variables to avoid repeating logic
 */
 argument "__pod_role" {
-  comment = "This is a hidden argument, it is the only way to set a reusable variable to not repeat logic.  Most annotation targets service or pod that is all you want, however if the role is endpoints you want the pod"
+  comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you want the pod"
   optional = true
   default = replace("endpoints", "pod", coalesce(argument.role.value, "pod"))
 }
 
+argument "__service_role" {
+  comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you we also want to consider service annotations"
+  optional = true
+  default = replace("endpoints", "service", coalesce(argument.role.value, "pod"))
+}
+
 argument "__sd_annotation" {
   optional = true
-  comment = "This is a hidden argument, it is the only way to set a reusable variable to not repeat logic.  The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
+  comment = "The logic is used to transform the annotation argument into a valid label name by removing unsupported characters."
   default = replace(replace(replace(coalesce(argument.annotation.value, "metrics.agent.grafana.com"),".", "_"),"/", "_"),"-", "_")
 }
 
 // annotations service discovery
-discovery.kubernetes "agent" {
+discovery.kubernetes "annotations" {
   role = coalesce(argument.role.value, "pod")
 
   selectors {
@@ -109,7 +115,7 @@ discovery.kubernetes "agent" {
 }
 
 discovery.relabel "annotations" {
-  targets = discovery.kubernetes.agent.targets
+  targets = discovery.kubernetes.annotations.targets
 
   /****************************************************************************************************************
    * Handle Targets to Keep or Drop
@@ -131,6 +137,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scrape",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_scrape",
       "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
     ]
     separator = ";"
@@ -190,6 +197,7 @@ discovery.relabel "annotations" {
     action = "keep"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_tenant",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_tenant",
     ]
     regex = "^(" + argument.tenant.value + ")$"
   }
@@ -209,6 +217,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -224,6 +233,7 @@ discovery.relabel "annotations" {
     source_labels = [
       "__address__",
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
     ]
     separator = ";"
     regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
@@ -238,6 +248,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -258,6 +269,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_interval",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_interval",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -278,6 +290,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_timeout",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_timeout",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -295,6 +308,7 @@ discovery.relabel "annotations" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_job",
+      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_job",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
