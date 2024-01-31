@@ -323,14 +323,17 @@ discovery.relabel "annotations" {
     target_label = argument.__pod_role.value
   }
 
-  // set a default job label
+  // set a default job label to be the namespace/pod_controller_name or namespace/service_name
   rule {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_namespace",
+      "__meta_kubernetes_pod_controller_name",
       argument.__pod_role.value,
     ]
-    separator = "/"
+    separator = ";"
+    regex = "^([^;]+)(?:;*)?([^;]+).*$"
+    replacement = "$1/$2"
     target_label = "job"
   }
 
