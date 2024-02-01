@@ -337,6 +337,20 @@ discovery.relabel "annotations" {
     target_label = "job"
   }
 
+  // if the controller is a ReplicaSet, drop the hash from the end of the ReplicaSet
+  rule {
+    action = "replace"
+    source_labels = [
+      "__meta_kubernetes_pod_controller_type",
+      "__meta_kubernetes_namespace",
+      "__meta_kubernetes_pod_controller_name",
+    ]
+    separator = ";"
+    regex = "^(?:ReplicaSet);([^;]+);([^;]+)-.+$"
+    replacement = "$1/$2"
+    target_label = "job"
+  }
+
   // allow resources to declare their the job label value to use when collecting their metrics, the default value is "",
   // Example Annotation:
   //   metrics.agent.grafana.com/job: integrations/kubernetes/cadvisor
@@ -351,7 +365,6 @@ discovery.relabel "annotations" {
     replacement = "$1"
     target_label = "job"
   }
-
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:"
   rule {
