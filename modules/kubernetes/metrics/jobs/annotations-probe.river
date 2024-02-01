@@ -109,12 +109,16 @@ discovery.relabel "probes" {
   // allow resources to declare they should be probed or not
   // Example Annotation:
   //   probes.grafana.com/probe: false
+  //
+  // the label prometheus.io/service-monitor: "false" is a common label for headless services, if it is set to false,
+  // do not probe the target
   rule {
     action = "keep"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_probe",
+      "__meta_kubernetes_" + argument.role.value + "_label_prometheus_io_service_monitor",
     ]
-    regex = "^true$"
+    regex = "^true;(|true)$"
   }
 
   // only keep targets where the pod is running or the pod_phase is empty and is not an init container.  This will only exist for role="pod" or
