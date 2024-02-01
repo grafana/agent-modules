@@ -183,25 +183,12 @@ discovery.relabel "probes" {
     source_labels = [
       "__address__",
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
+      "__meta_kubernetes_" + argument.role.value + "_port_number",
     ]
     separator = ";"
-    regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
+    regex = "^([^:]+)(?::\d+)?(?:;*)?([^;]+).*"
     replacement = "$1:$2"
     target_label = "__address__"
-  }
-
-  // set the target address to probe
-  rule {
-    action = "replace"
-    source_labels = [
-      "__scheme__",
-      "__address__",
-      "__tmp_probe_path",
-    ]
-    separator = ";"
-    regex = "(.*);(.+);(.+)"
-    replacement = "${1}${2}${3}"
-    target_label = "__param_target"
   }
 
   // allow resources to declare their the path to use when collecting their metrics, the default value is "/metrics",
@@ -216,6 +203,20 @@ discovery.relabel "probes" {
     regex = "^(?:;*)?([^;]+).*$"
     replacement = "$1"
     target_label = "__metrics_path__"
+  }
+
+  // set the target address to probe
+  rule {
+    action = "replace"
+    source_labels = [
+      "__scheme__",
+      "__address__",
+      "__metrics_path__",
+    ]
+    separator = ";"
+    regex = "(.*);(.+);(.+)"
+    replacement = "${1}://${2}${3}"
+    target_label = "__param_target"
   }
 
   // allow resources to declare their the module to use when probing, the default value is "unknown",
