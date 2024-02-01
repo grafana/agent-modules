@@ -312,7 +312,7 @@ discovery.relabel "probes" {
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
     replacement = "$1"
-    target_label = argument.__pod_role.value
+    target_label = argument.role.value
   }
 
   // set a default job label to be the namespace/service_name or namespace/ingress_name
@@ -320,7 +320,7 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_namespace",
-      argument.__pod_role.value,
+      argument.role.value,
     ]
     separator = ";"
     regex = "^([^;]+)(?:;*)?([^;]+).*$"
