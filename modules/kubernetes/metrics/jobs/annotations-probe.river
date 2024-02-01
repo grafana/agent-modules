@@ -168,7 +168,6 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
-      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -184,7 +183,6 @@ discovery.relabel "probes" {
     source_labels = [
       "__address__",
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
-      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_port",
     ]
     separator = ";"
     regex = "^([^:]+)(?::\\d+)?;(\\d+)$"
@@ -213,7 +211,6 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
-      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -248,7 +245,6 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_interval",
-      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_interval",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
@@ -269,7 +265,6 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_timeout",
-      "__meta_kubernetes_" + argument.__service_role.value + "_annotation_" + argument.__sd_annotation.value + "_timeout",
     ]
     separator = ";"
     regex = "^(?:;*)?(\\d+(s|m|ms|h|d)).*$"
