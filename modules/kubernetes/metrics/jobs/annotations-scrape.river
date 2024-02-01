@@ -1,18 +1,96 @@
 /*
-Module: job-agent
-Description: Scrapes grafana agent
+Module: job-annotation-scrape
+Description: Scrapes targets for metrics based on annotations
 
 Note: Every argument except for "forward_to" and "role" is optional, and does have a defined default value.  However, the values for these
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
+
+Kubernetes Annotation Auto-Scraping
+------------------------------------------------------------------------------------------------------------------------------------
+This module is meant to be used to automatically scrape targets based on a certain role and set of annotations.  This module can be consumed
+multiple times with different roles.  The supported roles are:
+
+  - pod
+  - service
+  - endpoints
+
+Typically, if mimicking the behavior of the prometheus-operator, and ServiceMonitor functionality you would use role="endpoints", if
+mimicking the behavior of the PodMonitor functionality you would use role="pod".  It is important to understand that with endpoints,
+the target is typically going to be a pod, and whatever annotations that are set on the service will automatically be propagated to the
+endpoints.  This is why the role "endpoints" is used, because it will scrape the pod, but also consider the service annotations.  Using
+role="endpoints", which scrape each endpoint associated to the service.  If role="service" is used, it will only scrape the service, only
+hitting one of the endpoints associated to the service.
+
+This is where you must consider your scraping strategy, for example if you scrape a service like "kube-state-metrics" using
+role="endpoints" you should only have a single replica of the kube-state-metrics pod, if you have multiple replicas, you should use
+role="service" or a separate non-annotation job completely.  Scraping a service instead of endpoints, is typically a rare use case, but
+it is supported.
+
+There are other considerations for using annotation based scraping as well, which is metric relabeling rules that happen post scrape.  If
+you have a target that you want to apply a bunch of relabelings to or a very large metrics response payload, performance wise it will be
+better to have a separate job for that target, rather than using use annotations.  As every targert will go through the ssame relabeling.
+Typical deployment strategies/options would be:
+
+Option #1 (recommended):
+  - Annotation Scraping for role="endpoints"
+  - Separate Jobs for specific service scrapes (i.e. kube-state-metrics, node-exporter, etc.) or large metric payloads
+  - Separate Jobs for K8s API scraping (i.e. cadvisor, kube-apiserver, kube-scheduler, etc.)
+
+Option #2:
+  - Annotation Scraping for role="pod"
+  - Annotation Scraping for role="service"  (i.e. kube-state-metrics, node-exporter, etc.)
+  - Separate Jobs for specific use cases or large metric payloads
+  - Separate Jobs for K8s API scraping (i.e. cadvisor, kube-apiserver, kube-scheduler, etc.)
+
+At no point should you use role="endpoints" and role="pod" together, as this will result in duplicate targets being scraped, thus
+generating duplicate metrics.  If you want to scrape both the pod and the service, use Option #2.
+
+Each port attached to an service/pod/endpoint is an eligible target, oftentimes it will have multiple ports.
+There may be instances when you want to scrape all ports or some ports and not others. To support this
+the following annotations are available:
+
+  metrics.agent.grafana.com/scrape: true
+
+the default scraping scheme is http, this can be specified as a single value which would override, the schema being used for all
+ports attached to the target:
+
+  metrics.agent.grafana.com/scheme: https
+
+the default path to scrape is /metrics, this can be specified as a single value which would override, the scrape path being used
+for all ports attached to the target:
+
+  metrics.agent.grafana.com/path: /metrics/some_path
+
+the default port to scrape is the target port, this can be specified as a single value which would override the scrape port being
+used for all ports attached to the target, note that even if aan target had multiple targets, the relabel_config targets are
+deduped before scraping:
+
+  metrics.agent.grafana.com/port: 8080
+
+the default interval to scrape is 1m, this can be specified as a single value which would override, the scrape interval being used
+for all ports attached to the target:
+
+  metrics.agent.grafana.com/interval: 5m
+
+the default timeout for scraping is 10s, this can be specified as a single value which would override, the scrape interval being
+used for all ports attached to the target:
+
+  metrics.agent.grafana.com/timeout: 30s
+
+the default job is namespace/{{ service name }} or namespace/{{ controller_name }} depending on the role, there may be instantces
+in which a different job name is required because of a set of dashboards, rules, etc. to support this there is a job annotation
+which will override the default value:
+
+  metrics.agent.grafana.com/job: integrations/kubernetes/kube-state-metrics
 */
 argument "forward_to" {
   comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
 }
 
 argument "role" {
-  comment = "The role to use when looking for targets to scrape via annotations, can be: endpoints, service, pod (default: pod)"
+  comment = "The role to use when looking for targets to scrape via annotations, can be: endpoints, service, pod (default: endpoints)"
 }
 
 argument "namespaces" {
@@ -85,13 +163,13 @@ argument "clustering" {
 argument "__pod_role" {
   comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you want the pod"
   optional = true
-  default = replace(coalesce(argument.role.value, "pod"), "endpoints", "pod")
+  default = replace(coalesce(argument.role.value, "endpoints"), "endpoints", "pod")
 }
 
 argument "__service_role" {
   comment = "Most annotation targets service or pod that is all you want, however if the role is endpoints you we also want to consider service annotations"
   optional = true
-  default = replace(coalesce(argument.role.value, "pod"), "endpoints", "service")
+  default = replace(coalesce(argument.role.value, "endpoints"), "endpoints", "service")
 }
 
 argument "__sd_annotation" {
@@ -102,10 +180,10 @@ argument "__sd_annotation" {
 
 // annotations service discovery
 discovery.kubernetes "annotations" {
-  role = coalesce(argument.role.value, "pod")
+  role = coalesce(argument.role.value, "endpoints")
 
   selectors {
-    role = coalesce(argument.role.value, "pod")
+    role = coalesce(argument.role.value, "endpoints")
     label = join(coalesce(argument.selectors.value, []), ",")
   }
 
@@ -160,7 +238,7 @@ discovery.relabel "annotations" {
       "__tmp_scrape",
       "__tmp_scrape_port_named_metrics",
       // endpoints is the role and most meta labels started with "endpoints", however the port name is an exception and starts with "endpoint"
-      "__meta_kubernetes_" + replace(coalesce(argument.role.value, "pod"), "endpoints", "endpoint") + "_port_name",
+      "__meta_kubernetes_" + replace(coalesce(argument.role.value, "endpoints"), "endpoints", "endpoint") + "_port_name",
     ]
     separator = ";"
     regex = "^(true;.*|(|true);true;(.*metrics.*))$"
