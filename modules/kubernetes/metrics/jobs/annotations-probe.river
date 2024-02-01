@@ -6,6 +6,59 @@ Note: Every argument except for "forward_to" and "role" is optional, and does ha
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
+
+Kubernetes Service Auto-Probing
+------------------------------------------------------------------------------------------------------------------------------------
+This module is meant to be used to automatically scrape targets based on a certain role and set of annotations.  This module can be consumed
+multiple times with different roles.  The supported roles are:
+
+  - service
+  - ingress
+
+Each port attached to an service is an eligible target, oftentimes service will have multiple ports.
+There may be instances when you want to probe all ports or some ports and not others. To support this
+the following annotations are available:
+
+only probe services with probe set to true, this can be single valued i.e. probe all ports for
+the service:
+
+probes.grafana.com/probe: true
+
+the default probing scheme is "", this can be specified as a single value which would override,
+if using HTTP prober specify "http" or "https":
+
+probes.grafana.com/scheme: https
+
+the default path to probe is /metrics, this can be specified as a single value which would override,
+the probe path being used for all ports attached to the service:
+
+probes.grafana.com/path: /metrics/some_path
+
+the default module to use for probing the default value is "unknown" as the modules are defined are in your blackbox exporter
+configuration file, this can be specified as a single value which would override, the probe module being used for all ports
+attached to the service:
+
+probes.grafana.com/module: http_2xx
+
+the default port to probe is the service port, this can be specified as a single value which would
+override the probe port being used for all ports attached to the service, note that even if aan service had
+multiple targets, the relabel_config targets are deduped before scraping:
+
+probes.grafana.com/port: 8080
+
+the value to set for the job label, by default this would be "integrations/blackbox_exporter" if not specified:
+
+probes.grafana.com/job: blackbox-exporter
+
+the default interval to probe is 1m, this can be specified as a single value which would override,
+the probe interval being used for all ports attached to the service:
+
+probes.grafana.com/interval: 5m
+
+the default timeout for scraping is 10s, this can be specified as a single value which would override,
+the probe interval being used for all ports attached to the service:
+
+probes.grafana.com/timeout: 30s
 */
 argument "forward_to" {
   comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
@@ -172,6 +225,7 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_scheme",
+      "__meta_kubernetes_ingress_scheme", // this would only exist for ingresses and can be used instead of setting the annotation
     ]
     separator = ";"
     regex = "^(?:;*)?(https?).*$"
@@ -202,6 +256,7 @@ discovery.relabel "probes" {
     action = "replace"
     source_labels = [
       "__meta_kubernetes_" + argument.role.value + "_annotation_" + argument.__sd_annotation.value + "_path",
+      "__meta_kubernetes_ingress_path", // this would only exist for ingresses and can be used instead of setting the annotation
     ]
     separator = ";"
     regex = "^(?:;*)?([^;]+).*$"
@@ -376,7 +431,7 @@ discovery.relabel "probes" {
 
 // scrape http only targtets
 prometheus.scrape "probes" {
-  job_name = "annotation-autodiscovery-http"
+  job_name = "annotation-probe-http"
   forward_to = [prometheus.relabel.probes.receiver]
   targets = discovery.relabel.probes.output
   scheme = "http"

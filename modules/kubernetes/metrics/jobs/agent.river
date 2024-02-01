@@ -28,7 +28,7 @@ argument "selectors" {
 }
 
 argument "port_name" {
-  comment = "The of the port to scrape metrics from"
+  comment = "The of the port to scrape metrics from (default: http-metrics)"
   optional = true
 }
 
@@ -148,7 +148,7 @@ discovery.relabel "agent" {
 
 // grafana agent scrape job
 prometheus.scrape "agent" {
-  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/cadvisor")
+  job_name = coalesce(argument.job_label.value, "integrations/agent")
   forward_to = [prometheus.relabel.agent.receiver]
   targets = discovery.relabel.agent.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
@@ -167,7 +167,8 @@ prometheus.relabel "agent" {
   // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
-    regex = coalesce(argument.keep_metrics.value, "(up|agent_build_info|log_.+)")
+    regex = coalesce(argument.keep_metrics.value, "(up|log_.+|(agent_(build_info|tcp_connections|wal_(samples_appended_total|storage_active_series))|go_(gc_duration_seconds_count|goroutines|memstats_heap_inuse_bytes)|process_(cpu_seconds_total|start_time_seconds)|prometheus_(remote_storage_(enqueue_retries_total|highest_timestamp_in_seconds|queue_highest_sent_timestamp_seconds|samples_(dropped_total|failed_total|pending|retried_total|total)|sent_batch_duration_seconds_(bucket|count|sum)|shard_(capacity|s(_desired|_max|_min))|succeeded_samples_total)|sd_discovered_targets|target_(interval_length_seconds_(count|sum)|scrapes_(exceeded_sample_limit_total|sample_(duplicate_timestamp_total|out_of_bounds_total|out_of_order_total)))|target_sync_length_seconds_sum|wal_watcher_current_segment)|traces_(exporter_send_failed_spans|exporter_sent_spans|loadbalancer_(backend_outcome|num_backends)|receiver_(accepted_spans|refused_spans)))
+)")
     action = "keep"
   }
 

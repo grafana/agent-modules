@@ -38,9 +38,8 @@ argument "port_name" {
 }
 
 argument "job_label" {
-  comment = "The job label to add for all gitlab-exporter metrics"
+  comment = "The job label to add for all gitlab-exporter metrics (default: integrations/gitlab)"
   optional = true
-  default = "integrations/gitlab-exporter"
 }
 
 argument "keep_metrics" {
@@ -107,7 +106,7 @@ discovery.relabel "gitlab" {
 
 // gitlab-exporter scrape job
 prometheus.scrape "gitlab" {
-  job_name = argument.job_label.value
+  job_name = coalesce(argument.job_label.value, "integrations/gitlab")
   forward_to = [prometheus.relabel.gitlab.receiver]
   targets = discovery.relabel.gitlab.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")

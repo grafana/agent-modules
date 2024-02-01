@@ -164,7 +164,7 @@ discovery.relabel "loki" {
 
 // loki scrape job
 prometheus.scrape "loki" {
-  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/cadvisor")
+  job_name = coalesce(argument.job_label.value, "integrations/loki")
   forward_to = [prometheus.relabel.loki.receiver]
   targets = discovery.relabel.loki.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")

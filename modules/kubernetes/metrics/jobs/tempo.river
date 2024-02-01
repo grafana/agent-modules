@@ -69,10 +69,7 @@ discovery.kubernetes "tempo" {
 
   selectors {
     role = "pod"
-    label = join(coalesce(argument.selectors.value, [
-      "app.kubernetes.io/name=tempo",
-      "app.kubernetes.io/name=enterprise-traces",
-    ]), ",")
+    label = join(coalesce(argument.selectors.value, ["app.kubernetes.io/name=tempo"]), ",")
   }
 
   namespaces {
@@ -164,7 +161,7 @@ discovery.relabel "tempo" {
 
 // tempo scrape job
 prometheus.scrape "tempo" {
-  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/cadvisor")
+  job_name = coalesce(argument.job_label.value, "integrations/tempo")
   forward_to = [prometheus.relabel.tempo.receiver]
   targets = discovery.relabel.tempo.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")

@@ -164,7 +164,7 @@ discovery.relabel "mimir" {
 
 // mimir scrape job
 prometheus.scrape "mimir" {
-  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/cadvisor")
+  job_name = coalesce(argument.job_label.value, "integrations/mimir")
   forward_to = [prometheus.relabel.mimir.receiver]
   targets = discovery.relabel.mimir.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")

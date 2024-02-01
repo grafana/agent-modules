@@ -37,9 +37,8 @@ argument "port_name" {
 }
 
 argument "job_label" {
-  comment = "The job label to add for all kube-state-metrics metrics"
+  comment = "The job label to add for all kube-state-metrics metrics (default: integrations/kubernetes/kube-state-metrics)"
   optional = true
-  default = "integrations/kubernetes/kube-state-metrics"
 }
 
 argument "keep_metrics" {
@@ -106,7 +105,7 @@ discovery.relabel "kube_state_metrics" {
 
 // kube-state-metrics scrape job
 prometheus.scrape "kube_state_metrics" {
-  job_name = argument.job_label.value
+  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-state-metrics")
   forward_to = [prometheus.relabel.kube_state_metrics.receiver]
   targets = discovery.relabel.kube_state_metrics.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")

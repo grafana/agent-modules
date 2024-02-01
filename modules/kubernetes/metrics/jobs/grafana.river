@@ -148,7 +148,7 @@ discovery.relabel "grafana" {
 
 // grafana scrape job
 prometheus.scrape "grafana" {
-  job_name = coalesce(argument.job_label.value, "integrations/kubernetes/cadvisor")
+  job_name = coalesce(argument.job_label.value, "integrations/grafana")
   forward_to = [prometheus.relabel.grafana.receiver]
   targets = discovery.relabel.grafana.output
   scrape_interval = coalesce(argument.scrape_interval.value, "60s")
