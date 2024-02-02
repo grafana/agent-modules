@@ -93,7 +93,7 @@ argument "annotation" {
 }
 
 argument "tenant" {
-  comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  comment = "The tenant to write metrics to.  This does not have to be the tenantId, this is the value to look for in the probes.grafana.com/tenant annotation, and this can be a regex."
   optional = true
   default = ".*"
 }

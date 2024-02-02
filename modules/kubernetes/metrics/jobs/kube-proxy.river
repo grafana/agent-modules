@@ -29,12 +29,12 @@ argument "selectors" {
 }
 
 argument "port" {
-  comment = "The port to scrape kube-proxy metrics on"
+  comment = "The port to scrape kube-proxy metrics on (default: 10249))"
   optional = true
 }
 
 argument "job_label" {
-  comment = "The job label to add for all kube-proxy metrics"
+  comment = "The job label to add for all kube-proxy metrics (default: integrations/kubernetes/kube-proxy)"
   optional = true
 }
 

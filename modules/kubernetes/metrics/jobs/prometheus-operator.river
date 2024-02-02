@@ -12,17 +12,6 @@ argument "forward_to" {
   optional = false
 }
 
-argument "scrape_interval" {
-  comment = "How often to scrape metrics from the targets (default: 60s)"
-  optional = true
-}
-
-argument "clustering" {
-  // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
-  comment = "Whether or not clustering should be enabled (default: false)"
-  optional = true
-}
-
 argument "namespaces" {
   comment = "List of namespaces to search for prometheus operator resources in (default: [] all namespaces)"
   optional = true
@@ -40,6 +29,17 @@ argument "podmonitor_namespaces" {
 
 argument "probe_namespaces" {
   comment = "List of namespaces to search for just probes resources in (default: [] all namespaces)"
+  optional = true
+}
+
+argument "scrape_interval" {
+  comment = "How often to scrape metrics from the targets (default: 60s)"
+  optional = true
+}
+
+argument "clustering" {
+  // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
+  comment = "Whether or not clustering should be enabled (default: false)"
   optional = true
 }
 

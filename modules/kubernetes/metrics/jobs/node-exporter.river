@@ -33,7 +33,7 @@ argument "selectors" {
 }
 
 argument "port_name" {
-  comment = "The of the port to scrape metrics from"
+  comment = "The of the port to scrape metrics from (default: metrics)"
   optional = true
 }
 

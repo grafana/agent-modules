@@ -34,7 +34,6 @@ argument "selectors" {
 argument "port_name" {
   comment = "The of the port to scrape metrics from"
   optional = true
-  default = "http"
 }
 
 argument "job_label" {
@@ -99,7 +98,7 @@ discovery.relabel "gitlab" {
 
   rule {
     source_labels = ["__meta_kubernetes_service_port_name"]
-    regex = argument.port_name.value
+    regex = coalesce(argument.port_name.value, "http")
     action = "keep"
   }
 }

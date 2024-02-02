@@ -42,8 +42,8 @@ argument "job_label" {
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep (default: see below)"
   optional = true
-  default = "(up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*))"
 }
 
 argument "scrape_interval" {
@@ -124,7 +124,7 @@ prometheus.relabel "kube_state_metrics" {
   // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
-    regex = argument.keep_metrics.value
+    regex = coalesce(argument.keep_metrics.value, "(up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*))")
     action = "keep"
   }
 }
