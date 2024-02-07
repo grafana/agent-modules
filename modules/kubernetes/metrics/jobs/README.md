@@ -36,7 +36,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./agent.river#L170) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -56,7 +56,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `drop_metrics` | `false` | `""` | A regex of metrics to drop |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -76,7 +76,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `scrape_port_named_metrics` | `false` | Whether or not to automatically scrape endpoints that have a port with 'metrics' in the name |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -91,7 +91,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./agent.river#L115) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -109,7 +109,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./agent.river#L128) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -127,7 +127,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./agent.river#L128) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -146,7 +146,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `drop_les` | `false` | [see module](./kube-apiserver.river#163) | Regex of metric les label values to drop |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -161,7 +161,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./kube-probes.river#L117) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -179,7 +179,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./kube-proxy.river#L124) | A regex of metrics to drop |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -194,7 +194,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./kube-resource.river#L117) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -212,7 +212,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./kube-state-metrics.river#L127) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -227,7 +227,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./kubelet.river#L116) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -245,7 +245,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./loki.river#L186) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -263,7 +263,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `keep_metrics` | `false` | [see module](./memcached.river#L170) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ___
@@ -281,7 +281,7 @@ ___
 | `keep_metrics` | `false` | [see module](./mimir.river#L186) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -299,7 +299,7 @@ ___
 | `keep_metrics` | `false` | [see module](./node-exporter.river#L141) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -317,7 +317,7 @@ ___
 | `keep_metrics` | `false` | [see module](./opencost.river#L123) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
@@ -349,5 +349,5 @@ ___
 | `keep_metrics` | `false` | [see module](./tempo.river#L183) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
-| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |

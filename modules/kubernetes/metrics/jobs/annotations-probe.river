@@ -119,7 +119,7 @@ argument "scrape_timeout" {
 }
 
 argument "max_cache_size" {
-  comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  Only increase if the amount of metrics returned is extremely large, the default will almost always be sufficient"
+  comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
   optional = true
 }
 
