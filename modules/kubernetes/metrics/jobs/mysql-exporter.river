@@ -23,7 +23,7 @@ argument "namespaces" {
 
 argument "selectors" {
   // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=mysql\"]) *Note: for Grafana Enterprise Logs change to [\"app.kubernetes.io/name=enterprise-logs\"]"
+  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=prometheus-mysql-exporter\"])"
   optional = true
 }
 
@@ -69,7 +69,7 @@ discovery.kubernetes "mysql" {
 
   selectors {
     role = "pod"
-    label = join(coalesce(argument.selectors.value, ["app.kubernetes.io/name=mysql"]), ",")
+    label = join(coalesce(argument.selectors.value, ["app.kubernetes.io/name=prometheus-mysql-exporter"]), ",")
   }
 
   namespaces {
