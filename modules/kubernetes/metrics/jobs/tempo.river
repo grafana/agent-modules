@@ -12,7 +12,7 @@ argument "forward_to" {
 }
 
 argument "enabled" {
-  comment = "Whether or not the tempo-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment"
+  comment = "Whether or not the tempo-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
   optional = true
 }
 
@@ -23,7 +23,7 @@ argument "namespaces" {
 
 argument "selectors" {
   // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=tempo\",\"app.kubernetes.io/name=enterprise-metrics\"])"
+  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=tempo\"])"
   optional = true
 }
 
@@ -58,7 +58,7 @@ argument "max_cache_size" {
 }
 
 argument "clustering" {
-  // Docs: https://tempo.com/docs/agent/latest/flow/concepts/clustering/
+  // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
   comment = "Whether or not clustering should be enabled (default: false)"
   optional = true
 }

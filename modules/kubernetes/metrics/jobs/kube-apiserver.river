@@ -13,7 +13,7 @@ argument "forward_to" {
 }
 
 argument "enabled" {
-  comment = "Whether or not the kube-apiserver job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment"
+  comment = "Whether or not the kube-apiserver job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
   optional = true
 }
 
