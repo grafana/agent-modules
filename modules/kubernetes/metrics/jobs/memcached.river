@@ -167,8 +167,7 @@ prometheus.relabel "memcached" {
   // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
-    regex = coalesce(argument.keep_metrics.value, "(up|memcached_(commands_total|connections_total|current_(bytes|connections|items)|items_(evicted_total|total)|max_connections|read_bytes_total|up|uptime_seconds|version|written_bytes_total)
-)")
+    regex = coalesce(argument.keep_metrics.value, "(up|memcached_(commands_total|connections_total|current_(bytes|connections|items)|items_(evicted_total|total)|max_connections|read_bytes_total|up|uptime_seconds|version|written_bytes_total))")
     action = "keep"
   }
 
