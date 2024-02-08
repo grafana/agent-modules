@@ -33,7 +33,7 @@ argument "port_name" {
 }
 
 argument "job_label" {
-  comment = "The job label to add for all mysql-metric (default: integrations/mysql)"
+  comment = "The job label to add for all mysql-metrics (default: integrations/mysql)"
   optional = true
 }
 
@@ -182,15 +182,5 @@ prometheus.relabel "mysql" {
     source_labels = ["__name__"]
     regex = coalesce(argument.keep_metrics.value, "mysql_(global_status_(aborted_(clients|connects)|buffer_pool_pages|bytes_(received|sent)|commands_total|created_tmp_(disk_tables|files|tables)|handlers_total|innodb_(log_waits|mem_(adaptive_hash|dictionary)|num_open_files|page_size)|max_used_connections|open_(files|table_definitions|tables)|opened_(files|table_definitions|tables)|qcache_(free_memory|hits|inserts|lowmem_prunes|not_cached|queries_in_cache)|queries|questions|select_(full_(join|range_join)|range(|_check)|scan)|slow_queries|sort_(merge_passes|range|rows|scan)|table_locks_(immediate|waited)|table_open_cache_(hits|misses|overflows)|threads_(cached|connected|created|running)|uptime|wsrep_(local_(recv_queue|state)|ready))|global_variables_(innodb_(additional_mem_pool_size|buffer_pool_size|log_buffer_size)|key_buffer_size|max_connections|open_files_limit|query_cache_size|table_(definition_cache|open_cache)|thread_cache_size|tokudb_cache_size|wsrep_desync)|heartbeat_(now|stored)_timestamp_seconds|info_schema_processlist_threads|slave_status_(seconds_behind_master|slave_(io|sql)_running|sql_delay)|up)")
     action = "keep"
-  }
-
-  // set the job label to be namespace/pod as this is what the cloud integration expects
-  rule {
-    action = "replace"
-    source_labels = ["namespace", "pod"]
-    separator = "/"
-    regex = "(.+)"
-    replacement = "$1"
-    target_label = "job"
   }
 }
