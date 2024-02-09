@@ -479,7 +479,7 @@ discovery.relabel "annotations" {
     target_label = "component"
   }
 
-  // add a controller label if the resource is a pod
+  // add a workload label if the resource is a pod
   // example: grafana-agent-68nv9 becomes DaemonSet/grafana-agent
   rule {
     source_labels = [

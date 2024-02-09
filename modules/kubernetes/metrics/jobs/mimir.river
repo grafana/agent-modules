@@ -12,7 +12,7 @@ argument "forward_to" {
 }
 
 argument "enabled" {
-  comment = "Whether or not the mimir-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment"
+  comment = "Whether or not the mimir-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
   optional = true
 }
 
@@ -23,7 +23,7 @@ argument "namespaces" {
 
 argument "selectors" {
   // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=mimir\",\"app.kubernetes.io/name=enterprise-metrics\"])"
+  comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=mimir\"])"
   optional = true
 }
 
@@ -58,7 +58,7 @@ argument "max_cache_size" {
 }
 
 argument "clustering" {
-  // Docs: https://mimir.com/docs/agent/latest/flow/concepts/clustering/
+  // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
   comment = "Whether or not clustering should be enabled (default: false)"
   optional = true
 }
@@ -69,10 +69,7 @@ discovery.kubernetes "mimir" {
 
   selectors {
     role = "pod"
-    label = join(coalesce(argument.selectors.value, [
-      "app.kubernetes.io/name=mimir",
-      "app.kubernetes.io/name=enterprise-logs",
-    ]), ",")
+    label = join(coalesce(argument.selectors.value, ["app.kubernetes.io/name=mimir"]), ",")
   }
 
   namespaces {
@@ -125,14 +122,14 @@ discovery.relabel "mimir" {
     target_label  = "container"
   }
 
-  // set a controller label
+  // set a workload label
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
       "__meta_kubernetes_pod_controller_name",
     ]
     separator = "/"
-    target_label  = "controller"
+    target_label  = "workload"
   }
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"

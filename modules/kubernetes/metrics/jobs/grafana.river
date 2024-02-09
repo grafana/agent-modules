@@ -12,7 +12,7 @@ argument "forward_to" {
 }
 
 argument "enabled" {
-  comment = "Whether or not the grafana-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment"
+  comment = "Whether or not the grafana-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
   optional = true
 }
 
@@ -122,14 +122,14 @@ discovery.relabel "grafana" {
     target_label  = "container"
   }
 
-  // set a controller label
+  // set a workload label
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
       "__meta_kubernetes_pod_controller_name",
     ]
     separator = "/"
-    target_label  = "controller"
+    target_label  = "workload"
   }
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"

@@ -8,8 +8,12 @@ The following jobs are completely isolated and have no dependencies on other mod
 - [Annotations Probe](#annotations-probe)
 - [Annotations Scrape](#annotation-scrape)
 - [cAdvisor](#cadvisor)
+- [Cert Manager](#cert-manager)
+- [Consul](#consul)
+- [Etcd](#etcd)
 - [Gitlab Exporter](#gitlab-exporter)
 - [Grafana](#grafana)
+- [HAProxy](#haproxy)
 - [Kube ApiServer](#kube-apiserver)
 - [Kube Probes](#kube-probes)
 - [Kube Proxy](#kube-proxy)
@@ -17,10 +21,16 @@ The following jobs are completely isolated and have no dependencies on other mod
 - [Kube State Metrics](#kube-state-metrics)
 - [Kubelet](#kubelet)
 - [Loki](#loki)
+- [Memcached](#memcached)
 - [Mimir](#mimir)
+- [Mysql](#mysql)
 - [Node Exporter](#node-exporter)
 - [OpenCost](#opencost)
 - [Prometheus Operator](#prometheus-operator)
+- [Push Gateway](#push-gateway)
+- [RabbitMQ](#rabbitmq)
+- [Redis](#redis)
+- [Statsd](#Statsd)
 - [Tempo](#tempo)
 
 ### Agent
@@ -88,7 +98,61 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
 | `enabled` | `false` | `true` | Whether or not the cAdvisor job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
 | `job_label` | `false` | `integrations/kubernetes/cadvisor` | The job label to add for all metrics |
-| `keep_metrics` | `false` | [see module](./agent.river#L115) | A regex of metrics to keep |
+| `keep_metrics` | `false` | [see module](./cadvisor.river#L115) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Cert Manager
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the cert-manager should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=cert-manager"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `http-metrics` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/cert-manager` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./cert-manager.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Consul
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the consul should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app=consul"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `http-metrics` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/consul` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./consul.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Etcd
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the etcd should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/component=etcd"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `metrics` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/consul` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./etcd.river#L183) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
 | `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -106,7 +170,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `selectors` | `false` | `["app.kubernetes.io/name=gitlab-ci-pipelines-exporter"]` | The label selectors to use to find matching targets |
 | `port_name` | `false` | `http` | The of the port to scrape metrics from |
 | `job_label` | `false` | `integrations/gitlab` | The job label to add for all metrics |
-| `keep_metrics` | `false` | [see module](./agent.river#L128) | A regex of metrics to keep |
+| `keep_metrics` | `false` | [see module](./gitlab.river#L128) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
 | `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -119,12 +183,30 @@ The following jobs are completely isolated and have no dependencies on other mod
 | Argument | Required | Default | Description |
 | :------- | :------- | :-------| :---------- |
 | `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
-| `enabled` | `false` | `true` | Whether or not the gitlab-exporter should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `enabled` | `false` | `true` | Whether or not the grafana should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
 | `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
 | `selectors` | `false` | `["app.kubernetes.io/name=grafana"]` | The label selectors to use to find matching targets |
 | `port_name` | `false` | `http-metrics` | The of the port to scrape metrics from |
 | `job_label` | `false` | `integrations/gitlab` | The job label to add for all metrics |
 | `keep_metrics` | `false` | [see module](./agent.river#L128) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### HAProxy
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the haproxy should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/component=haproxy"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `prometheus` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/haproxy` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./haproxy.river#L183) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
 | `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -266,7 +348,7 @@ The following jobs are completely isolated and have no dependencies on other mod
 | `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
-___
+---
 
 ### Mimir
 
@@ -279,6 +361,24 @@ ___
 | `port_name` | `false` | `http-metrics` | The of the port to scrape metrics from |
 | `job_label` | `false` | `integrations/mimir` | The job label to add for all metrics |
 | `keep_metrics` | `false` | [see module](./mimir.river#L186) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Mysql
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the haproxy should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=prometheus-mysql-exporter"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `metrics` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/mysql` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./mysql.river#L183) | A regex of metrics to keep |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
 | `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
@@ -332,6 +432,78 @@ ___
 | `podmonitor_namespaces` | `false` | `[]` | List of namespaces to search for just podmonitors resources in |
 | `probe_namespaces` | `false` | `[]` | List of namespaces to search for just probes resources in |
 | `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Push Gateway
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the pushgateway should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=prometheus-pushgateway"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `metrics` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/push-gateway` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./push-gateway.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### RabbitMQ
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the rabbitmq should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=rabbitmq-exporter"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `rabbitmq-exporter` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/rabbitmq` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./rabbitmq.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Redis
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the redis should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=prometheus-redis-exporter"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `redis-exporter` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/redis` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./redis.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering` | `false` | `false` | Whether or not clustering should be enabled |
+
+---
+
+### Statsd
+
+| Argument | Required | Default | Description |
+| :------- | :------- | :-------| :---------- |
+| `forward_to` | `true` | _NA_ | Must be a list(MetricsReceiver) where collected logs should be forwarded to |
+| `enabled` | `false` | `true` | Whether or not the statsd should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment |
+| `namespaces` | `false` | `[]` | The namespaces to look for targets in (`[]` is all namespaces) |
+| `selectors` | `false` | `["app.kubernetes.io/name=prometheus-statsd-exporter"]` | The label selectors to use to find matching targets |
+| `port_name` | `false` | `http` | The of the port to scrape metrics from |
+| `job_label` | `false` | `integrations/statsd` | The job label to add for all metrics |
+| `keep_metrics` | `false` | [see module](./redis.river#L183) | A regex of metrics to keep |
+| `scrape_interval` | `false` | `60s` | How often to scrape metrics from the targets |
+| `scrape_timeout` | `false` | `10s` | How long before a scrape times out |
+| `max_cache_size` | `false` | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | `false` | `false` | Whether or not clustering should be enabled |
 
 ---
