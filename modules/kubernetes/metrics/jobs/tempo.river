@@ -122,14 +122,14 @@ discovery.relabel "tempo" {
     target_label  = "container"
   }
 
-  // set a controller label
+  // set a workload label
   rule {
     source_labels = [
       "__meta_kubernetes_pod_controller_kind",
       "__meta_kubernetes_pod_controller_name",
     ]
     separator = "/"
-    target_label  = "controller"
+    target_label  = "workload"
   }
 
   // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
