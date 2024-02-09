@@ -42,8 +42,8 @@ argument "job_label" {
 }
 
 argument "keep_metrics" {
+  comment = "A regex of metrics to keep (default: see below)"
   optional = true
-  default = "(up|(gitlab_ci_pipeline_job_(timestamp|status|duration_seconds|id|run_count|artifact_size_bytes)|gitlab_runner_jobs_total|gcpe_.*))"
 }
 
 argument "scrape_interval" {
@@ -124,7 +124,7 @@ prometheus.relabel "gitlab" {
   // keep only metrics that match the keep_metrics regex
   rule {
     source_labels = ["__name__"]
-    regex = coalesce(argument.keep_metrics.value, "(gitlab_ci_pipeline_job_(timestamp|status|duration_seconds|id|run_count|artifact_size_bytes)|gitlab_runner_jobs_total|gcpe_.*)")
+    regex = coalesce(argument.keep_metrics.value, "(up|(gitlab_ci_(active_jobs_sum|pipeline_size_builds_sum|runner_authentication_(failure|success)_total|trace_operations_total)|gitlab_rails_boot_time_seconds|http_request_duration_seconds_(count|sum)|http_requests_total|job_register_attempts_(failed_total|total)|pipelines_created_total|user_session_logins_total))")
     action = "keep"
   }
 }
