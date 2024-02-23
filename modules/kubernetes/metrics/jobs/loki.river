@@ -187,10 +187,13 @@ prometheus.relabel "loki" {
   // set the job label to be namespace/pod as this is what the cloud integration expects
   rule {
     action = "replace"
-    source_labels = ["namespace", "pod"]
+    source_labels = [
+      "namespace",
+      "workload"
+    ]
     separator = "/"
-    regex = "(.+)"
-    replacement = "$1"
+    regex = "(.+)/.+/(.+)"
+    replacement = "$1/$2"
     target_label = "job"
   }
 }
