@@ -17,7 +17,7 @@ parameterize a configuration to create reusable pipelines.
 | [Metrics and Logs Annotation Ingestion](./modules/kubernetes/) | Module to ingest Metrics (scraping/probes) and Logs through annotations. | `>= v0.36.1`
 | [OTLP to LGTM](./modules/otlp/otlp-to-lgtm/) | Module to ingest OTLP data and then send it to Loki, Mimir and Tempo stacks locally or in GrafanaCloud. | `>= v0.33`
 | [Grafana Agent Telemetry to LGTM](./modules/grafana-agent/telemetry-to-lgtm/) | Module to forward the Grafana Agent's own telemetry data to Loki, Mimir and Tempo stacks locally or in Grafana Cloud. | `>= v0.33`
-| [Grafana Agent Dynamic Blackbox Exporter](./modules/grafana-agent/dynamic-blackbox/) | Module to use blackbox exporter with dynamic targets. | `>= v0.35`
+| [Grafana Agent Dynamic Blackbox Exporter](./modules/grafana-agent/dynamic-blackbox/) | Module to use blackbox exporter with dynamic targets. | `>= v0.39`
 | [Grafana Cloud Autoconfigure](./modules/grafana-cloud/autoconfigure/) | Module to automatically configure receivers for Grafana Cloud. | `>= v0.34`
 | [Host Filtering](./modules/host-filter/) | The host filtering module provides a Flow mode equivalent to static mode's host filtering functionality. | `>= v0.34`
 
