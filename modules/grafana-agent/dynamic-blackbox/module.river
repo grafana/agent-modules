@@ -35,7 +35,8 @@ prometheus.exporter.blackbox "base" {
   config_file	= argument.config_file.value
   config = argument.config.value
   probe_timeout_offset = argument.probe_timeout_offset.value
-  target "dummy" {
+  target {
+    name = "dummy"
     address = "dummy"
   }
 }
