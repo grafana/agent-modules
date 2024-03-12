@@ -8,6 +8,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "tenant" {
+  // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
+  optional = true
+  default = ".*"
+}
+
 argument "git_repo" {
   optional = true
   default = coalesce(env("GIT_REPO"), "https://github.com/grafana/agent-modules.git")
