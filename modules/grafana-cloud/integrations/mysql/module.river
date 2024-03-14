@@ -1,0 +1,68 @@
+/********************************************
+ * ARGUMENTS
+ ********************************************/
+argument "instance" {}
+
+argument "metrics_targets" {}
+
+argument "metrics_receiver" {}
+
+argument "logs_receiver" {}
+
+/********************************************
+ * EXPORTS
+ ********************************************/
+export "logs_receiver" {
+  value = loki.relabel.job_instance.receiver
+}
+
+/********************************************
+ * Metrics scrape and relabel
+ ********************************************/
+prometheus.scrape "mysql" {
+  job_name = "integrations/mysql"
+  targets = argument.metrics_targets.value
+  forward_to = [prometheus.relabel.instance.receiver]
+}
+
+prometheus.relabel "instance" {
+  forward_to = argument.metrics_receiver.value
+
+  rule {
+    target_label = "instance"
+    replacement = argument.instance.value
+  }
+}
+
+/********************************************
+ * Logs relabel and pipeline stages
+ ********************************************/
+loki.relabel "job_instance" {
+  forward_to = [loki.process.stages.receiver]
+  rule {
+    target_label = "instance"
+    replacement = argument.instance.value
+  }
+  rule {
+    target_label = "job"
+    replacement = "integrations/mysql"
+  }
+}
+
+loki.process "stages" {
+  forward_to = argument.logs_receiver.value
+  stage.regex {
+    expression = "(?P<timestamp>.+) (?P<thread>[\\d]+) \\[(?P<label>.+?)\\]( \\[(?P<err_code>.+?)\\] \\[(?P<subsystem>.+?)\\])? (?P<msg>.+)"
+  }
+  stage.labels {
+    values = {
+      level = "label",
+      err_code = "",
+      subsystem = "",
+    }
+  }
+  stage.drop {
+    expression = "^ *$"
+    drop_counter_reason = "drop empty lines"
+  }
+}
