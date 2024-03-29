@@ -213,7 +213,7 @@ declare "local" {
     targets = [
       {
         "__address__" = "localhost:12345",
-        "source" = "local"
+        "source" = "local",
       },
     ]
   }
