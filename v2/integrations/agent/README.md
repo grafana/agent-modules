@@ -77,7 +77,7 @@ The following labels are automatically added to exported targets.
 | `forward_to` | _yes_ | `list(MetricsReceiver)`  | Must be a where scraped should be forwarded to |
 | `job_label`  | _no_ | `integrations/agent` | The job label to add for all grafana-agent metric |
 | `port_name`  | _no_ | `http-metrics` | The of the port to scrape metrics from |
-| `keep_metrics` | _no_ | [see code](module.river#L241) | A regex of metrics to keep |
+| `keep_metrics` | _no_ | [see code](module.river#L196) | A regex of metrics to keep |
 | `scrape_interval` | _no_ | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | _no_ | `10s` | How long before a scrape times out |
 | `max_cache_size` | _no_ | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
