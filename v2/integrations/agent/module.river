@@ -6,25 +6,6 @@ Note: Every argument except for "forward_to" is optional, and does have a define
       arguments are not defined using the default = " ... " argument syntax, but rather using the coalesce(argument.value, " ... ").
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
-
-Usage:
-// import the module
-import.git "agent" {
-  repository = "https://github.com/grafana/agent-modules.git"
-  revision   = "main"
-  path       = "modules/kubernetes/logs/kubelet.river"
-  pull_frequency = "15m"
-}
-
-// if on kubernetes
-agent.kubernetes "metrics" {
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-// if on local machine / vm
-agent.local "metrics" {
-  forward_to = [prometheus.remote_write.default.receiver]
-}
 */
 declare "kubernetes" {
   // arguments for kubernetes discovery
@@ -115,6 +96,13 @@ declare "kubernetes" {
       replacement = "$1"
       target_label = "app"
     }
+
+    // set a source label
+    rule {
+      action = "replace"
+      replacement = "kubernetes"
+      target_label = "source"
+    }
   }
 
   export "output" {
@@ -123,77 +111,34 @@ declare "kubernetes" {
 }
 
 declare "local" {
+
+  argument "port_name" {
+    comment = "The port to use (default: 12345)"
+    optional = true
+  }
+
   // arguments for local (static)
-  argument "enabled" {
-    comment = "Whether or not the grafana-agent job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
-    optional = true
-  }
-
-  // arguments for scrape module
-  argument "forward_to" {
-    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
-  }
-
-  argument "job_label" {
-    comment = "The job label to add for all grafana-agent metric (default: integrations/agent)"
-    optional = true
-  }
-
-  argument "keep_metrics" {
-    comment = "A regex of metrics to keep (default: see below)"
-    optional = true
-  }
-
-  argument "scrape_interval" {
-    comment = "How often to scrape metrics from the targets (default: 60s)"
-    optional = true
-  }
-
-  argument "scrape_timeout" {
-    comment = "How long before a scrape times out (default: 10s)"
-    optional = true
-  }
-
-  argument "max_cache_size" {
-    comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
-    optional = true
-  }
-
-  argument "clustering" {
-    // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
-    comment = "Whether or not clustering should be enabled (default: false)"
-    optional = true
-  }
-
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost:12345",
+        "__address__" = "localhost" + format("%s", argument.port.value),
         "source" = "local",
       },
     ]
   }
 
-  // invoke common scrape module
-  scrape "job" {
-    forward_to = argument.forward_to.value
-    targets = discovery.relabel.local.output
-    job_label = coalesce(argument.job_label.value, "integrations/agent")
-    keep_metrics = coalesce(argument.keep_metrics.value, null)
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
-    max_cache_size = coalesce(argument.max_cache_size.value, 100000)
-    clustering = coalesce(argument.clustering.value, false)
+  export "output" {
+    value = discovery.relabel.local.output
   }
 }
 
 declare "scrape" {
-  argument "forward_to" {
-    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
-  }
-
   argument "targets" {
     comment = "Must be a list() of targets"
+  }
+
+  argument "forward_to" {
+    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   }
 
   argument "job_label" {
