@@ -95,7 +95,7 @@ declare "kubernetes" {
   }
 
   // grafana agent relabelings (pre-scrape)
-  discovery.relabel "Kubernetes" {
+  discovery.relabel "kubernetes" {
     targets = discovery.kubernetes.agent.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
