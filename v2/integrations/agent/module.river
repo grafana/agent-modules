@@ -153,16 +153,8 @@ declare "kubernetes" {
     }
   }
 
-  // invoke common scrape module
-  scrape "job" {
-    forward_to = argument.forward_to.value
-    targets = discovery.relabel.kubernetes.output
-    job_label = coalesce(argument.job_label.value, "integrations/agent")
-    keep_metrics = coalesce(argument.keep_metrics.value, null)
-    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
-    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
-    max_cache_size = coalesce(argument.max_cache_size.value, 100000)
-    clustering = coalesce(argument.clustering.value, false)
+  export "output" {
+    value = discovery.relabel.kubernetes.output
   }
 }
 
