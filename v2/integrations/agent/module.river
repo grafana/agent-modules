@@ -82,6 +82,12 @@ declare "kubernetes" {
       separator = "/"
       target_label  = "workload"
     }
+    // remove the hash from the ReplicaSet
+    rule {
+      source_labels = ["workload"]
+      regex = "(ReplicaSet/.+)-.+"
+      target_label  = "workload"
+    }
 
     // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
     rule {
