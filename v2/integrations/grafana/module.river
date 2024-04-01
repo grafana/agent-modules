@@ -21,7 +21,7 @@ declare "kubernetes" {
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: http-metrics)"
+    comment = "The of the port to scrape metrics from (default: grafana)"
     optional = true
   }
 
@@ -51,7 +51,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_ready",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "http-metrics") + "@Running@true"
+      regex = coalesce(argument.port_name.value, "grafana") + "@Running@true"
       action = "keep"
     }
 
@@ -119,7 +119,7 @@ declare "kubernetes" {
 declare "local" {
 
   argument "port" {
-    comment = "The port to use (default: 9150)"
+    comment = "The port to use (default: 3000)"
     optional = true
   }
 
@@ -127,7 +127,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "9150")),
+        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "3000")),
         "source" = "local",
       },
     ]

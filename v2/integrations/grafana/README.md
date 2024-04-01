@@ -17,8 +17,8 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | Name         | Required | Default                                | Description                                                                 |
 | :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=grafana"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `http-metrics`                              | The of the port to scrape metrics from                                      |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=grafana"]`   | The label selectors to use to find matching targets                         |
+| `port_name`  | _no_     | `grafana`                              | The of the port to scrape metrics from                                      |
 
 #### Exports
 
@@ -47,7 +47,7 @@ The following labels are automatically added to exported targets.
 
 | Name | Optional | Default | Description |
 | :--- | :---     | :---    | :---------- |
-| `port` | `true` | `9150` | The of the port to scrape metrics from |
+| `port` | `true` | `3000` | The of the port to scrape metrics from |
 
 #### Exports
 
@@ -69,17 +69,17 @@ The following labels are automatically added to exported targets.
 
 #### Arguments
 
-| Name | Required | Default | Description |
-| :--- | :---     | :---    | :---------- |
-| `targets`    | _yes_ | `list(map(string))` | List of targets to scrape                           |
-| `forward_to` | _yes_ | `list(MetricsReceiver)`  | Must be a where scraped should be forwarded to |
-| `job_label`  | _no_ | `integrations/grafana` | The job label to add for all grafana metric |
-| `port_name`  | _no_ | `http-metrics` | The of the port to scrape metrics from |
-| `keep_metrics` | _no_ | [see code](module.river#L202) | A regex of metrics to keep |
-| `scrape_interval` | _no_ | `60s` | How often to scrape metrics from the targets |
-| `scrape_timeout` | _no_ | `10s` | How long before a scrape times out |
-| `max_cache_size` | _no_ | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering` | _no_ | `false` | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled |
+| Name              | Required | Default | Description         |
+| :---------------- | :------- | :------ | ------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `targets`         | _yes_    | `list(map(string))`           | List of targets to scrape                                                                                                                |
+| `forward_to`      | _yes_    | `list(MetricsReceiver)`       | Must be a where scraped should be forwarded to                                                                                      |
+| `job_label`       | _no_     | `integrations/grafana`        | The job label to add for all grafana metric                                                                                           |
+| `port_name`       | _no_     | `http-metrics`                | The of the port to scrape metrics from                                                                                                        |
+| `keep_metrics`    | _no_     | [see code](module.river#L202) | A regex of metrics to keep                                                                                                     |
+| `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                           |
+| `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                     |
+| `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
+| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                       |
 
 #### Labels
 
