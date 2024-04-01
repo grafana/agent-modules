@@ -80,6 +80,15 @@ The following labels are automatically added to exported targets.
 | `scrape_timeout` | _no_ | `10s` | How long before a scrape times out |
 | `max_cache_size` | _no_ | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | _no_ | `false` | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled |
+
+#### Labels
+
+The following labels are automatically added to exported targets.
+
+| Label | Description |
+| :---- | :-----------|
+| `job` | Set to the value of `argument.job_label.value` |
+
 ---
 
 ## Usage

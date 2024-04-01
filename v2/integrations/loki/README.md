@@ -17,8 +17,8 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | Name         | Required | Default                                | Description                                                                 |
 | :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `http-metrics`                              | The of the port to scrape metrics from                                      |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets<br>*Note:* for Grafana Enterprise Logs this should be `["app.kubernetes.io/name=enterprise-logs"]`                         |
+| `port_name`  | _no_     | `http-metrics`                         | The of the port to scrape metrics from                                      |
 
 #### Exports
 
@@ -80,6 +80,16 @@ The following labels are automatically added to exported targets.
 | `scrape_timeout` | _no_ | `10s` | How long before a scrape times out |
 | `max_cache_size` | _no_ | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
 | `clustering` | _no_ | `false` | Whether or not [clustering](https://grafana.com/docs/agent/latest/flow/concepts/clustering/) should be enabled |
+
+#### Labels
+
+The following labels are automatically added to exported targets.
+
+| Label | Description |
+| :---- | :-----------|
+| `job` | For kubernetes scrapes, this label is set to `{{namespace}}/{{controller_name}}` |
+
+
 ---
 
 ## Usage
