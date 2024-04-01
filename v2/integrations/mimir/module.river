@@ -201,7 +201,7 @@ declare "scrape" {
       action = "replace"
       source_labels = [
         "namespace",
-        "workload"
+        "workload",
       ]
       separator = "/"
       regex = "(.+)/.+/(.+)"
