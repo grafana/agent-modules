@@ -47,9 +47,7 @@ The following labels are automatically added to exported targets.
 
 | Name | Optional | Default | Description |
 | :--- | :---     | :---    | :---------- |
-| `namespaces` | `true` | `[]`  | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors` | `true` | `["app.kubernetes.io/name=grafana-agent"]` | The label selectors to use to find matching targets |
-| `port_name` | `true` | `http-metrics` | The of the port to scrape metrics from |
+| `port` | `true` | `12345` | The of the port to scrape metrics from |
 
 #### Exports
 

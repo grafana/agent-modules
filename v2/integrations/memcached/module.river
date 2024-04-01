@@ -118,8 +118,8 @@ declare "kubernetes" {
 
 declare "local" {
 
-  argument "port_name" {
-    comment = "The port to use (default: 12345)"
+  argument "port" {
+    comment = "The port to use (default: 9150)"
     optional = true
   }
 
@@ -127,7 +127,7 @@ declare "local" {
   discovery.relabel "local" {
     targets = [
       {
-        "__address__" = "localhost" + format("%s", argument.port.value),
+        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "9150")),
         "source" = "local",
       },
     ]
