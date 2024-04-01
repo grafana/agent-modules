@@ -18,7 +18,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | :----------- | :------- | :---------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                                  | The namespaces to look for targets in, the default (`[]`) is all namespaces |
 | `selectors`  | _no_     | `["app.kubernetes.io/name=prometheus-node-exporter"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `node_exporter`                                       | The of the port to scrape metrics from                                      |
+| `port_name`  | _no_     | `metrics      `                                       | The of the port to scrape metrics from                                      |
 
 #### Exports
 
@@ -46,8 +46,8 @@ The following labels are automatically added to exported targets.
 #### Arguments
 
 | Name | Optional | Default | Description |
-| :--- | :---     | :---    | :---------- |
-| `port` | `true` | `3000` | The of the port to scrape metrics from |
+| :--- | :---     | :------ | :---------- |
+| `port` | `true` | `9100`  | The of the port to scrape metrics from |
 
 #### Exports
 

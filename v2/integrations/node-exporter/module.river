@@ -21,7 +21,7 @@ declare "kubernetes" {
   }
 
   argument "port_name" {
-    comment = "The of the port to scrape metrics from (default: node_exporter)"
+    comment = "The of the port to scrape metrics from (default: metrics)"
     optional = true
   }
 
@@ -52,7 +52,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "node_exporter") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
       action = "keep"
     }
 
