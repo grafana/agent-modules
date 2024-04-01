@@ -14,11 +14,11 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                    | Description |
-| :----------- | :------- | :----------------------------------------- | :---------- |
-| `namespaces` | _no_     | `[]`                                       | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=memcached"]` | The label selectors to use to find matching targets |
-| `port_name`  | _no_     | `http-metrics`                             | The of the port to scrape metrics from |
+| Name         | Required | Default                                | Description                                                                 |
+| :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
+| `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=memcached"]` | The label selectors to use to find matching targets                         |
+| `port_name`  | _no_     | `metrics`                              | The of the port to scrape metrics from                                      |
 
 #### Exports
 
@@ -32,11 +32,11 @@ The following labels are automatically added to exported targets.
 
 | Label | Description |
 | :---- | :-----------|
-| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                 |
-| `container` | The name of the container, usually `memcached`                                                |
-| `namespace` | The namespace the target was found in.                                                            |
-| `pod`       | The full name of the pod                                                                          |
-| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC |
+| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                               |
+| `container` | The name of the container, usually `memcached`                                                                                                                  |
+| `namespace` | The namespace the target was found in.                                                                                                                          |
+| `pod`       | The full name of the pod                                                                                                                                        |
+| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                               |
 | `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `StatefulSet/memcached-metrics` |
 
 ---
