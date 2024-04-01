@@ -14,11 +14,11 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 #### Arguments
 
-| Name         | Required | Default                                | Description                                                                 |
-| :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
-| `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets<br>*Note:* for Grafana Enterprise Logs this should be `["app.kubernetes.io/name=enterprise-logs"]`                         |
-| `port_name`  | _no_     | `http-metrics`                         | The of the port to scrape metrics from                                      |
+| Name         | Required | Default                                | Description                                                                                                                                            |
+| :----------- | :------- | :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces                                                                            |
+| `selectors`  | _no_     | `["app.kubernetes.io/name=loki"]`      | The label selectors to use to find matching targets<br>*Note:* for Grafana Enterprise Logs this should be `["app.kubernetes.io/name=enterprise-logs"]` |
+| `port_name`  | _no_     | `http-metrics`                         | The of the port to scrape metrics from                                                                                                                 |
 
 #### Exports
 
@@ -75,7 +75,7 @@ The following labels are automatically added to exported targets.
 | `forward_to` | _yes_ | `list(MetricsReceiver)`  | Must be a where scraped should be forwarded to |
 | `job_label`  | _no_ | `integrations/loki` | The job label to add for all loki metric |
 | `port_name`  | _no_ | `http-metrics` | The of the port to scrape metrics from |
-| `keep_metrics` | _no_ | [see code](module.river#L202) | A regex of metrics to keep |
+| `keep_metrics` | _no_ | [see code](module.river#L215) | A regex of metrics to keep |
 | `scrape_interval` | _no_ | `60s` | How often to scrape metrics from the targets |
 | `scrape_timeout` | _no_ | `10s` | How long before a scrape times out |
 | `max_cache_size` | _no_ | `100000` | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |

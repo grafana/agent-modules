@@ -25,7 +25,7 @@ declare "kubernetes" {
     optional = true
   }
 
-  // memcached service discovery for all of the pods in the memcached daemonset
+  // memcached service discovery for all of the pods
   discovery.kubernetes "memcached" {
     role = "pod"
 

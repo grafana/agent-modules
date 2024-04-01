@@ -25,7 +25,7 @@ declare "kubernetes" {
     optional = true
   }
 
-  // grafana agent service discovery for all of the pods in the grafana agent daemonset
+  // grafana agent service discovery for all of the pods
   discovery.kubernetes "agent" {
     role = "pod"
 
