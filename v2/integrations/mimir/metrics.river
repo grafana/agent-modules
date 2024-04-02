@@ -14,7 +14,13 @@ declare "kubernetes" {
     optional = true
   }
 
-  argument "selectors" {
+  argument "field_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [])"
+    optional = true
+  }
+
+  argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=mimir\"])"
     optional = true
@@ -31,7 +37,8 @@ declare "kubernetes" {
 
     selectors {
       role = "pod"
-      label = join(coalesce(argument.selectors.value, ["app.kubernetes.io/name=mimir"]), ",")
+      field = join(coalesce(argument.fieldselectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=mimir"]), ",")
     }
 
     namespaces {

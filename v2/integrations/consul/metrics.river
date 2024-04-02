@@ -12,19 +12,20 @@ declare "consul" {
     comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   }
 
-  argument "enabled" {
-    comment = "Whether or not the consul-job should be enabled, this is useful for disabling the job when it is being consumed by other modules in a multi-tenancy environment (default: true)"
-    optional = true
-  }
-
   argument "namespaces" {
     comment = "The namespaces to look for targets in (default: [] is all namespaces)"
     optional = true
   }
 
-  argument "selectors" {
+  argument "field_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app=consul\"])"
+    comment = "The label selectors to use to find matching targets (default: [])"
+    optional = true
+  }
+
+  argument "label_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [\"k8s-app=konnectivity-agent\"])"
     optional = true
   }
 
@@ -81,17 +82,6 @@ declare "consul" {
   // consul relabelings (pre-scrape)
   discovery.relabel "consul" {
     targets = discovery.kubernetes.consul.targets
-
-    // drop all targets if enabled is false
-    rule {
-      target_label = "__enabled"
-      replacement = format("%s", coalesce(argument.enabled.value, "true"))
-    }
-    rule {
-      source_labels = ["__enabled"]
-      regex = "false"
-      action = "drop"
-    }
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
