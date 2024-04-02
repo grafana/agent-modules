@@ -946,7 +946,7 @@ declare "kube_dns" {
 
    // kube_dns scrape job
   prometheus.scrape "kube_dns" {
-    job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube_dns")
+    job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-dns")
     forward_to = [prometheus.relabel.kube_dns.receiver]
     targets = discovery.relabel.kube_dns.output
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
