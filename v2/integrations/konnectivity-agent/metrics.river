@@ -11,7 +11,7 @@ Note: Every argument except for "forward_to" is optional, and does have a define
 declare "kubernetes" {
   // arguments for kubernetes discovery
   argument "namespaces" {
-    comment = "The namespaces to look for targets in (default: [] is all namespaces)"
+    comment = "The namespaces to look for targets in (default: [\"kube-system\"] is all namespaces)"
     optional = true
   }
 
@@ -43,7 +43,7 @@ declare "kubernetes" {
     }
 
     namespaces {
-      names = coalesce(argument.namespaces.value, [])
+      names = coalesce(argument.namespaces.value, ["kube-system"])
     }
   }
 
