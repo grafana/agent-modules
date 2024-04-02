@@ -93,7 +93,6 @@ declare "kubernetes" {
 }
 
 declare "local" {
-
   argument "port" {
     comment = "The port to use (default: 9150)"
     optional = true
