@@ -45,10 +45,7 @@ declare "kubernetes" {
 
     // keep only the specified metrics port name, and pods that are Running and ready
     rule {
-      source_labels = [
-        "__meta_kubernetes_service_port_name",
-      ]
-      separator = "@"
+      source_labels = ["__meta_kubernetes_service_port_name"]
       regex = coalesce(argument.port_name.value, "http")
       action = "keep"
     }
