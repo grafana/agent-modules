@@ -49,10 +49,16 @@ declare "kubernetes" {
   discovery.relabel "konnectivity" {
     targets = discovery.kubernetes.konnectivity.targets
 
-    // only keep targets with a matching port name
+    // keep only the specified metrics port name, and pods that are Running and ready
     rule {
-      source_labels = ["__meta_kubernetes_service_port_name"]
-      regex = coalesce(argument.port_name.value, "metrics")
+      source_labels = [
+        "__meta_kubernetes_pod_container_port_name",
+        "__meta_kubernetes_pod_phase",
+        "__meta_kubernetes_pod_ready",
+        "__meta_kubernetes_pod_container_init",
+      ]
+      separator = "@"
+      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
       action = "keep"
     }
 
@@ -64,17 +70,39 @@ declare "kubernetes" {
 
     // set the pod label
     rule {
-      source_labels = ["__meta_kubernetes_service_name"]
-      target_label  = "service"
+      source_labels = ["__meta_kubernetes_pod_name"]
+      target_label  = "pod"
+    }
+
+    // set the container label
+    rule {
+      source_labels = ["__meta_kubernetes_pod_container_name"]
+      target_label  = "container"
+    }
+
+    // set a workload label
+    rule {
+      source_labels = [
+        "__meta_kubernetes_pod_controller_kind",
+        "__meta_kubernetes_pod_controller_name",
+      ]
+      separator = "/"
+      target_label  = "workload"
+    }
+    // remove the hash from the ReplicaSet
+    rule {
+      source_labels = ["workload"]
+      regex = "(ReplicaSet/.+)-.+"
+      target_label  = "workload"
     }
 
     // set the app name if specified as metadata labels "app:" or "app.kubernetes.io/name:" or "k8s-app:"
     rule {
       action = "replace"
       source_labels = [
-        "__meta_kubernetes_service_label_app_kubernetes_io_name",
-        "__meta_kubernetes_service_label_k8s_app",
-        "__meta_kubernetes_service_label_app",
+        "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+        "__meta_kubernetes_pod_label_k8s_app",
+        "__meta_kubernetes_pod_label_app",
       ]
       separator = ";"
       regex = "^(?:;*)?([^;]+).*$"
