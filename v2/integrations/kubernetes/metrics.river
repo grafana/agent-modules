@@ -436,7 +436,7 @@ declare "apiserver" {
     }
 
     namespaces {
-      names = coalesce(argument.namespace.value, ["default"])
+      names = coalesce(argument.namespaces.value, ["default"])
     }
   }
 
