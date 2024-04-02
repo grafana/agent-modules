@@ -821,7 +821,7 @@ declare "kube_dns" {
   }
 
   argument "job_label" {
-    comment = "The job label to add for all kube_dns metric (default: integrations/kubernetes/kube_dns)"
+    comment = "The job label to add for all kube_dns metric (default: integrations/kubernetes/kube-dns)"
     optional = true
   }
 
@@ -966,7 +966,7 @@ declare "kube_dns" {
     rule {
       source_labels = ["__name__"]
       regex = coalesce(argument.drop_metrics.value, "^(go|process|promhttp)_.+$")
-      action = "keep"
+      action = "drop"
     }
 
     // keep only metrics that match the keep_metrics regex
