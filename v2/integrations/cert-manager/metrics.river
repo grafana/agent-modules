@@ -116,28 +116,6 @@ declare "kubernetes" {
   }
 }
 
-declare "local" {
-
-  argument "port" {
-    comment = "The port to use (default: 9150)"
-    optional = true
-  }
-
-  // arguments for local (static)
-  discovery.relabel "local" {
-    targets = [
-      {
-        "__address__" = "localhost" + format("%s", coalesce(argument.port.value, "9150")),
-        "source" = "local",
-      },
-    ]
-  }
-
-  export "output" {
-    value = discovery.relabel.local.output
-  }
-}
-
 declare "scrape" {
   argument "targets" {
     comment = "Must be a list() of targets"
@@ -199,7 +177,7 @@ declare "scrape" {
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(up|cert-manager_(commands_total|connections_total|current_(bytes|connections|items)|items_(evicted_total|total)|max_connections|read_bytes_total|up|uptime_seconds|version|written_bytes_total))")
+      regex = coalesce(argument.keep_metrics.value, "(up|(certmanager_(certificate_(expiration_timestamp_seconds|ready_status)|clock_time_seconds|controller_sync_call_count|http_acme_client_request_(count|duration_seconds_(count|sum)))|container_(cpu_(cfs_(periods|throttled_periods)_total|usage_seconds_total)|memory_usage_bytes|network_(receive|transmit)_bytes_total)|kube_pod_container_resource_(limits|requests)_(cpu_cores|memory_bytes)))")
       action = "keep"
     }
   }
