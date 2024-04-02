@@ -49,9 +49,10 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_port_name",
         "__meta_kubernetes_pod_phase",
         "__meta_kubernetes_pod_ready",
+        "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true"
+      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
       action = "keep"
     }
 
