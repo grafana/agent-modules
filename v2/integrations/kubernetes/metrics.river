@@ -8,7 +8,13 @@ Note: Every argument except for "forward_to" is optional, and does have a define
       does not override the value passed in, where coalesce() will return the first non-null value.
 */
 declare "cadvisor" {
-  argument "selectors" {
+  argument "field_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [\"metadata.name=kubernetes\"])"
+    optional = true
+  }
+
+  argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
@@ -55,7 +61,8 @@ declare "cadvisor" {
 
     selectors {
       role = "node"
-      label = join(coalesce(argument.selectors.value, []), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, []), ",")
     }
   }
 
@@ -213,7 +220,13 @@ declare "cadvisor" {
 }
 
 declare "resources" {
-  argument "selectors" {
+  argument "field_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [\"metadata.name=kubernetes\"])"
+    optional = true
+  }
+
+  argument "label_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
     comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
@@ -260,7 +273,8 @@ declare "resources" {
 
     selectors {
       role = "node"
-      label = join(coalesce(argument.selectors.value, []), ",")
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, []), ",")
     }
   }
 
@@ -351,19 +365,20 @@ declare "apiserver" {
     comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
   }
 
-  argument "namespace" {
+  argument "namespaces" {
     comment = "The namespaces to look for targets in (default: default)"
     optional = true
   }
 
-  argument "selectors" {
+  argument "field_selectors" {
     // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=memcached\"])"
+    comment = "The label selectors to use to find matching targets (default: [\"metadata.name=kubernetes\"])"
     optional = true
   }
 
-  argument "service" {
-    comment = "The label to use for the selector (default: kubernetes)"
+  argument "label_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [])"
     optional = true
   }
 
@@ -416,11 +431,12 @@ declare "apiserver" {
 
     selectors {
       role = "service"
-      field = "metadata.name=" + coalesce(argument.service.value, "kubernetes")
+      field = join(coalesce(argument.field_selectors.value, ["metadata.name=kubernetes"]), ",")
+      label = join(coalesce(argument.label_selectors.value, []), ",")
     }
 
     namespaces {
-      names = [coalesce(argument.namespace.value, "default")]
+      names = coalesce(argument.namespace.value, ["default"])
     }
   }
 
@@ -512,6 +528,134 @@ declare "apiserver" {
       ]
       regex = coalesce(argument.drop_les.value, "apiserver_request_duration_seconds_bucket;(0.15|0.25|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2.5|3|3.5|4.5|6|7|8|9|15|25|30|50)")
       action = "drop"
+    }
+  }
+}
+
+declare "kube_state_metrics" {
+
+  argument "forward_to" {
+    comment = "Must be a list(MetricsReceiver) where collected logs should be forwarded to"
+  }
+
+  argument "namespaces" {
+    comment = "The namespaces to look for targets in (default: [])"
+    optional = true
+  }
+
+  argument "field_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [])"
+    optional = true
+  }
+
+  argument "label_selectors" {
+    // Docs: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+    comment = "The label selectors to use to find matching targets (default: [\"app.kubernetes.io/name=kube-state-metrics\"])"
+    optional = true
+  }
+
+  argument "port_name" {
+    comment = "The value of the label for the selector (default: http)"
+    optional = true
+  }
+
+  argument "job_label" {
+    comment = "The job label to add for all kube-kube_state_metrics metrics (default: integrations/kubernetes/kube-state-metrics)"
+    optional = true
+  }
+
+  argument "keep_metrics" {
+    comment = "A regex of metrics to keep (default: see below)"
+    optional = true
+  }
+
+  argument "scrape_interval" {
+    comment = "How often to scrape metrics from the targets (default: 60s)"
+    optional = true
+  }
+
+  argument "scrape_timeout" {
+    comment = "How long before a scrape times out (default: 10s)"
+    optional = true
+  }
+
+  argument "max_cache_size" {
+    comment = "The maximum number of elements to hold in the relabeling cache (default: 100000).  This should be at least 2x-5x your largest scrape target or samples appended rate."
+    optional = true
+  }
+
+  argument "clustering" {
+    // Docs: https://grafana.com/docs/agent/latest/flow/concepts/clustering/
+    comment = "Whether or not clustering should be enabled (default: false)"
+    optional = true
+  }
+
+  // kube-kube_state_metrics service discovery
+  discovery.kubernetes "kube_state_metrics" {
+    role = "service"
+
+    selectors {
+      role = "service"
+      field = join(coalesce(argument.field_selectors.value, []), ",")
+      label = join(coalesce(argument.label_selectors.value, ["app.kubernetes.io/name=kube-state-metrics"]), ",")
+    }
+
+    namespaces {
+      names = coalesce(argument.namespace.value, ["default"])
+    }
+  }
+
+  // kube-state-metrics relabelings (pre-scrape)
+  discovery.relabel "kube_state_metrics" {
+    targets = discovery.kubernetes.kube_state_metrics.targets
+
+    // only keep targets with a matching port name
+    rule {
+      source_labels = ["__meta_kubernetes_service_port_name"]
+      regex = coalesce(argument.port_name.value, "http")
+      action = "keep"
+    }
+
+    // set a source label
+    rule {
+      action = "replace"
+      replacement = "kubernetes"
+      target_label = "source"
+    }
+  }
+
+  // kube-kube_state_metrics scrape job
+  prometheus.scrape "kube_state_metrics" {
+    job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-state-metrics")
+    forward_to = [prometheus.relabel.kube_state_metrics.receiver]
+    targets = discovery.relabel.kube_state_metrics.output
+    scheme = "https"
+    scrape_interval = coalesce(argument.scrape_interval.value, "60s")
+    scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
+    bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+    tls_config {
+      ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+      insecure_skip_verify = false
+      server_name = "kubernetes"
+    }
+
+    clustering {
+      enabled = coalesce(argument.clustering.value, false)
+    }
+  }
+
+  // kube_state_metrics metric relabelings (post-scrape)
+  prometheus.relabel "kube_state_metrics" {
+    forward_to = argument.forward_to.value
+    max_cache_size = coalesce(argument.max_cache_size.value, 100000)
+
+    // keep only metrics that match the keep_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.keep_metrics.value, "(up|kube_(daemonset.*|deployment_(metadata_generation|spec_replicas|status_(observed_generation|replicas_(available|updated)))|horizontalpodautoscaler_(spec_(max|min)_replicas|status_(current|desired)_replicas)|job.*|namespace_status_phase|node.*|persistentvolumeclaim_resource_requests_storage_bytes|pod_(container_(info|resource_(limits|requests)|status_(last_terminated_reason|restarts_total|waiting_reason))|info|owner|start_time|status_(phase|reason))|replicaset.*|resourcequota|statefulset.*))")
+      action = "keep"
     }
   }
 }
