@@ -48,7 +48,7 @@ declare "kubernetes" {
   }
 
   // konnectivity relabelings (pre-scrape)
-  discovery.relabel "kubernetes" {
+  discovery.relabel "konnectivity" {
     targets = discovery.kubernetes.konnectivity.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
@@ -121,7 +121,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.kubernetes.output
+    value = discovery.relabel.konnectivity.output
   }
 }
 
