@@ -278,7 +278,7 @@ declare "resources" {
     rule {
       source_labels = ["__meta_kubernetes_node_name"]
       regex = "(.+)"
-      replacement = "/api/v1/nodes/${1}/proxy/metrics/resources"
+      replacement = "/api/v1/nodes/${1}/proxy/metrics/resource"
       target_label = "__metrics_path__"
     }
 
