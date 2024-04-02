@@ -602,7 +602,7 @@ declare "kube_state_metrics" {
     }
 
     namespaces {
-      names = coalesce(argument.namespace.value, ["default"])
+      names = coalesce(argument.namespaces.value, ["default"])
     }
   }
 
