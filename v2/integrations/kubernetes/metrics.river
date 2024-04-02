@@ -34,6 +34,11 @@ declare "cadvisor" {
     optional = true
   }
 
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
+    optional = true
+  }
+
   argument "scrape_interval" {
     comment = "How often to scrape metrics from the targets (default: 60s)"
     optional = true
@@ -137,6 +142,13 @@ declare "cadvisor" {
   prometheus.relabel "cadvisor" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
+
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
 
     // keep only metrics that match the keep_metrics regex
     rule {
@@ -246,6 +258,11 @@ declare "resources" {
     optional = true
   }
 
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
+    optional = true
+  }
+
   argument "scrape_interval" {
     comment = "How often to scrape metrics from the targets (default: 60s)"
     optional = true
@@ -350,6 +367,13 @@ declare "resources" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
+
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
@@ -383,6 +407,11 @@ declare "kubelet" {
 
   argument "keep_metrics" {
     comment = "A regex of metrics to keep (default: see below)"
+    optional = true
+  }
+
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -489,6 +518,13 @@ declare "kubelet" {
   prometheus.relabel "kubelet" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
+
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
 
     // keep only metrics that match the keep_metrics regex
     rule {
@@ -722,6 +758,11 @@ declare "kube_state_metrics" {
     optional = true
   }
 
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
+    optional = true
+  }
+
   argument "scrape_interval" {
     comment = "How often to scrape metrics from the targets (default: 60s)"
     optional = true
@@ -795,6 +836,13 @@ declare "kube_state_metrics" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
+
     // keep only metrics that match the keep_metrics regex
     rule {
       source_labels = ["__name__"]
@@ -828,6 +876,11 @@ declare "probes" {
 
   argument "keep_metrics" {
     comment = "A regex of metrics to keep (default: see below)"
+    optional = true
+  }
+
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
     optional = true
   }
 
@@ -934,6 +987,13 @@ declare "probes" {
   prometheus.relabel "probes" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
+
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
 
     // keep only metrics that match the keep_metrics regex
     rule {
