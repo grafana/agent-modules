@@ -7,9 +7,11 @@ Note: Every argument except for "forward_to" is optional, and does have a define
       This is because if the argument passed in from another consuming module is set to null, the default = " ... " syntax will
       does not override the value passed in, where coalesce() will return the first non-null value.
 */
+
 declare "kubernetes" {
+  // arguments for kubernetes discovery
   argument "namespaces" {
-    comment = "The namespaces to look for targets in (default: [\"kube-system\"])"
+    comment = "The namespaces to look for targets in (default: [] is all namespaces)"
     optional = true
   }
 
@@ -26,27 +28,27 @@ declare "kubernetes" {
   }
 
   argument "port_name" {
-    comment = "The value of the label for the selector (default: metrics)"
+    comment = "The of the port to scrape metrics from (default: metrics)"
     optional = true
   }
 
-  // kube-konnectivity service discovery
+  // konnectivity service discovery for all of the pods
   discovery.kubernetes "konnectivity" {
-    role = "service"
+    role = "pod"
 
     selectors {
-      role = "service"
-      field = join(coalesce(argument.field_selectors.value, []), ",")
-      label = join(coalesce(argument.label_selectors.value, ["k8s-app=konnectivity-agent"]), ",")
+      role = "pod"
+      field = join(coalesce(argument.selectors.value, []), ",")
+      label = join(coalesce(argument.selectors.value, ["k8s-app=konnectivity-agent"]), ",")
     }
 
     namespaces {
-      names = coalesce(argument.namespaces.value, ["kube-system"])
+      names = coalesce(argument.namespaces.value, [])
     }
   }
 
-  // konnectivity-agent relabelings (pre-scrape)
-  discovery.relabel "konnectivity" {
+  // konnectivity relabelings (pre-scrape)
+  discovery.relabel "kubernetes" {
     targets = discovery.kubernetes.konnectivity.targets
 
     // keep only the specified metrics port name, and pods that are Running and ready
@@ -119,7 +121,7 @@ declare "kubernetes" {
   }
 
   export "output" {
-    value = discovery.relabel.konnectivity.output
+    value = discovery.relabel.kubernetes.output
   }
 }
 
