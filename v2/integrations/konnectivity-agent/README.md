@@ -31,12 +31,12 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 The following labels are automatically added to exported targets.
 
-| Label | Description |
-| :---- | :-----------|
-| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                               |
-| `namespace` | The namespace the target was found in.                                                                                                                          |
-| `service`   | The full name of the service                                                                                                                                        |
-| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                               |
+| Label       | Description                                                                                       |
+| :---------- | :------------------------------------------------------------------------------------------------ |
+| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                 |
+| `namespace` | The namespace the target was found in.                                                            |
+| `service`   | The full name of the service                                                                      |
+| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC |
 
 ---
 

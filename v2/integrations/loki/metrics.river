@@ -111,6 +111,19 @@ declare "kubernetes" {
       target_label = "app"
     }
 
+    // set the component if specified as metadata labels "component:" or "app.kubernetes.io/component:" or "k8s-component:"
+    rule {
+      action = "replace"
+      source_labels = [
+        "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+        "__meta_kubernetes_pod_label_k8s_component",
+        "__meta_kubernetes_pod_label_component",
+      ]
+      regex = "^(?:;*)?([^;]+).*$"
+      replacement = "$1"
+      target_label = "component"
+    }
+
     // set a source label
     rule {
       action = "replace"

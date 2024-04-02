@@ -30,24 +30,24 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 The following labels are automatically added to exported targets.
 
-| Label | Description |
-| :---- | :-----------|
-| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                               |
-| `container` | The name of the container, usually `loki`                                                                                                                  |
-| `namespace` | The namespace the target was found in.                                                                                                                          |
-| `pod`       | The full name of the pod                                                                                                                                        |
-| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                               |
-| `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `StatefulSet/loki-metrics` |
-
+| Label       | Description                                                                                                                                         |
+| :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                   |
+| `component` | Derived from the pod label value of `app.kubernetes.io/component`, `k8s-component`, or `component                                                   |
+| `container` | The name of the container, usually `haproxy`                                                                                                        |
+| `namespace` | The namespace the target was found in.                                                                                                              |
+| `pod`       | The full name of the pod                                                                                                                            |
+| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                   |
+| `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `ReplicaSet/my-app` |
 ---
 
 ### local
 
 #### Arguments
 
-| Name | Optional | Default | Description |
-| :--- | :---     | :---    | :---------- |
-| `port` | `true` | `3000` | The of the port to scrape metrics from |
+| Name   | Optional | Default | Description                            |
+| :----- | :------- | :------ | :------------------------------------- |
+| `port` | `true`   | `3100`  | The of the port to scrape metrics from |
 
 #### Exports
 

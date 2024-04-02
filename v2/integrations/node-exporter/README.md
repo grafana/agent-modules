@@ -18,7 +18,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | :----------- | :------- | :---------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                                  | The namespaces to look for targets in, the default (`[]`) is all namespaces |
 | `selectors`  | _no_     | `["app.kubernetes.io/name=prometheus-node-exporter"]` | The label selectors to use to find matching targets                         |
-| `port_name`  | _no_     | `metrics      `                                       | The of the port to scrape metrics from                                      |
+| `port_name`  | _no_     | `metrics`                                             | The of the port to scrape metrics from                                      |
 
 #### Exports
 
@@ -30,14 +30,15 @@ Handles discovery of kubernetes targets and exports them, this component does no
 
 The following labels are automatically added to exported targets.
 
-| Label       | Description                                                                                                                                                         |
-| :---------- | :-----------                                                                                                                                                        |
-| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                                   |
-| `container` | The name of the container, usually `node_exporter`                                                                                                                  |
-| `namespace` | The namespace the target was found in.                                                                                                                              |
-| `pod`       | The full name of the pod                                                                                                                                            |
-| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                                   |
-| `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `StatefulSet/node_exporter-metrics` |
+| Label       | Description                                                                                                                                         |
+| :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app`       | Derived from the pod label value of `app.kubernetes.io/name`, `k8s-app`, or `app`                                                                   |
+| `component` | Derived from the pod label value of `app.kubernetes.io/component`, `k8s-component`, or `component                                                   |
+| `container` | The name of the container, usually `haproxy`                                                                                                        |
+| `namespace` | The namespace the target was found in.                                                                                                              |
+| `pod`       | The full name of the pod                                                                                                                            |
+| `source`    | Constant value of `kubernetes`, denoting where the results came from, this can be useful for LBAC                                                   |
+| `workload`  | Kubernetes workload, a combination of `__meta_kubernetes_pod_controller_kind` and `__meta_kubernetes_pod_controller_name`, i.e. `ReplicaSet/my-app` |
 
 ---
 
@@ -45,9 +46,9 @@ The following labels are automatically added to exported targets.
 
 #### Arguments
 
-| Name | Optional | Default | Description |
-| :--- | :---     | :------ | :---------- |
-| `port` | `true` | `9100`  | The of the port to scrape metrics from |
+| Name   | Optional | Default | Description                            |
+| :----- | :------- | :------ | :------------------------------------- |
+| `port` | `true`   | `9100`  | The of the port to scrape metrics from |
 
 #### Exports
 
@@ -59,9 +60,9 @@ The following labels are automatically added to exported targets.
 
 The following labels are automatically added to exported targets.
 
-| Label | Description |
-| :---- | :-----------|
-| `source`    | Constant value of `local`, denoting where the results came from, this can be useful for LBAC |
+| Label    | Description                                                                                  |
+| :------- | :------------------------------------------------------------------------------------------- |
+| `source` | Constant value of `local`, denoting where the results came from, this can be useful for LBAC |
 
 ---
 
@@ -79,7 +80,7 @@ The following labels are automatically added to exported targets.
 | `scrape_interval` | _no_     | `60s`                         | How often to scrape metrics from the targets                                                                                                        |
 | `scrape_timeout`  | _no_     | `10s`                         | How long before a scrape times out                                                                                                                  |
 | `max_cache_size`  | _no_     | `100000`                      | The maximum number of elements to hold in the relabeling cache.  This should be at least 2x-5x your largest scrape target or samples appended rate. |
-| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://node_exporter.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                      |
+| `clustering`      | _no_     | `false`                       | Whether or not [clustering](https://node_exporter.com/docs/agent/latest/flow/concepts/clustering/) should be enabled                                |
 
 #### Labels
 
