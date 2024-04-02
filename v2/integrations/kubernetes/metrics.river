@@ -625,21 +625,13 @@ declare "kube_state_metrics" {
     }
   }
 
-  // kube-kube_state_metrics scrape job
+  // kube-state-metrics scrape job
   prometheus.scrape "kube_state_metrics" {
     job_name = coalesce(argument.job_label.value, "integrations/kubernetes/kube-state-metrics")
     forward_to = [prometheus.relabel.kube_state_metrics.receiver]
     targets = discovery.relabel.kube_state_metrics.output
-    scheme = "https"
     scrape_interval = coalesce(argument.scrape_interval.value, "60s")
     scrape_timeout = coalesce(argument.scrape_timeout.value, "10s")
-    bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-    tls_config {
-      ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-      insecure_skip_verify = false
-      server_name = "kubernetes"
-    }
 
     clustering {
       enabled = coalesce(argument.clustering.value, false)
