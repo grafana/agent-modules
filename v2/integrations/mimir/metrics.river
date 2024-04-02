@@ -59,7 +59,7 @@ declare "kubernetes" {
         "__meta_kubernetes_pod_container_init",
       ]
       separator = "@"
-      regex = coalesce(argument.port_name.value, "metrics") + "@Running@true@false"
+      regex = coalesce(argument.port_name.value, "http-metrics") + "@Running@true@false"
       action = "keep"
     }
 
@@ -178,6 +178,11 @@ declare "scrape" {
     optional = true
   }
 
+  argument "drop_metrics" {
+    comment = "A regex of metrics to drop (default: see below)"
+    optional = true
+  }
+
   argument "scrape_interval" {
     comment = "How often to scrape metrics from the targets (default: 60s)"
     optional = true
@@ -217,6 +222,20 @@ declare "scrape" {
     forward_to = argument.forward_to.value
     max_cache_size = coalesce(argument.max_cache_size.value, 100000)
 
+    // drop metrics that match the drop_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process)_.+$)")
+      action = "drop"
+    }
+
+    // keep only metrics that match the keep_metrics regex
+    rule {
+      source_labels = ["__name__"]
+      regex = coalesce(argument.keep_metrics.value, "(.+)")
+      action = "keep"
+    }
+
     // set the job label to be namespace/pod as this is what the cloud integration expects
     rule {
       action = "replace"
@@ -228,13 +247,6 @@ declare "scrape" {
       regex = "(.+)/.+/(.+)"
       replacement = "$1/$2"
       target_label = "job"
-    }
-
-    // keep only metrics that match the keep_metrics regex
-    rule {
-      source_labels = ["__name__"]
-      regex = coalesce(argument.keep_metrics.value, "(.+)")
-      action = "keep"
     }
   }
 }
