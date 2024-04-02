@@ -965,7 +965,7 @@ declare "kube_dns" {
     // drop metrics that match the drop_metrics regex
     rule {
       source_labels = ["__name__"]
-      regex = coalesce(argument.drop_metrics.value, "^(go|process|promhttp)_.+$")
+      regex = coalesce(argument.drop_metrics.value, "(^(go|process|promhttp)_.+$)")
       action = "drop"
     }
 
