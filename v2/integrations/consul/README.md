@@ -17,7 +17,7 @@ Handles discovery of kubernetes targets and exports them, this component does no
 | Name         | Required | Default                                | Description                                                                 |
 | :----------- | :------- | :------------------------------------- | :-------------------------------------------------------------------------- |
 | `namespaces` | _no_     | `[]`                                   | The namespaces to look for targets in, the default (`[]`) is all namespaces |
-| `selectors`  | _no_     | `["app=consul"]` | The label selectors to use to find matching targets                         |
+| `selectors`  | _no_     | `["app=consul"]`                       | The label selectors to use to find matching targets                         |
 | `port_name`  | _no_     | `metrics`                              | The of the port to scrape metrics from                                      |
 
 #### Exports
