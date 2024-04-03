@@ -1,6 +1,6 @@
-# redis Module
+# Redis Module
 
-Handles scraping redis metrics.
+Handles scraping Redis metrics.
 
 ## Components
 

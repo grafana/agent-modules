@@ -1,6 +1,6 @@
-# Memcached Module
+# Mimir Module
 
-Handles scraping Memcached metrics.
+Handles scraping Mimir metrics.
 
 ## Components
 

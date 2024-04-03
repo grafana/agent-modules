@@ -1,6 +1,6 @@
-# Memcached Module
+# Grafana Module
 
-Handles scraping Memcached metrics.
+Handles scraping Grafana metrics.
 
 ## Components
 

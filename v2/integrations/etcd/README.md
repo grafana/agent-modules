@@ -1,6 +1,6 @@
-# Memcached Module
+# Etcd Module
 
-Handles scraping Memcached metrics.
+Handles scraping Etcd metrics.
 
 ## Components
 

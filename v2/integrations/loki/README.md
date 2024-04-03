@@ -1,6 +1,6 @@
-# Memcached Module
+# Loki Module
 
-Handles scraping Memcached metrics.
+Handles scraping Loki metrics.
 
 ## Components
 

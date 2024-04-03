@@ -1,6 +1,6 @@
-# Memcached Module
+# MySQL Module
 
-Handles scraping Memcached metrics.
+Handles scraping MySQL metrics.
 
 ## Components
 

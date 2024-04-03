@@ -1,6 +1,6 @@
-# rabbitmq Module
+# RabbitMQ Module
 
-Handles scraping rabbitmq metrics.
+Handles scraping RabbitMQ metrics.
 
 ## Components
 

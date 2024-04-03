@@ -1,6 +1,6 @@
-# Memcached Module
+# Postgres Module
 
-Handles scraping Memcached metrics.
+Handles scraping Postgres metrics.
 
 ## Components
 

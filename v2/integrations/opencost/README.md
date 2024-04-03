@@ -1,6 +1,6 @@
-# opencost Exporter Module
+# OpenCost Exporter Module
 
-Handles scraping opencost Exporter metrics.
+Handles scraping OpenCost Exporter metrics.
 
 ## Components
 

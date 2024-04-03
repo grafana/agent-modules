@@ -1,6 +1,6 @@
-# Memcached Module
+# Consul Module
 
-Handles scraping Memcached metrics.
+Handles scraping Consul metrics.
 
 ## Components
 

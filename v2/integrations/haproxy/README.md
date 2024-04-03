@@ -1,6 +1,6 @@
-# haproxy Module
+# HAProxy Module
 
-Handles scraping haproxy metrics.
+Handles scraping HAProxy metrics.
 
 ## Components
 
