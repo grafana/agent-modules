@@ -64,7 +64,7 @@ discovery.relabel "container_runtime" {
   rule {
     action = "replace"
     source_labels = ["__meta_kubernetes_pod_container_id"]
-    regex = "^(\\w+):\\/\\/.+$"
+    regex = "^(\\S+):\\/\\/.+$"
     replacement = "$1"
     target_label = "tmp_container_runtime"
   }
@@ -85,7 +85,7 @@ loki.process "parse" {
 
   // if the label tmp_container_runtime from above is containerd parse using cri
   stage.match {
-    selector = "{tmp_container_runtime=\"containerd\"}"
+    selector = "{tmp_container_runtime=~\"containerd|cri-o\"}"
     // the cri processing stage extracts the following k/v pairs: log, stream, time, flags
     stage.cri {}
 
