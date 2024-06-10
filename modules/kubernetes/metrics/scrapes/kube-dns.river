@@ -14,6 +14,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How frequently to scrape the targets of this scrape configuration."
+  optional = true
+  default = "60s"
+}
+
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
@@ -92,6 +98,7 @@ discovery.relabel "kube_dns" {
 prometheus.scrape "kube_dns" {
   targets = discovery.relabel.kube_dns.output
   forward_to = [module.git.relabelings_kube_dns.exports.metric_relabelings.receiver]
+  scrape_interval = argument.scrape_interval.value
 
   clustering {
     enabled = argument.clustering.value

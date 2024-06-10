@@ -61,6 +61,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How frequently to scrape the targets of this scrape configuration."
+  optional = true
+  default = "60s"
+}
+
 argument "blackbox_url" {
   // comment = "The address of the blackbox exporter to use (without the protocol), only the hostname and port i.e. blackbox-prometheus-blackbox-exporter.default.svc.cluster.local:9115"
   optional = false
@@ -119,6 +125,7 @@ module.git "ingress_targets" {
 prometheus.scrape "probe_ingresses" {
   targets = module.git.ingress_targets.exports.relabelings.output
   forward_to = [module.git.relabelings_blackbox.exports.metric_relabelings.receiver]
+  scrape_interval = argument.scrape_interval.value
 
   clustering {
     enabled = argument.clustering.value

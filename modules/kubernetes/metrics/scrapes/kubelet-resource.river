@@ -7,6 +7,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How frequently to scrape the targets of this scrape configuration."
+  optional = true
+  default = "60s"
+}
+
 argument "tenant" {
   // comment = "The tenant to filter logs to.  This does not have to be the tenantId, this is the value to look for in the logs.agent.grafana.com/tenant annotation, and this can be a regex."
   optional = true
@@ -67,6 +73,7 @@ prometheus.scrape "kubelet_resource" {
   scheme = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   forward_to = [module.git.relabelings_kubelet_resource.exports.metric_relabelings.receiver]
+  scrape_interval = argument.scrape_interval.value
 
   tls_config {
     ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"

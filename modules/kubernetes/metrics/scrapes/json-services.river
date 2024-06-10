@@ -59,6 +59,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How frequently to scrape the targets of this scrape configuration."
+  optional = true
+  default = "60s"
+}
+
 argument "json_exporter_url" {
   // comment = "The address of the json exporter to use (without the protocol), only the hostname and port i.e. json-exporter.agents.svc.cluster.local:7979"
   optional = false
@@ -109,6 +115,7 @@ module.git "service_targets" {
 prometheus.scrape "json_services" {
   targets = module.git.service_targets.exports.relabelings.output
   forward_to = [module.git.relabelings_json_exporter.exports.metric_relabelings.receiver]
+  scrape_interval = argument.scrape_interval.value
 
   clustering {
     enabled = argument.clustering.value
