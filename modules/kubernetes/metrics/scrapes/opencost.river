@@ -9,6 +9,12 @@ argument "forward_to" {
   optional = false
 }
 
+argument "scrape_interval" {
+  // comment = "How frequently to scrape the targets of this scrape configuration."
+  optional = true
+  default = "60s"
+}
+
 argument "app_name" {
   // comment = "The name of the opencost app"
   optional = true
@@ -82,6 +88,7 @@ discovery.relabel "opencost" {
 prometheus.scrape "opencost" {
   targets = discovery.relabel.opencost.output
   forward_to = [module.git.opencost.exports.metric_relabelings.receiver]
+  scrape_interval = argument.scrape_interval.value
 
   clustering {
     enabled = argument.clustering.value
